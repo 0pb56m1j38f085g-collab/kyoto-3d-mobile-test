@@ -88,8 +88,18 @@ function makeStudy(){
  const deckZ=1.1,deckD=2.65;
  cube(tx,floor-.19,tz,11.6,.32,7.0,C.wood,0,true,1);cube(tx,floor-.14,deckZ,12.0,.3,deckD,C.woodLight,0,true,1);
  for(let i=0;i<40;i++){let z=-6.7+i*.232;cube(tx,floor+.018,z,11.65,.025,.012,'#ad875e',0,false,1);}
- const xs=Array.from({length:7},(_,i)=>tx-5.25+i*1.75),zs=[-5.7,-3.8,-1.85,.05,2.16];
- for(let x of xs)for(let z of zs){let y=ground(x,z);cube(x,y+.06,z,.52,.18,.48,C.stone,0,true,3);templeFootings.push(roundedStone.instances[roundedStone.instances.length-1]);cube(x,(y+floor)/2,z,.205,floor-y,.205,C.woodDark,0,true,1);templeColumns.push(bevel.instances[bevel.instances.length-1]);for(let yy=3.35;yy<floor-.25;yy+=1.15)if(yy>y+.2){cube(x,yy,z,.4,.16,.4,C.woodShade,0,true,1);}}
+ // Architectural correction v1: distinguish the hall's inner supports from 18 visible stage supports.
+ // These are stylized placements, not measured coordinates or a structural engineering drawing.
+ const xs=Array.from({length:7},(_,i)=>tx-5.25+i*1.75),coreZs=[-5.7,-3.8,-1.85];
+ const stageXs=Array.from({length:6},(_,i)=>tx-4.85+i*1.94),stageZs=[-.25,.95,2.16];
+ const zs=[...coreZs,...stageZs];
+ for(let x of xs)for(let z of coreZs{let y=ground(x,z);cube(x,y+.06,z,.52,.18,.48,C.stone,0,true,3);templeFootings.push(roundedStone.instances[roundedStone.instances.length-1]);cube(x,(y+floor)/2,z,.205,floor-y,.205,C.woodDark,0,true,1);templeColumns.push(bevel.instances[bevel.instances.length-1]);for(let yy=3.35;yy<floor-.25;yy+=1.15)if(yy>y+.2){cube(x,yy,z,.4,.16,.4,C.woodShade,0,true,1);}}
+ // Six by three posts visually identify the projecting stage, independently of the hall frame.
+ for(let x of stageXs)for(let z of stageZs){let y=ground(x,z);
+  cube(x,y+.06,z,.52,.18,.48,C.stone,0,true,3);
+  cube(x,(y+floor)/2,z,.24,floor-y,.24,C.woodDark,0,true,1);
+  for(let yy=3.35;yy<floor-.25;yy+=1.15)if(yy>y+.2)cube(x,yy,z,.43,.17,.43,C.woodShade,0,true,1);
+ }
  for(let y of [3.4,4.55,5.7,6.83]){for(let z of zs){cube(tx,y,z,11.2,.19,.2,C.woodShade,0,true,1);}for(let x of xs){cube(x,y,-1.75,.2,.18,8.12,C.woodDark,0,true,1);}}
  for(let i=0;i<xs.length-1;i++){let x=xs[i];for(let yy of [3.4,4.55,5.7]){let a=[x,yy,2.16],b=[xs[i+1],yy+1.1,2.16];if(yy>ground(x,2.16)&&i%3===0){beam(a,b,.087,.078,C.wood);}}}
  // Side lattice is visible when rotating the scene.
@@ -231,16 +241,16 @@ function makeStudy(){
  // Terrace under the pavilion behind the access stair.
  cube(-7.6,6.52,-6.8,4.4,.30,3.3,'#d4c6a8');
  const pagodaStart=new Map(scene.meshes.map(m=>[m,m.instances.length]));
- // Five-tier miniature tower: deliberately a separate study asset, not a geographic label.
+ // Three-tier tower motif for Kiyomizu-dera precinct. Position remains illustrative, not surveyed.
  const px=12.2,pz=-2.0,py=ground(px,pz)+.13;
  cube(px,py+.005,pz+.35,6.05,.12,5.7,'#d9d1be');
  for(let side of[-1,1])for(let i=0;i<12;i++){let z=pz-2.2+i*.48,x=px+side*3.0;cube(x,py-.24,z,.23,.54,.43,pick(['#b9b7a6','#c6c2af','#aaa99b']),0,true,3);cube(x,py+.066,z,.33,.10,.50,C.stoneLight,0,true,3);}
  cube(px,py+.12,pz,4.8,.25,4.8,C.stoneLight);let top=py+.27;
- for(let k=0;k<5;k++){let w=3.7*Math.pow(.86,k),bodyH=1.14*Math.pow(.965,k);cube(px,top+.1,pz,w*.86,.16,w*.86,C.wood);cube(px,top+.55,pz,w*.76,bodyH,w*.76,C.paper,0,true);for(let side of[-1,1]){for(let j=0;j<5;j++){let a=-w*.32+j*w*.16;cube(px+a,top+.54,pz+side*w*.385,.08,bodyH,.09,C.woodShade,0,true,1);cube(px+side*w*.385,top+.54,pz+a,.09,bodyH,.08,C.woodShade,0,true,1);}cube(px,top+.42,pz+side*w*.39,w*.55,.6,.04,'#665440',0,false);for(let j=0;j<7;j++)cube(px-w*.24+j*w*.08,top+.43,pz+side*w*.42,.026,.59,.035,C.rail,0,false,1);}
+ for(let k=0;k<3;k++){let w=3.7*Math.pow(.83,k),bodyH=1.44*Math.pow(.965,k);cube(px,top+.1,pz,w*.86,.16,w*.86,C.wood);cube(px,top+.55,pz,w*.76,bodyH,w*.76,C.paper,0,true);for(let side of[-1,1]){for(let j=0;j<5;j++){let a=-w*.32+j*w*.16;cube(px+a,top+.54,pz+side*w*.385,.08,bodyH,.09,C.woodShade,0,true,1);cube(px+side*w*.385,top+.54,pz+a,.09,bodyH,.08,C.woodShade,0,true,1);}cube(px,top+.42,pz+side*w*.39,w*.55,.6,.04,'#665440',0,false);for(let j=0;j<7;j++)cube(px-w*.24+j*w*.08,top+.43,pz+side*w*.42,.026,.59,.035,C.rail,0,false,1);}
  cube(px,top+bodyH,pz,w*.9,.16,w*.9,C.woodShade);
  for(let side of[-1,1])for(let n=0;n<13;n++){let off=(-.53+n*.088)*w;beam([px+off,top+bodyH+.01,pz+side*w*.58],[px+off,top+bodyH+.13,pz+side*w*.40],.039,.05,C.woodLight);beam([px+side*w*.58,top+bodyH+.01,pz+off],[px+side*w*.40,top+bodyH+.13,pz+off],.039,.05,C.woodLight);}
  for(let a of[-1,1])for(let b of[-1,1]){cube(px+a*w*.36,top+bodyH-.11,pz+b*w*.36,w*.19,.10,w*.19,C.rail);cube(px+a*w*.36,top+bodyH-.24,pz+b*w*.36,w*.12,.16,w*.12,C.woodShade);}
- roof(px,top+bodyH+.03,pz,w*1.28,w*1.28,.79*Math.pow(.92,k),k===0?'#79717a':'#81767a');if(k<4){for(let side of[-1,1])railing([px-w*.48,top+.1,pz+side*w*.48],[px+w*.48,top+.1,pz+side*w*.48],.30,.43);}top+=bodyH+.43;
+ roof(px,top+bodyH+.03,pz,w*1.28,w*1.28,.79*Math.pow(.92,k),k===0?'#79717a':'#81767a');if(k<2){for(let side of[-1,1])railing([px-w*.48,top+.1,pz+side*w*.48],[px+w*.48,top+.1,pz+side*w*.48],.30,.43);}top+=bodyH+.43;
  }
  pole(px,top+.95,pz,.045,2.25,'#b08a46');for(let i=0;i<9;i++)pole(px,top+.14+i*.185,pz,.23-i*.016,.06,'#bf9c54');bead(px,top+2.13,pz,.10,'#d9ba73');
 
