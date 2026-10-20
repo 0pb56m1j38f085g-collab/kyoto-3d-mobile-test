@@ -81,7 +81,7 @@ function makeStudy(){
  // Turn the main hall inside the miniature, rather than turning the entire plinth.
  const templeAngle=-.30,templePivot=[1.6,-3.2];
  function templePoint(p){let x=p[0]-templePivot[0],z=p[2]-templePivot[1];return [templePivot[0]+Math.cos(templeAngle)*x+Math.sin(templeAngle)*z,p[1]-.55,templePivot[1]-Math.sin(templeAngle)*x+Math.cos(templeAngle)*z];}
- const templeStart=new Map(scene.meshes.map(m=>[m,m.instances.length])),templeFootings=[],templeColumns=[];
+ const templeStart=new Map(scene.meshes.map(m=>[m,m.instances.length])),templeFootings=[],templeColumns=[],stageFootings=[],stageColumns=[];
  // Main timber temple and the high, open stage.
 
  const tx=1.6,tz=-3.2,floor=7.2,ww=10.8,dd=6.3;
@@ -96,12 +96,15 @@ function makeStudy(){
  for(let x of xs)for(let z of coreZs{let y=ground(x,z);cube(x,y+.06,z,.52,.18,.48,C.stone,0,true,3);templeFootings.push(roundedStone.instances[roundedStone.instances.length-1]);cube(x,(y+floor)/2,z,.205,floor-y,.205,C.woodDark,0,true,1);templeColumns.push(bevel.instances[bevel.instances.length-1]);for(let yy=3.35;yy<floor-.25;yy+=1.15)if(yy>y+.2){cube(x,yy,z,.4,.16,.4,C.woodShade,0,true,1);}}
  // Six by three posts visually identify the projecting stage, independently of the hall frame.
  for(let x of stageXs)for(let z of stageZs){let y=ground(x,z);
-  cube(x,y+.06,z,.52,.18,.48,C.stone,0,true,3);
-  cube(x,(y+floor)/2,z,.24,floor-y,.24,C.woodDark,0,true,1);
+  cube(x,y+.06,z,.52,.18,.48,C.stone,0,true,3);stageFootings.push(roundedStone.instances[roundedStone.instances.length-1]);
+  cube(x,(y+floor)/2,z,.24,floor-y,.24,C.woodDark,0,true,1);stageColumns.push(bevel.instances[bevel.instances.length-1]);
   for(let yy=3.35;yy<floor-.25;yy+=1.15)if(yy>y+.2)cube(x,yy,z,.43,.17,.43,C.woodShade,0,true,1);
  }
  for(let y of [3.4,4.55,5.7,6.83]){for(let z of zs){cube(tx,y,z,11.2,.19,.2,C.woodShade,0,true,1);}for(let x of xs){cube(x,y,-1.75,.2,.18,8.12,C.woodDark,0,true,1);}}
- for(let i=0;i<xs.length-1;i++){let x=xs[i];for(let yy of [3.4,4.55,5.7]){let a=[x,yy,2.16],b=[xs[i+1],yy+1.1,2.16];if(yy>ground(x,2.16)&&i%3===0){beam(a,b,.087,.078,C.wood);}}}
+ // Projecting stage uses its own lateral ties and diagonal bracing.
+ for(let j=0;j<stageZs.length;j++)for(let yy of [4.55,5.7,6.83])cube(tx,yy,stageZs[j],10.9,.18,.21,C.woodShade,0,true,1);
+ for(let i=0;i<stageXs.length;i++)for(let yy of [4.55,5.7,6.83])cube(stageXs[i],yy,1.03,.18,.16,2.9,C.woodDark,0,true,1);
+ for(let i=0;i<stageXs.length-1;i++)for(let j=0;j<stageZs.length;j++){let x=stageXs[i],z=stageZs[j],yy=4.55;if(yy>ground(x,z)+.3)beam([x,yy,z],[stageXs[i+1],yy+1.12,z],.09,.09,C.wood);}
  // Side lattice is visible when rotating the scene.
  for(let k=0;k<zs.length-1;k++)for(let yy of[3.4,4.55,5.7])if(yy>ground(xs[6],zs[k]))beam([xs[6],yy,zs[k]],[xs[6],yy+1.1,zs[k+1]],.12,.11,C.wood);
  cube(tx,8.22,tz-.78,10.02,2.0,4.10,'#624c39',0,false);cube(tx,8.43,-5.85,10.45,1.95,.14,C.paper,0,false);
@@ -206,7 +209,8 @@ function makeStudy(){
  }
  // Keep the rotated structure seated on the height field.
  for(let i of templeFootings)i.p[1]=ground(i.p[0],i.p[2])+.06;
- for(let i of templeColumns){let h0=ground(i.p[0],i.p[2]);i.p[1]=(h0+floor-.55)/2;i.s[1]=floor-.55-h0;}
+ for(let i of [...templeFootings,...stageFootings])i.p[1]=ground(i.p[0],i.p[2])+.06;
+ for(let i of [...templeColumns,...stageColumns]){let h0=ground(i.p[0],i.p[2]);i.p[1]=(h0+floor-.55)/2;i.s[1]=Math.max(.12,floor-.55-h0);}
  // Wide access stair beside the main hall, with many individual risers and stone curbs.
  function stairs(a,b,width,n=24){for(let i=0;i<n;i++){let t=(i+.5)/n,p=V.add(a,V.mul(V.sub(b,a),t)),dy=(b[1]-a[1])/n;let len=Math.hypot(b[0]-a[0],b[2]-a[2])/n;let angle=Math.atan2(b[0]-a[0],b[2]-a[2]);let foundation=ground(p[0],p[2])-.05,top=p[1]-.10;if(top>foundation+.12)cube(p[0],(top+foundation)/2,p[2],width*.96,top-foundation,len+.022,'#b8b5a6',angle,false,3);
  if(i%2===0 && top>foundation+.34){
