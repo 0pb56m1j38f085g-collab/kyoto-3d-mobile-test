@@ -1,0 +1,26 @@
+{
+  "version": "phone-test-01",
+  "source": "kiyomizu-crafted-v4-source.zip",
+  "source_scene_sha256": "e8db46d0e9296b70218cf1dedc305b324c47e526302e10f36f7b37214524be3a",
+  "scope": "Existing v4 main hall and a local garden patch. No rebuilding or geometric simplification of the main hall.",
+  "gps": false,
+  "analytics": false,
+  "backend": false,
+  "third_party_requests": false,
+  "public_deployment_status": "NOT_DEPLOYED; awaiting hosting connection",
+  "physical_device_test": "Not performed in this environment",
+  "rendering": "Real-time WebGL2, not offline path-traced reference image quality",
+  "browser_checks": 32,
+  "browser_checks_passed": true,
+  "test_environment": "Chromium + ANGLE Mesa llvmpipe software renderer, mobile viewports and emulated touch; not a physical smartphone.",
+  "mainHallGeometryExactMatch": true,
+  "triangles_in_test_patch": 3409527,
+  "build_files": [
+    "index.html",
+    "src/renderer.js",
+    "src/scene.js",
+    "src/app.js",
+    "robots.txt",
+    "vercel.json"
+  ]
+}
