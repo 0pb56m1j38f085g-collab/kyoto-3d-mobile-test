@@ -42,7 +42,7 @@
  canvas.addEventListener('wheel',e=>{e.preventDefault();zoom(Math.exp(e.deltaY*.001));},{passive:false});canvas.addEventListener('contextmenu',e=>e.preventDefault());
  canvas.addEventListener('keydown',e=>{if(!ready)return;let handled=true;anim=null;if(e.key==='ArrowLeft')camera.yaw-=.1;else if(e.key==='ArrowRight')camera.yaw+=.1;else if(e.key==='ArrowUp')camera.pitch=clamp(camera.pitch+.06,.22,1.1);else if(e.key==='ArrowDown')camera.pitch=clamp(camera.pitch-.06,.22,1.1);else if(e.key==='+'||e.key==='=')zoom(.9);else if(e.key==='-')zoom(1.1);else if(e.key==='Home')view('temple');else handled=false;if(handled){e.preventDefault();hideHint();request();}});
  function diagnostics(){const r=renderer,dt=tickTimes.length?tickTimes.reduce((a,b)=>a+b,0)/tickTimes.length:0;return[
- 'Kyoto 3D device test 01',`表示: ${canvas.clientWidth} × ${canvas.clientHeight} CSS px`,
+ 'Kyoto 3D device test 01 / bootfix-20261020-01',`表示: ${canvas.clientWidth} × ${canvas.clientHeight} CSS px`,
  `描画: ${canvas.width} × ${canvas.height} px`, `画質: ${names[quality]}${autoLowered?'（解像度自動調整）':''}`,
  `初期表示: ${Math.round(window.__startupMs||0)} ms`,dt?`操作時の描画間隔: 約${Math.round(dt)} ms`:'描画間隔: まだ操作データがありません',
  `三角形: ${r?Math.round(r.scene.stats.triangles).toLocaleString('en-US'):0}`,
@@ -63,9 +63,9 @@
  canvas.addEventListener('webglcontextrestored',()=>{try{renderer=new Renderer(canvas,model,{dpr:modes[quality].dpr,shadowSize:2048});renderer.ao=modes[quality].ao;renderer.focusEffect=modes[quality].focus;contextLost=false;ready=true;$('error').hidden=true;request();}catch(e){fail('描画の復帰に失敗しました。再読み込みしてください。');}});
  window.addEventListener('error',e=>{runtimeErrors.push(e.message||'Unknown error');if(!ready)fail('読み込み中にエラーが発生しました。 '+(e.message||''));});
  window.addEventListener('unhandledrejection',e=>{runtimeErrors.push(errorMessage(e.reason));if(!ready)fail(errorMessage(e.reason));});
- setTimeout(()=>{try{const modelStart=performance.now();model=makeStudy();window.__modelMs=performance.now()-modelStart;
+ setTimeout(()=>{try{if(typeof makeStudy!=='function')throw Error('3Dモデルの読み込みに失敗しました（scene.js）。再読み込みしてください。');const modelStart=performance.now();model=makeStudy();window.__modelMs=performance.now()-modelStart;
  renderer=new Renderer(canvas,model,{dpr:modes.standard.dpr,shadowSize:2048});renderer.ao=modes.standard.ao;renderer.focusEffect=modes.standard.focus;camera=authored('temple');ready=true;
  window.phoneTest={get camera(){return camera;},get renderer(){return renderer;},get model(){return model;},get ready(){return ready;},get quality(){return quality;},get modal(){return modal;},get errors(){return runtimeErrors.slice();},view,request,setQuality,diagnostics,pause(v){paused=Boolean(v);if(paused&&raf){cancelAnimationFrame(raf);raf=0;}else if(!paused)request();},setCamera(c){anim=null;Object.assign(camera,c);request();}};
  if(params.has('quality'))setQuality(params.get('quality'));if(params.has('view'))view(params.get('view'),false);request();
- }catch(e){runtimeErrors.push(errorMessage(e));fail('WebGL 2の表示に失敗しました。ブラウザでこのページを開き直してください。\n'+errorMessage(e));window.__error=errorMessage(e);}},80);
+ }catch(e){runtimeErrors.push(errorMessage(e));fail('3Dの初期化に失敗しました。\n'+errorMessage(e));window.__error=errorMessage(e);}},80);
 })();
