@@ -93,7 +93,7 @@ function makeStudy(){
  const xs=Array.from({length:7},(_,i)=>tx-5.25+i*1.75),coreZs=[-5.7,-3.8,-1.85];
  const stageXs=Array.from({length:6},(_,i)=>tx-4.85+i*1.94),stageZs=[-.25,.95,2.16];
  const zs=[...coreZs,...stageZs];
- for(let x of xs)for(let z of coreZs{let y=ground(x,z);cube(x,y+.06,z,.52,.18,.48,C.stone,0,true,3);templeFootings.push(roundedStone.instances[roundedStone.instances.length-1]);cube(x,(y+floor)/2,z,.205,floor-y,.205,C.woodDark,0,true,1);templeColumns.push(bevel.instances[bevel.instances.length-1]);for(let yy=3.35;yy<floor-.25;yy+=1.15)if(yy>y+.2){cube(x,yy,z,.4,.16,.4,C.woodShade,0,true,1);}}
+ for(let x of xs)for(let z of coreZs){let y=ground(x,z);cube(x,y+.06,z,.52,.18,.48,C.stone,0,true,3);templeFootings.push(roundedStone.instances[roundedStone.instances.length-1]);cube(x,(y+floor)/2,z,.205,floor-y,.205,C.woodDark,0,true,1);templeColumns.push(bevel.instances[bevel.instances.length-1]);for(let yy=3.35;yy<floor-.25;yy+=1.15)if(yy>y+.2){cube(x,yy,z,.4,.16,.4,C.woodShade,0,true,1);}}
  // Six by three posts visually identify the projecting stage, independently of the hall frame.
  for(let x of stageXs)for(let z of stageZs){let y=ground(x,z);
   cube(x,y+.06,z,.52,.18,.48,C.stone,0,true,3);stageFootings.push(roundedStone.instances[roundedStone.instances.length-1]);
