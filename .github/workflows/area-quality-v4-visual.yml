@@ -1,7 +1,7 @@
 name: Higashiyama area v4 baked visual review
 on:
   push:
-    branches: [area-higashiyama-quality-v4, area-higashiyama-accuracy-v1]
+    branches: [area-higashiyama-quality-v4, area-higashiyama-accuracy-v1, area-higashiyama-accuracy-v1.2]
     paths:
       - 'area-quality-v4/**'
       - '.github/workflows/area-quality-v4-visual.yml'
