@@ -44,12 +44,12 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  html=html.replaceAll("建築・景観 v5 · 春の造形見本","東山・祇園 · エリア品質 v4");
  html=html.replace('data-view="temple" aria-pressed="true">本堂全景</button><button data-view="corner" aria-pressed="false">近くで見る</button><button data-view="reverse" aria-pressed="false">別の角度</button>',
                    'data-view="area" aria-pressed="true">エリア全体</button><button data-view="temple" aria-pressed="false">清水寺</button><button data-view="hokanji" aria-pressed="false">八坂の塔</button>');
- html=html.replaceAll("quality-v5.4","area-higashiyama-quality-v4.3");
+ html=html.replaceAll("quality-v5.4","area-higashiyama-quality-v4.4");
  fs.writeFileSync(path.join(site,'src/renderer.js'),renderer);fs.writeFileSync(path.join(site,'src/app.js'),app);fs.writeFileSync(path.join(site,'src/scene.js'),scene);fs.writeFileSync(path.join(site,'index.html'),html);fs.writeFileSync(path.join(site,'robots.txt'),'User-agent: *\nDisallow: /\n');
  for(const file of ['renderer.js','scene.js','app.js'])cp.execFileSync(process.execPath,['--check',path.join(site,'src',file)],{stdio:'inherit'});
  const context=vm.createContext({console,performance});for(const file of ['renderer.js','scene.js'])vm.runInContext(fs.readFileSync(path.join(site,'src',file),'utf8'),context,{filename:file});
  const model=vm.runInContext('makeStudy()',context,{timeout:90000});
- if(model.revision!=='area-higashiyama-quality-v4.3'||model.areaQuality!=='v4.4-district-continuity-and-landmark-clarity')throw Error('Wrong area revision');
+ if(model.revision!=='area-higashiyama-quality-v4.4'||model.areaQuality!=='v4.4-district-continuity-and-landmark-clarity')throw Error('Wrong area revision');
  if(!model.areaSites||!model.areaSites.geographicAnchors)throw Error('Area anchors missing');
  let size=12,instances=0;
  for(const m of model.meshes){
