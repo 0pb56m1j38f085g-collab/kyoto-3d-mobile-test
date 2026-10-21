@@ -292,6 +292,33 @@
   const t=(i+.5)/34,px=yasakaX+range(-2.8,2.8),pz=yasakaZ-5.7+t*7.2,py=ground(px,pz);
   person(px,py+.08,pz,range(.45,.58),range(-.3,.3));
  }
+
+ // Human-scale life and small street furniture along Sannenzaka / Ninenzaka.
+ function routePoint(pts,t){
+  let lens=[],total=0;for(let i=0;i<pts.length-1;i++){const l=Math.hypot(pts[i+1][0]-pts[i][0],pts[i+1][1]-pts[i][1]);lens.push(l);total+=l;}
+  let d=t*total;for(let i=0;i<lens.length;i++){if(d<=lens[i]){const u=d/lens[i];return [pts[i][0]+(pts[i+1][0]-pts[i][0])*u,pts[i][1]+(pts[i+1][1]-pts[i][1])*u,Math.atan2(pts[i+1][0]-pts[i][0],pts[i+1][1]-pts[i][1])];}d-=lens[i];}
+  const q=pts.at(-1),p=pts.at(-2);return[q[0],q[1],Math.atan2(q[0]-p[0],q[1]-p[1])];
+ }
+ for(let i=0;i<76;i++){
+  const path=i%3===0?sannenzaka:(i%3===1?ninenzaka:eastSpine),q=routePoint(path,(i+.65)/(76+1)),side=i%2?1:-1;
+  const x=q[0]+Math.cos(q[2])*side*range(.12,.36),z=q[1]-Math.sin(q[2])*side*range(.12,.36),y=ground(x,z);
+  if(!landmarkClear(x,z))person(x,y+.08,z,range(.42,.57),q[2]+range(-.25,.25));
+ }
+ // Stone lanterns, low fences and shop-side greenery create a continuous street edge.
+ for(let i=0;i<28;i++){
+  const q=routePoint(i%2?sannenzaka:ninenzaka,(i+.5)/28),side=i%2?1:-1,x=q[0]+Math.cos(q[2])*side*1.20,z=q[1]-Math.sin(q[2])*side*1.20,y=ground(x,z);
+  if(i%3===0){
+   box([x,y+.18,z],[.28,.36,.28],'#aaa99b',q[2],3);box([x,y+.50,z],[.38,.25,.38],'#bbb7a6',q[2],3);hip('street-lantern-cap-'+i,x,z,.50,.50,y+.62,.18,.18,'#a9a695');
+  }else{
+   pole([x,y+.05,z],[x,y+.58,z],.035,'#7c6249');
+   ball([x,y+.46,z],[.25,.20,.26],pick(C.greens),tiny,4);
+  }
+ }
+ // Small retaining walls follow parts of the slopes instead of exposing raw terrain.
+ areaStoneWall([-8.2,10.6],[-13.5,14.8],.42);
+ areaStoneWall([-15.8,19.2],[-20.3,20.2],.48);
+ areaStoneWall([-20.0,27.5],[-18.2,31.8],.45);
+
  // Precinct vegetation with mixed crowns and clearings around roads
  for(const [cx,cz,rad,count] of [[-22,18,5.9,30],[-18,29,6.6,34],[-29,44,7.6,38],[-12,22,5.2,24]]){
   for(let j=0;j<count;j++){
@@ -307,4 +334,4 @@
   if(Math.hypot(x-areaAnchor.hokanji[0],z-areaAnchor.hokanji[1])<2.4||Math.hypot(x-areaAnchor.kodaiji[0],z-areaAnchor.kodaiji[1])<2.9||Math.hypot(x-areaAnchor.yasaka[0],z-areaAnchor.yasaka[1])<3.5)continue;
   if(rnd()<.58)ball([x,ground(x,z)+.17,z],[range(.14,.30),range(.10,.22),range(.14,.30)],pick(C.greens),tiny,4);
  }
- scene.areaQuality='v4-cleared-urban-corridor-and-baked-lighting';
+ scene.areaQuality='v5-detailed-landmarks-machiya-and-street-life';
