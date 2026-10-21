@@ -1,0 +1,51 @@
+name: Canopy and veranda isolated visual study
+on:
+  push:
+    branches: [quality-v5-architecture-lighting]
+    paths:
+      - '.github/workflows/canopy-study.yml'
+      - 'quality-v5/studies/canopy-v54.cjs'
+      - 'quality-v5/studies/prepare-canopy-study.cjs'
+      - 'quality-v5/studies/render-canopy-study.cjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: kiyomizu-isolated-canopy-study
+  cancel-in-progress: true
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Build isolated study with checked geometry and newly computed light
+        env:
+          LIGHT_SAMPLES: '24'
+          OMP_NUM_THREADS: '4'
+        run: node quality-v5/studies/prepare-canopy-study.cjs
+      - name: Install fixed browser test dependency
+        run: |
+          npm install --prefix "$RUNNER_TEMP/kyoto-browser" --no-audit --no-fund playwright@1.55.0
+          "$RUNNER_TEMP/kyoto-browser/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Compare actual WebGL renderings and touch interactions
+        env:
+          NODE_PATH: ${{ runner.temp }}/kyoto-browser/node_modules
+        run: xvfb-run -a node quality-v5/studies/render-canopy-study.cjs
+      - name: Preserve study output and evidence; no publication
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: kiyomizu-canopy-v54-study
+          path: |
+            canopy-study-artifacts/
+            quality-v5/studies/
+          retention-days: 7
+          compression-level: 6
+          if-no-files-found: error
+          include-hidden-files: false
