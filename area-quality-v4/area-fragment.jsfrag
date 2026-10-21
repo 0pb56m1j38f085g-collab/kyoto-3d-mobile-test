@@ -56,25 +56,42 @@
 
  let areaHouseId=0;
  function areaMachiya(x,z,a=0,s=1,tone=0,variant=0){
-  const y=ground(x,z),w=(1.58+variant*.08)*s,d=(1.15+(variant%2)*.17)*s,h=(1.28+(variant%3)*.10)*s;
-  const wall=['#c9a77d','#b99571','#d0b58f','#b78e6e'][tone%4],trim=['#604a38','#70513d','#594536'][tone%3];
-  box([x,y+h*.49,z],[w,h,d],wall,a,1);
-  // true pitched miniature roof with layered eave
-  hip('machiya-roof-'+areaHouseId,x,z,w*1.18,d*1.18,y+h*.93,.52*s,.26,variant%2?'#75675e':'#817168');
-  plate([x,y+h*.26,z],[w*.92,.055,d+.04*s],trim,a,1);
-  // front lattice / shop facade
-  for(let j=-3;j<=3;j++){
-   const xx=j*w*.115;
-   plate([x+Math.cos(a)*xx,y+h*.47,z-Math.sin(a)*xx],[.032*s,.78*s,d+.055*s],trim,a,1);
+  const y=ground(x,z),w=(1.58+variant*.08)*s,d=(1.15+(variant%2)*.17)*s;
+  const twoStorey=variant%4!==3,h=(twoStorey?2.05:1.48)*s;
+  const wall=['#c9a77d','#b99571','#d0b58f','#b78e6e'][tone%4],upper=['#d9c5a7','#ccb594','#e1cfb2','#c5aa89'][tone%4],trim=['#604a38','#70513d','#594536'][tone%3],roof=variant%2?'#75675f':'#817169';
+  // Ground floor and subtly recessed upper floor create readable machiya proportions.
+  box([x,y+(twoStorey?.54:.48)*s,z],[w,1.08*s,d],wall,a,1);
+  if(twoStorey)box([x,y+1.48*s,z],[w*.94,.80*s,d*.94],upper,a,1);
+  hip('machiya-roof-'+areaHouseId,x,z,w*1.22,d*1.24,y+h-.12*s,.55*s,.27,roof);
+  // Deep street eave / hisashi.
+  const frontX=x+Math.sin(a)*d*.54,frontZ=z+Math.cos(a)*d*.54;
+  plate([frontX,y+.98*s,frontZ],[w*1.04,.10*s,.47*s],roof,a,1);
+  for(let j=-4;j<=4;j++){
+   const xx=j*w*.105;
+   plate([frontX+Math.cos(a)*xx,y+.48*s,frontZ-Math.sin(a)*xx],[.030*s,.80*s,.06*s],trim,a,1);
   }
-  for(let j=0;j<3;j++)plate([x,y+h*(.26+j*.22),z],[w*.92,.028*s,d+.06*s],trim,a,1);
-  // noren / small shop sign
+  for(let j=0;j<3;j++)plate([frontX,y+.24*s+j*.28*s,frontZ],[w*.92,.026*s,.065*s],trim,a,1);
+  if(twoStorey){
+   // Upper paper windows framed by dark timber.
+   for(let j=-2;j<=2;j++){
+    const xx=j*w*.18;
+    plate([frontX+Math.cos(a)*xx,y+1.48*s,frontZ-Math.sin(a)*xx],[w*.16,.49*s,.055*s],'#e7dcc4',a,1);
+    plate([frontX+Math.cos(a)*xx,y+1.48*s,frontZ-Math.sin(a)*xx],[.025*s,.52*s,.065*s],trim,a,1);
+   }
+   plate([frontX,y+1.24*s,frontZ],[w*.92,.035*s,.07*s],trim,a,1);
+   plate([frontX,y+1.72*s,frontZ],[w*.92,.035*s,.07*s],trim,a,1);
+  }
+  // Noren, sign, entrance stone and paired planters.
   if(variant%2===0){
-   plate([x+Math.cos(a)*w*.24,y+h*.36,z-Math.sin(a)*w*.24],[w*.33,.32*s,d+.08*s],variant%4===0?'#9d6654':'#718b82',a,1);
+   plate([frontX+Math.cos(a)*w*.22,y+.55*s,frontZ-Math.sin(a)*w*.22],[w*.34,.34*s,.072*s],variant%4===0?'#9d6654':'#718b82',a,1);
+   box([frontX-Math.cos(a)*w*.36,y+.72*s,frontZ+Math.sin(a)*w*.36],[.12*s,.44*s,.08*s],'#8c674b',a,1);
   }
-  // entrance stone and planter
-  plate([x+Math.sin(a)*(d*.55),y+.04,z+Math.cos(a)*(d*.55)],[.48*s,.08,.36*s],'#bdb7a7',a,3);
-  ball([x+Math.sin(a)*(d*.67)+Math.cos(a)*w*.32,y+.23,z+Math.cos(a)*(d*.67)-Math.sin(a)*w*.32],[.18*s,.24*s,.18*s],pick(C.greens),tiny,4);
+  plate([frontX,y+.045*s,frontZ],[.52*s,.09*s,.38*s],'#bdb7a7',a,3);
+  for(const side of[-1,1]){
+   const px=frontX+Math.cos(a)*side*w*.36,pz=frontZ-Math.sin(a)*side*w*.36;
+   box([px,y+.11*s,pz],[.20*s,.20*s,.20*s],'#8f7960',a,1);
+   ball([px,y+.28*s,pz],[.18*s,.20*s,.18*s],pick(C.greens),tiny,4);
+  }
   areaHouseId++;
  }
  function ribbonBuildings(pts,spacing=2.25){
