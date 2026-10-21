@@ -1,7 +1,7 @@
 name: Higashiyama area quality v4 validation
 on:
   push:
-    branches: [area-higashiyama-quality-v4]
+    branches: [area-higashiyama-quality-v4, area-higashiyama-accuracy-v1]
     paths:
       - 'area-quality-v4/**'
       - 'quality-v5/bake_vertex.cpp'
