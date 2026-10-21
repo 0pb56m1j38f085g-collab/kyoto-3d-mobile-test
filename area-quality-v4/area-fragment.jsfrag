@@ -168,6 +168,54 @@
  hokanjiPagoda(areaAnchor.hokanji[0],areaAnchor.hokanji[1],1.06);
 
  function templeCompound(x,z,s=1){
+  const y=ground(x,z),wood='#956a4d',deep='#684a37',roof='#71635c',paper='#e4d8c0';
+  // Main hall with recessed wall and veranda.
+  box([x,y+.72*s,z],[4.85*s,1.44*s,3.00*s],deep,0,1);
+  box([x,y+.82*s,z+1.32*s],[4.55*s,1.25*s,.22*s],paper,0,1);
+  for(let i=-4;i<=4;i++){
+   const px=x+i*.52*s;
+   pole([px,y+.18*s,z+1.58*s],[px,y+1.48*s,z+1.58*s],.055*s,wood);
+   plate([px,y+.82*s,z+1.49*s],[.035*s,1.05*s,.06*s],deep,0,1);
+  }
+  plate([x,y+.20*s,z+1.86*s],[5.15*s,.18*s,1.28*s],'#b48e65',0,1);
+  hip('kodaiji-main-roof',x,z,5.65*s,3.85*s,y+1.38*s,1.12*s,.30,roof);
+  // Layered eave brackets.
+  for(let i=-4;i<=4;i++)box([x+i*.58*s,y+1.54*s,z+1.45*s],[.30*s,.14*s,.36*s],'#a37a55',0,1);
+
+  // Covered side hall and short connecting corridor.
+  const sideX=x+4.35*s,sideZ=z-.55*s,sideY=ground(sideX,sideZ);
+  box([sideX,sideY+.54*s,sideZ],[2.65*s,1.08*s,1.90*s],'#a17656',-.08,1);
+  hip('kodaiji-side-roof',sideX,sideZ,3.2*s,2.4*s,sideY+1.02*s,.76*s,.28,'#75655d');
+  for(let i=0;i<5;i++){
+   const cx=x+2.45*s+i*.42*s,cz=z+.18*s-i*.13*s,cy=ground(cx,cz);
+   pole([cx,cy+.04,cz],[cx,y+.76*s,cz],.045*s,deep);
+   plate([cx,y+.79*s,cz],[.46*s,.12*s,1.05*s],'#b58f65',-.30,1);
+  }
+
+  // Garden terraces, pond, arched bridge and pavilion.
+  areaStoneWall([x-4.4*s,z+2.55*s],[x+5.4*s,z+2.55*s],.52*s);
+  areaStoneWall([x-4.4*s,z+2.55*s],[x-4.4*s,z+6.0*s],.45*s);
+  const pondX=x+3.0*s,pondZ=z+4.15*s,pondY=ground(pondX,pondZ);
+  plate([pondX,pondY+.065,pondZ],[5.4*s,.055*s,3.0*s],'#82b8bd',-.11,5);
+  // Simple red bridge with posts and rails.
+  for(let i=-3;i<=3;i++){
+   const bx=pondX+i*.46*s,by=pondY+.20*s+.12*s*(1-Math.abs(i)/3);
+   plate([bx,by,pondZ],[.43*s,.10*s,.82*s],'#b8674d',0,1);
+   for(const side of[-1,1])pole([bx,by+.05*s,pondZ+side*.48*s],[bx,by+.55*s,pondZ+side*.48*s],.028*s,'#9c4d3e');
+  }
+  for(const side of[-1,1])beam([pondX-1.55*s,pondY+.63*s,pondZ+side*.48*s],[pondX+1.55*s,pondY+.63*s,pondZ+side*.48*s],.035*s,'#a44e3f',.045*s);
+  const pavX=x-3.0*s,pavZ=z+4.5*s,pavY=ground(pavX,pavZ);
+  for(const px of[-.75,.75])for(const pz of[-.55,.55])pole([pavX+px*s,pavY+.1,pavZ+pz*s],[pavX+px*s,pavY+1.25*s,pavZ+pz*s],.05*s,deep);
+  plate([pavX,pavY+.20*s,pavZ],[1.9*s,.14*s,1.45*s],'#b79068',0,1);
+  hip('kodaiji-garden-pavilion',pavX,pavZ,2.5*s,2.0*s,pavY+1.20*s,.68*s,.26,roof);
+  // Stones and clipped shrubs give the garden a deliberately composed edge.
+  for(let j=0;j<34;j++){
+   const aa=j*2.399,rr=2.4*s*Math.sqrt((j+.4)/34),px=pondX+Math.cos(aa)*rr,pz=pondZ+Math.sin(aa)*rr,py=ground(px,pz);
+   if(j%4===0)box([px,py+.10*s,pz],[.28*s,.20*s,.24*s],pick(['#aaa99a','#b9b6a5','#cbc6b3']),aa,3);
+   else ball([px,py+.18*s,pz],[.24*s,.17*s,.25*s],pick(C.greens),tiny,4);
+  }
+ }
+ templeCompound(x,z,s=1){
   const y=ground(x,z),wood='#966b4d',roof='#72645c';
   // main hall
   box([x,y+.68*s,z],[4.6*s,1.36*s,2.95*s],wood,0,1);
