@@ -1,0 +1,35 @@
+name: Higashiyama v4.4 fast geometry preview
+on:
+  push:
+    branches: [area-higashiyama-quality-v4]
+    paths:
+      - 'area-v44-fast-preview.cjs'
+      - '.github/workflows/area-v44-fast-preview.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preview:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: |
+          npm install --prefix "$RUNNER_TEMP/v44-fast" --no-audit --no-fund playwright@1.55.0
+          "$RUNNER_TEMP/v44-fast/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Render geometry preview
+        env:
+          NODE_PATH: ${{ runner.temp }}/v44-fast/node_modules
+        run: xvfb-run -a node area-v44-fast-preview.cjs
+      - if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: higashiyama-v44-fast-preview
+          path: v44-fast-artifacts/
+          if-no-files-found: error
+          retention-days: 7
