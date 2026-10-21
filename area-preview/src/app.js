@@ -3,10 +3,10 @@
 (()=>{
  const $=id=>document.getElementById(id),canvas=$('scene'),copy=o=>JSON.parse(JSON.stringify(o));
  const params=new URLSearchParams(location.search);if(params.has('capture'))document.body.classList.add('capture');
- const presets={temple:{target:[1.6,6.2,-.3],span:21.5,yaw:.52,pitch:.42},corner:{target:[2.8,5.55,1.75],span:13.4,yaw:.57,pitch:.34},reverse:{target:[1.8,6.1,-.8],span:22.5,yaw:-.22,pitch:.43}};
+ const presets={area:{target:[-15,6,22],span:76,yaw:.62,pitch:.49},temple:{target:[1.6,6.2,-.3],span:21.5,yaw:.52,pitch:.42},corner:{target:[2.8,5.55,1.75],span:13.4,yaw:.57,pitch:.34},reverse:{target:[1.8,6.1,-.8],span:22.5,yaw:-.22,pitch:.43}};
  const modes={standard:{dpr:Math.min(devicePixelRatio||1,1.25),ao:.50,focus:1.6},high:{dpr:Math.min(devicePixelRatio||1,1.8),ao:.57,focus:2.0},light:{dpr:Math.min(devicePixelRatio||1,.85),ao:.25,focus:0}};
  const names={standard:'標準',high:'高画質',light:'軽量'};
- let model,renderer,camera,selected='temple',quality='standard',ready=false,contextLost=false,anim=null,raf=0,lastDraw=0,pointers=new Map(),previousGesture=null,modal=null,returnFocus=null,tickTimes=[],renderTimes=[],toastTimer,resizeTimer,paused=false;
+ let model,renderer,camera,selected='area',quality='standard',ready=false,contextLost=false,anim=null,raf=0,lastDraw=0,pointers=new Map(),previousGesture=null,modal=null,returnFocus=null,tickTimes=[],renderTimes=[],toastTimer,resizeTimer,paused=false;
  let autoLowered=false,lastAdaptiveFrame=0;const started=performance.now();const runtimeErrors=[];
  const touchDevice=()=>matchMedia('(pointer:coarse)').matches||navigator.maxTouchPoints>0;
  const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
