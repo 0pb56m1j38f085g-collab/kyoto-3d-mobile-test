@@ -16,11 +16,14 @@ for(const patch of JSON.parse(fs.readFileSync(path.join(root,'patches.json'),'ut
  if(sha(result)!==expected[patch.path])throw Error('Final asset checksum mismatch: '+patch.path);
  fs.writeFileSync(path.join(site,patch.path),result);
 }
-fs.writeFileSync(path.join(site,'src/scene.js'),require('./refine.cjs')(fs.readFileSync(path.join(root,'scene.js'),'utf8')));
+const reviewedScene=require('./refine.cjs')(fs.readFileSync(path.join(root,'scene.js'),'utf8'));
+const canopyScene=require('./studies/canopy-v54.cjs')(reviewedScene).replace('quality-v5.4-study','quality-v5.4');
+fs.writeFileSync(path.join(site,'src/scene.js'),canopyScene);
 fs.writeFileSync(path.join(site,'robots.txt'),'User-agent: *\nDisallow: /\n');
 require('./finish.cjs')(site);
 require('./presentation.cjs')(site);
-const viewerHashes=require('./interaction.cjs')(site);
+require('./interaction.cjs')(site);
+const viewerHashes=require('./finish-v54.cjs')(site);
 fs.writeFileSync(path.join(out,'viewer-hashes.json'),JSON.stringify(viewerHashes,null,2));
 for(const file of ['renderer.js','scene.js','app.js'])cp.execFileSync(process.execPath,['--check',path.join(site,'src',file)],{stdio:'inherit'});
 const context=vm.createContext({console,performance});
@@ -40,14 +43,14 @@ b.write('KYT4',at);at+=4;u(scene.meshes.length);u(instances);
 for(const m of scene.meshes){const name=Buffer.from(m.name);u(name.length);name.copy(b,at);at+=name.length;u(m.p.length/9);for(let t=0;t<m.p.length/9;t++){for(let k=0;k<9;k++)f(m.p[t*9+k]);for(let k=0;k<9;k++)f(m.n[t*9+k]);for(let k=0;k<6;k++)f(m.u[t*6+k]);}}
 scene.meshes.forEach((m,gi)=>{for(const i of m.instances){u(gi);u(i.mat);for(const v of[...i.p,...i.s,...i.q,...i.c])f(v);}});
 if(at!==size)throw Error('Packed model length mismatch');
-const hash=sha(b);if(hash!=='ff5467b590eb67975f770f8b43085111120f2aa1a1af01d2962ae572fe1c5609')throw Error('Model differs from the validated geometry: '+hash);
+const hash=sha(b);if(hash!=='6d6c7ef310b9b9d19dafd280c79a11fe4d6297d51e62359778ae3f8408e3b727')throw Error('Model differs from the validated geometry: '+hash);
 const scenePath=path.join(out,'scene.bin');fs.writeFileSync(scenePath,b);console.log('MODEL_SHA256',hash);
 if(process.argv.includes('--validate-only')){console.log('MODEL_VALIDATED',JSON.stringify(scene.stats));process.exit(0);}
 async function buildLighting(){
  const source=path.join(root,'bake_vertex.cpp'),exe=path.join(out,'bake_vertex');
  const rays=process.env.LIGHT_SAMPLES||'96';if(!/^(24|48|96|128)$/.test(rays))throw Error('Unsupported light sample count');
  const lightPath=path.join(site,'lighting.bin'),bakerHash=sha(fs.readFileSync(source));
- const lightCount=3378240,lightSize=8+lightCount*4;
+ const lightCount=3062824,lightSize=8+lightCount*4;
  function validInfo(info){return info&&info.modelHash===hash&&info.bakerHash===bakerHash&&info.rays===Number(rays)&&info.lightSamples===lightCount&&/^[a-f0-9]{64}$/.test(info.lightingHash);}
  function validLight(data,info){return validInfo(info)&&data.length===lightSize&&data.toString('ascii',0,4)==='KVL1'&&data.readUInt32LE(4)===lightCount&&sha(data)===info.lightingHash;}
  let cached=false;
@@ -63,7 +66,7 @@ async function buildLighting(){
  else{cp.execFileSync('g++',['-O3','-std=c++17','-fopenmp',source,'-o',exe],{stdio:'inherit'});cp.execFileSync(exe,[scenePath,lightPath,rays],{stdio:'inherit',timeout:55*60*1000});}
  const light=fs.readFileSync(lightPath);
  if(light.toString('ascii',0,4)!=='KVL1'||light.length!==lightSize||light.readUInt32LE(4)!==lightCount)throw Error('Light bake is incomplete or mismatched');
- fs.writeFileSync(path.join(site,'build-info.json'),JSON.stringify({revision:scene.revision,viewerRevision:'quality-v5.3.1',viewerHashes,modelHash:hash,bakerHash,meshes:scene.meshes.length,instances,triangles:scene.meshes.reduce((n,m)=>n+m.p.length/9*m.instances.length,0),lightSamples:lightCount,rays:Number(rays),lightingBytes:light.length,lightingHash:sha(light),architecture:scene.stats,surveyed:false,description:'Native WebGL2 miniature. Actual geometry with matching four-bounce light bake, indexed vertices and native MSAA. No reference-image planes.'},null,2));
- console.log('BUILD_VALIDATED',JSON.stringify({meshes:scene.meshes.length,instances,lighting:light.length,viewerRevision:'quality-v5.3.1'}));
+ fs.writeFileSync(path.join(site,'build-info.json'),JSON.stringify({revision:scene.revision,viewerRevision:'quality-v5.4',viewerHashes,modelHash:hash,bakerHash,meshes:scene.meshes.length,instances,triangles:scene.meshes.reduce((n,m)=>n+m.p.length/9*m.instances.length,0),lightSamples:lightCount,rays:Number(rays),lightingBytes:light.length,lightingHash:sha(light),architecture:scene.stats,surveyed:false,description:'Native WebGL2 miniature. Actual geometry with matching four-bounce light bake, indexed vertices and native MSAA. Soft presentation fill; no reference-image planes. Architectural dimensions remain illustrative.'},null,2));
+ console.log('BUILD_VALIDATED',JSON.stringify({meshes:scene.meshes.length,instances,lighting:light.length,viewerRevision:'quality-v5.4'}));
 }
 buildLighting().catch(e=>{console.error(e);process.exitCode=1;});

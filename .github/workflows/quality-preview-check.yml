@@ -5,7 +5,7 @@ on:
     paths:
       - '.github/workflows/quality-preview-check.yml'
       - 'quality-v5/tests/*.cjs'
-      - 'quality-v5/finish.cjs'
+      - 'quality-v5/finish-v54.cjs'
       - 'quality-v5/build.cjs'
   workflow_dispatch:
 permissions:
@@ -16,8 +16,8 @@ concurrency:
 jobs:
   browser:
     if: github.repository == '0pb56m1j38f085g-collab/kyoto-3d-mobile-test'
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
+    runs-on: ubuntu-22.04
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@v6
         with:
@@ -31,15 +31,15 @@ jobs:
         run: |
           npm install --prefix "$RUNNER_TEMP/kyoto-browser" --no-audit --no-fund playwright@1.55.0
           "$RUNNER_TEMP/kyoto-browser/node_modules/.bin/playwright" install --with-deps chromium
-      - name: Read-only test of the exact published viewer and touch gestures
+      - name: Verify exact published v5.4 geometry, lighting, rendering and touch gestures
         env:
           NODE_PATH: ${{ runner.temp }}/kyoto-browser/node_modules
-        run: xvfb-run -a node quality-v5/tests/verify-final.cjs
+        run: xvfb-run -a node quality-v5/tests/verify-v54.cjs
       - name: Save actual browser renders, test results, and source
         if: always()
         uses: actions/upload-artifact@v5
         with:
-          name: kiyomizu-quality-v5-browser-verified
+          name: kiyomizu-quality-v54-browser-verified
           path: |
             quality-test-artifacts/
             quality-v5/
