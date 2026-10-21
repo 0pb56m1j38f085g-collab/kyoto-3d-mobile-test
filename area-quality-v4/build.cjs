@@ -59,6 +59,14 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  renderer=exact(renderer,'lit+=base*vec3(.38,.31,.24)*fill;','lit+=base*vec3(.40,.34,.28)*fill;','area warm frontal fill');
  renderer=exact(renderer,'vec3(1.0,.92,.83)*2.05*nd*sh','vec3(1.0,.94,.88)*1.96*nd*sh','area sun warmth');
  renderer=exact(renderer,'aces(lit*.76)','aces(lit*.785)','area exposure');
+ // WebKit/Safari can produce a slightly different procedural light-index count from
+ // V8 because transcendental floating-point results may round differently. The 3D
+ // geometry is still valid. Never fail the whole viewer for that optional baked-light
+ // mismatch: keep the dynamic soft-light path and expose a diagnostic instead.
+ renderer=exact(renderer,
+  "if(count!==this.lightSampleCount||buffer.byteLength!==8+count*4)throw Error('3Dモデルと照明データの版が一致しません。');",
+  "if(count!==this.lightSampleCount||buffer.byteLength!==8+count*4){this.bakedMismatch={expected:this.lightSampleCount,received:count,bytes:buffer.byteLength};console.warn('Baked lighting disabled for this JS engine:',this.bakedMismatch);this.bakedEnabled=false;return false;}",
+  'WebKit baked-light graceful fallback');
 
  fs.writeFileSync(path.join(site,'src/renderer.js'),renderer);fs.writeFileSync(path.join(site,'src/app.js'),app);fs.writeFileSync(path.join(site,'src/scene.js'),scene);fs.writeFileSync(path.join(site,'index.html'),html);fs.writeFileSync(path.join(site,'robots.txt'),'User-agent: *\nDisallow: /\n');
  for(const file of ['renderer.js','scene.js','app.js'])cp.execFileSync(process.execPath,['--check',path.join(site,'src',file)],{stdio:'inherit'});
