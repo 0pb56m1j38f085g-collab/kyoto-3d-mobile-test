@@ -143,6 +143,34 @@
  }
  templeCompound(areaAnchor.kodaiji[0],areaAnchor.kodaiji[1],1.02);
 
+ // Kodaiji precinct: white gravel garden, stepping stones, covered link and pond bridge.
+ {
+  const x=areaAnchor.kodaiji[0],z=areaAnchor.kodaiji[1],y=ground(x,z);
+  plate([x-1.1,y+.095,z+3.45],[6.9,.05,2.55],'#e8e0cf',0,0);
+  for(let j=0;j<15;j++){
+   const px=x-3.0+j*.42,pz=z+3.25+Math.sin(j*.9)*.26,py=ground(px,pz);
+   box([px,py+.07,pz],[.30,.13,.22],j%3===0?'#a9a695':'#bdb8a8',j*.23,3);
+  }
+  for(let j=0;j<7;j++){
+   const px=x-3.5+j*.55,pz=z+1.95,py=ground(px,pz);
+   pole([px,py+.02,pz],[px,py+.92,pz],.045,'#78604a');
+  }
+  // Low hedge frames the garden without hiding the hall.
+  for(let j=0;j<18;j++){
+   const px=x-4.1+j*.47,pz=z+4.55,py=ground(px,pz);
+   ball([px,py+.18,pz],[.22,.18,.25],j%4===0?'#8ca258':'#79924f',tiny,4);
+  }
+  // A small bridge across the pond makes the garden readable in the isometric view.
+  const bx=x+3.15,bz=z+1.20,by=ground(bx,bz)+.22;
+  plate([bx,by,bz],[1.05,.09,2.75],'#ae805a',-.10,1);
+  for(const side of[-1,1]){
+   const xx=bx+side*.57;
+   pole([xx,by,bz-1.25],[xx,by+.48,bz-1.25],.035,'#815b42');
+   pole([xx,by,bz+1.25],[xx,by+.48,bz+1.25],.035,'#815b42');
+   beam([xx,by+.48,bz-1.28],[xx,by+.48,bz+1.28],.035,'#8d6548');
+  }
+ }
+
  function areaTorii(x,z,s=1,a=0){
   const y=ground(x,z),c='#c9573f';
   for(const side of[-1,1])pole([x+Math.cos(a)*side*1.18*s,y,z-Math.sin(a)*side*1.18*s],[x+Math.cos(a)*side*1.18*s,y+2.48*s,z-Math.sin(a)*side*1.18*s],.12*s,c);
@@ -173,6 +201,38 @@
  box([yasakaX,gy+.56,yasakaZ-5.3],[4.0,1.12,1.35],'#bd5a42',0,1);
  hip('yasaka-gate-roof',yasakaX,yasakaZ-5.3,4.8,2.0,gy+1.05,.62,.28,'#6b5e57');
 
+ // Yasaka forecourt: broad approach, flanking shrine halls and denser lantern rhythm.
+ {
+  const x=yasakaX,z=yasakaZ,y=yasakaY;
+  plate([x,y+.085,z-4.0],[9.6,.06,5.1],'#d8cbb4',0,0);
+  areaSteps([x,z-7.0],[x,z-4.8],3.4,8);
+  for(const side of[-1,1]){
+   const px=x+side*5.15,pz=z-.35,py=ground(px,pz);
+   box([px,py+.54,pz],[2.5,1.08,2.0],side<0?'#bd5c42':'#b95640',0,1);
+   hip('yasaka-wing-'+(side<0?'w':'e'),px,pz,3.05,2.55,py+1.02,.72,.26,'#665b56');
+   for(let j=-1;j<=1;j++)pole([px+j*.56,py+.08,pz+1.02],[px+j*.56,py+1.02,pz+1.02],.05,'#c66b4d');
+  }
+  for(let row=0;row<2;row++)for(let j=-4;j<=4;j++){
+   const px=x+j*.90,pz=z-3.0-row*1.05,py=ground(px,pz);
+   pole([px,py,pz],[px,py+.68,pz],.028,'#79604a');
+   box([px,py+.80,pz],[.20,.26,.20],'#ead7ad',0,1);
+   hip('yasaka-court-lantern-'+row+'-'+(j+4),px,pz,.32,.32,py+.91,.13,.18,'#6e625a');
+  }
+ }
+
+
+ // Human scale extends through the whole district; tiny figures make streets and forecourts legible.
+ for(let n=1;n<eastSpine.length-1;n++){
+  const a=eastSpine[n-1],b=eastSpine[n],c=eastSpine[n+1];
+  for(let j=0;j<3;j++){
+   const t=(j+1)/4,x=b[0]+(c[0]-b[0])*t+range(-.28,.28),z=b[1]+(c[1]-b[1])*t+range(-.25,.25);
+   person(x,ground(x,z)+.08,z,range(.46,.58),Math.atan2(c[0]-b[0],c[1]-b[1])+range(-.4,.4));
+  }
+ }
+ for(const [cx,cz,count]of[[areaAnchor.hokanji[0],areaAnchor.hokanji[1]+2.7,8],[areaAnchor.kodaiji[0],areaAnchor.kodaiji[1]+3.2,9],[areaAnchor.yasaka[0],areaAnchor.yasaka[1]-3.9,12]]){
+  for(let j=0;j<count;j++){const a=j*2.399,r=.65+Math.sqrt((j+.3)/count)*2.0,x=cx+Math.cos(a)*r,z=cz+Math.sin(a)*r;person(x,ground(x,z)+.08,z,range(.46,.58),a+1.2);}
+ }
+
  // Precinct vegetation forms a frame around landmarks, not a blanket over them.
  for(const [cx,cz,rad,count] of [[-22,18,7.0,24],[-18,29,8.0,28],[-29,44,9.0,30],[-12,22,6.1,22]]){
   for(let j=0;j<count;j++){
@@ -188,4 +248,4 @@
   if(Math.hypot(x-areaAnchor.hokanji[0],z-areaAnchor.hokanji[1])<2.4||Math.hypot(x-areaAnchor.kodaiji[0],z-areaAnchor.kodaiji[1])<2.9||Math.hypot(x-areaAnchor.yasaka[0],z-areaAnchor.yasaka[1])<3.5)continue;
   if(rnd()<.58)ball([x,ground(x,z)+.17,z],[range(.14,.30),range(.10,.22),range(.14,.30)],pick(C.greens),tiny,4);
  }
- scene.areaQuality='v4.1-town-fabric-landmark-clearings';
+ scene.areaQuality='v4.2-landmark-precincts-and-human-scale';
