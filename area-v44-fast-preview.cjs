@@ -1,4 +1,5 @@
 'use strict';
+// Camera review trigger: final v4.6 mobile framing.
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),cp=require('node:child_process');
 const {chromium}=require('playwright');const OUT=path.resolve('v44-fast-artifacts'),BASE='http://127.0.0.1:4176';
 fs.mkdirSync(OUT,{recursive:true});const report={checks:[],shots:[],errors:[],mode:'geometry-only fast preview; baked lighting intentionally absent'};
