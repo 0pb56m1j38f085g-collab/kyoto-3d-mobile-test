@@ -83,8 +83,26 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  if(process.argv.includes('--validate-only')){console.log('AREA_MODEL_VALIDATED',JSON.stringify({modelHash,meshes:model.meshes.length,instances,revision:model.revision,areaQuality:model.areaQuality}));return;}
  const source=path.join(qroot,'bake_vertex.cpp'),exe=path.join(out,'bake_vertex'),rays=process.env.LIGHT_SAMPLES||'24';
  if(!/^(12|24|48|96|128)$/.test(rays))throw Error('Unsupported LIGHT_SAMPLES');
- cp.execFileSync('g++',['-O3','-std=c++17','-fopenmp',source,'-o',exe],{stdio:'inherit'});
- const lightPath=path.join(site,'lighting.bin');cp.execFileSync(exe,[scenePath,lightPath,rays],{stdio:'inherit',timeout:70*60*1000});
+ const lightPath=path.join(site,'lighting.bin'),bakerHash=sha(fs.readFileSync(source));
+ let reused=false;
+ // Strictly reuse the currently published lighting only when it belongs to the exact same
+ // geometry, baker and ray count. This avoids an unnecessary 15-minute rebake for viewer-only fixes.
+ try{
+  const infoRes=await fetch('https://higashiyama-quality-v4.onrender.com/build-info.json?cache-safe-probe=1',{signal:AbortSignal.timeout(20000),cache:'no-store'});
+  if(infoRes.ok){
+   const info=await infoRes.json();
+   if(info.modelHash===modelHash&&info.bakerHash===bakerHash&&info.rays===Number(rays)&&Number.isInteger(info.lightSamples)&&/^[a-f0-9]{64}$/.test(info.lightingHash)){
+    const lightRes=await fetch('https://higashiyama-quality-v4.onrender.com/lighting.bin?cache-safe='+info.lightingHash,{signal:AbortSignal.timeout(120000),cache:'no-store'});
+    if(lightRes.ok){
+     const data=Buffer.from(await lightRes.arrayBuffer());
+     if(data.length===8+info.lightSamples*4&&data.toString('ascii',0,4)==='KVL1'&&data.readUInt32LE(4)===info.lightSamples&&sha(data)===info.lightingHash){
+      fs.writeFileSync(lightPath,data);reused=true;console.log('AREA_LIGHT_CACHE_VALIDATED',info.lightingHash);
+     }
+    }
+   }
+  }
+ }catch(e){console.log('Area light cache unavailable:',e.message);}
+ if(!reused){cp.execFileSync('g++',['-O3','-std=c++17','-fopenmp',source,'-o',exe],{stdio:'inherit'});cp.execFileSync(exe,[scenePath,lightPath,rays],{stdio:'inherit',timeout:70*60*1000});}
  const light=fs.readFileSync(lightPath);if(light.toString('ascii',0,4)!=='KVL1')throw Error('Invalid light header');
  const lightSamples=light.readUInt32LE(4);if(light.length!==8+lightSamples*4)throw Error('Incomplete light bake');
  const lightingHash=sha(light),assetToken=modelHash.slice(0,16)+'-'+lightingHash.slice(0,16);
@@ -96,7 +114,7 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  fs.writeFileSync(appPath,cacheSafeApp);fs.writeFileSync(htmlPath,cacheSafeHtml);
  const viewerHashes={};for(const file of['src/renderer.js','src/scene.js','src/app.js','index.html'])viewerHashes[file]=sha(fs.readFileSync(path.join(site,file)));
  const triangles=model.meshes.reduce((n,m)=>n+m.p.length/9*m.instances.length,0);
- const info={revision:model.revision,viewerRevision:'area-higashiyama-quality-v4.7.1-cache-safe',viewerHashes,modelHash,bakerHash:sha(fs.readFileSync(source)),meshes:model.meshes.length,instances,triangles,lightSamples,rays:Number(rays),lightingBytes:light.length,lightingHash,architecture:model.stats,areaSites:model.areaSites,surveyed:false,assetToken,description:'Higashiyama miniature with Kiyomizu v5.4 presentation pipeline and a geometry-matched baked light field. Geographic anchors are real; intermediate streets and structures remain authored.'};
+ const info={revision:model.revision,viewerRevision:'area-higashiyama-quality-v4.7.1-cache-safe',viewerHashes,modelHash,bakerHash,meshes:model.meshes.length,instances,triangles,lightSamples,rays:Number(rays),lightingBytes:light.length,lightingHash,architecture:model.stats,areaSites:model.areaSites,surveyed:false,assetToken,description:'Higashiyama miniature with Kiyomizu v5.4 presentation pipeline and a geometry-matched baked light field. Geographic anchors are real; intermediate streets and structures remain authored.'};
  fs.writeFileSync(path.join(site,'build-info.json'),JSON.stringify(info,null,2));
  console.log('AREA_BUILD_VALIDATED',JSON.stringify({modelHash,meshes:model.meshes.length,instances,triangles,lightSamples,lightingBytes:light.length}));
 })().catch(e=>{console.error(e);process.exitCode=1;});
