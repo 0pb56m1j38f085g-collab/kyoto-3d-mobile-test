@@ -23,20 +23,20 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  let renderer=rendererB.toString('utf8'),app=appB.toString('utf8'),html=indexB.toString('utf8'),scene=sceneB.toString('utf8');
  const fragment=fs.readFileSync(path.join(root,'area-fragment.jsfrag'),'utf8');
  scene=exact(scene,"\n group='distant-context';","\n"+fragment+"\n group='distant-context';",'area insertion point');
- scene=exact(scene,"scene.revision='quality-v5.4';","scene.revision='area-higashiyama-quality-v4';",'area revision');
+ scene=exact(scene,"scene.revision='quality-v5.4';","scene.revision='area-higashiyama-quality-v4.1';",'area revision');
  scene=scene.replace("scene.areaQuality='v3-detailed-landmarks-and-streetscape';","scene.areaQuality='v4-cleared-urban-corridor-and-baked-lighting';");
  scene=exact(scene,
   "scene.named={temple:{target:[-1,7.2,-.4],span:29,yaw:.64,pitch:.43},corner:{target:[1.9,8.5,1.4],span:15.7,yaw:.65,pitch:.31},reverse:{target:[-1,7.4,-.4],span:29,yaw:-.54,pitch:.43}};",
-  "scene.named={area:{target:[-16,5.5,24],span:64,yaw:.66,pitch:.50},temple:{target:[-1,7.2,-.4],span:29,yaw:.64,pitch:.43},hokanji:{target:[-26.2,5.0,16.6],span:13.5,yaw:.58,pitch:.39},kodaiji:{target:[-17.7,4.8,28.8],span:15.5,yaw:.57,pitch:.42},yasaka:{target:[-29.1,4.6,44.6],span:16.5,yaw:.57,pitch:.42},street:{target:[-19.4,3.9,21.0],span:14.5,yaw:.74,pitch:.38},corner:{target:[1.9,8.5,1.4],span:15.7,yaw:.65,pitch:.31},reverse:{target:[-1,7.4,-.4],span:29,yaw:-.54,pitch:.43}};",
+  "scene.named={area:{target:[-12,5.7,22],span:55,yaw:.66,pitch:.49},temple:{target:[-1,7.2,-.4],span:29,yaw:.64,pitch:.43},hokanji:{target:[-26.2,5.2,16.6],span:12.5,yaw:.58,pitch:.39},kodaiji:{target:[-17.7,4.9,28.8],span:12.8,yaw:-.72,pitch:.39},yasaka:{target:[-29.1,4.7,44.6],span:13.8,yaw:-.58,pitch:.39},street:{target:[-20.3,4.0,22.0],span:12.8,yaw:.78,pitch:.37},corner:{target:[1.9,8.5,1.4],span:15.7,yaw:.65,pitch:.31},reverse:{target:[-1,7.4,-.4],span:29,yaw:-.54,pitch:.43}};",
   'area camera metadata');
  app=exact(app,
   "const presets={temple:{target:[.7,7.2,-.85],span:30.5,yaw:.61,pitch:.37},corner:{target:[1.9,8.5,1.4],span:15.7,yaw:.65,pitch:.31},reverse:{target:[-1,7.4,-.4],span:29,yaw:-.54,pitch:.43}};",
-  "const presets={area:{target:[-16,5.5,24],span:64,yaw:.66,pitch:.50},temple:{target:[.7,7.2,-.85],span:30.5,yaw:.61,pitch:.37},hokanji:{target:[-26.2,5.0,16.6],span:13.5,yaw:.58,pitch:.39},kodaiji:{target:[-17.7,4.8,28.8],span:15.5,yaw:.57,pitch:.42},yasaka:{target:[-29.1,4.6,44.6],span:16.5,yaw:.57,pitch:.42},street:{target:[-19.4,3.9,21.0],span:14.5,yaw:.74,pitch:.38},corner:{target:[1.9,8.5,1.4],span:15.7,yaw:.65,pitch:.31},reverse:{target:[-1,7.4,-.4],span:29,yaw:-.54,pitch:.43}};",
+  "const presets={area:{target:[-12,5.7,22],span:55,yaw:.66,pitch:.49},temple:{target:[.7,7.2,-.85],span:30.5,yaw:.61,pitch:.37},hokanji:{target:[-26.2,5.2,16.6],span:12.5,yaw:.58,pitch:.39},kodaiji:{target:[-17.7,4.9,28.8],span:12.8,yaw:-.72,pitch:.39},yasaka:{target:[-29.1,4.7,44.6],span:13.8,yaw:-.58,pitch:.39},street:{target:[-20.3,4.0,22.0],span:12.8,yaw:.78,pitch:.37},corner:{target:[1.9,8.5,1.4],span:15.7,yaw:.65,pitch:.31},reverse:{target:[-1,7.4,-.4],span:29,yaw:-.54,pitch:.43}};",
   'area camera presets');
  app=exact(app,"let model,renderer,camera,selected='temple'","let model,renderer,camera,selected='area'",'initial selected view');
  app=exact(app,"camera=authored('temple');ready=true;","camera=authored(params.get('view')||'area');ready=true;",'initial area camera');
- app=app.replaceAll("lighting.bin?v=quality-v5.4","lighting.bin?v=area-higashiyama-quality-v4");
- app=app.replaceAll("quality-v5.4","area-higashiyama-quality-v4");
+ app=app.replaceAll("lighting.bin?v=quality-v5.4","lighting.bin?v=area-higashiyama-quality-v4.1.1");
+ app=app.replaceAll("quality-v5.4","area-higashiyama-quality-v4.1");
  app=app.replace("camera.target[0]=clamp(camera.target[0],-7,10);camera.target[1]=clamp(camera.target[1],3.5,11);camera.target[2]=clamp(camera.target[2],-7,7);",
                  "camera.target[0]=clamp(camera.target[0],-46,18);camera.target[1]=clamp(camera.target[1],2,17);camera.target[2]=clamp(camera.target[2],-14,54);");
  app=app.replaceAll("Math.max(45,30/(canvas.clientWidth/canvas.clientHeight))","Math.max(150,80/(canvas.clientWidth/canvas.clientHeight))");
@@ -44,12 +44,12 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  html=html.replaceAll("建築・景観 v5 · 春の造形見本","東山・祇園 · エリア品質 v4");
  html=html.replace('data-view="temple" aria-pressed="true">本堂全景</button><button data-view="corner" aria-pressed="false">近くで見る</button><button data-view="reverse" aria-pressed="false">別の角度</button>',
                    'data-view="area" aria-pressed="true">エリア全体</button><button data-view="temple" aria-pressed="false">清水寺</button><button data-view="hokanji" aria-pressed="false">八坂の塔</button>');
- html=html.replaceAll("quality-v5.4","area-higashiyama-quality-v4");
+ html=html.replaceAll("quality-v5.4","area-higashiyama-quality-v4.1");
  fs.writeFileSync(path.join(site,'src/renderer.js'),renderer);fs.writeFileSync(path.join(site,'src/app.js'),app);fs.writeFileSync(path.join(site,'src/scene.js'),scene);fs.writeFileSync(path.join(site,'index.html'),html);fs.writeFileSync(path.join(site,'robots.txt'),'User-agent: *\nDisallow: /\n');
  for(const file of ['renderer.js','scene.js','app.js'])cp.execFileSync(process.execPath,['--check',path.join(site,'src',file)],{stdio:'inherit'});
  const context=vm.createContext({console,performance});for(const file of ['renderer.js','scene.js'])vm.runInContext(fs.readFileSync(path.join(site,'src',file),'utf8'),context,{filename:file});
  const model=vm.runInContext('makeStudy()',context,{timeout:90000});
- if(model.revision!=='area-higashiyama-quality-v4'||model.areaQuality!=='v4-cleared-urban-corridor-and-baked-lighting')throw Error('Wrong area revision');
+ if(model.revision!=='area-higashiyama-quality-v4.1'||model.areaQuality!=='v4.1-town-fabric-landmark-clearings')throw Error('Wrong area revision');
  if(!model.areaSites||!model.areaSites.geographicAnchors)throw Error('Area anchors missing');
  let size=12,instances=0;
  for(const m of model.meshes){
@@ -74,7 +74,7 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  const lightSamples=light.readUInt32LE(4);if(light.length!==8+lightSamples*4)throw Error('Incomplete light bake');
  const viewerHashes={};for(const file of['src/renderer.js','src/scene.js','src/app.js','index.html'])viewerHashes[file]=sha(fs.readFileSync(path.join(site,file)));
  const triangles=model.meshes.reduce((n,m)=>n+m.p.length/9*m.instances.length,0);
- const info={revision:model.revision,viewerRevision:'area-higashiyama-quality-v4',viewerHashes,modelHash,bakerHash:sha(fs.readFileSync(source)),meshes:model.meshes.length,instances,triangles,lightSamples,rays:Number(rays),lightingBytes:light.length,lightingHash:sha(light),architecture:model.stats,areaSites:model.areaSites,surveyed:false,description:'Higashiyama miniature with Kiyomizu v5.4 presentation pipeline and a geometry-matched baked light field. Geographic anchors are real; intermediate streets and structures remain authored.'};
+ const info={revision:model.revision,viewerRevision:'area-higashiyama-quality-v4.1.1',viewerHashes,modelHash,bakerHash:sha(fs.readFileSync(source)),meshes:model.meshes.length,instances,triangles,lightSamples,rays:Number(rays),lightingBytes:light.length,lightingHash:sha(light),architecture:model.stats,areaSites:model.areaSites,surveyed:false,description:'Higashiyama miniature with Kiyomizu v5.4 presentation pipeline and a geometry-matched baked light field. Geographic anchors are real; intermediate streets and structures remain authored.'};
  fs.writeFileSync(path.join(site,'build-info.json'),JSON.stringify(info,null,2));
  console.log('AREA_BUILD_VALIDATED',JSON.stringify({modelHash,meshes:model.meshes.length,instances,triangles,lightSamples,lightingBytes:light.length}));
 })().catch(e=>{console.error(e);process.exitCode=1;});
