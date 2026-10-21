@@ -1,0 +1,58 @@
+{
+  "subject": "京都・音羽山清水寺 本堂",
+  "checkedOn": "2026-10-21",
+  "notASurvey": true,
+  "sources": [
+    {
+      "id": "temple-treasures-main-hall",
+      "publisher": "音羽山清水寺",
+      "url": "https://www.kiyomizudera.or.jp/read/秘仏-十一面千手観音立像",
+      "facts": {
+        "frontWidthApproxMetres": 36,
+        "sideLengthApproxMetres": 30,
+        "ridgeHeightMetresAsDescribed": 18,
+        "roof": "檜皮葺・寄棟造・起り反りの曲面"
+      },
+      "limitations": "公表文章中の概数。軒先・柱心・裳階・翼廊のどの境界を含むか、棟高の基準面はこの文章だけでは確定しない。3Dの外接寸法を直接この数字へ変換しない。"
+    },
+    {
+      "id": "temple-history-stage",
+      "publisher": "音羽山清水寺",
+      "url": "https://www.kiyomizudera.or.jp/history.php",
+      "facts": {
+        "stageAreaApproxSquareMetres": 200,
+        "stageFloorboards": 166,
+        "stageHeightFromFootingsApproxMetres": 13,
+        "principalStageColumns": 18,
+        "supportSystem": "柱と縦横の貫を接合する懸造"
+      },
+      "limitations": "数字を一致させても配置・断面・仕口が正確になった証明ではない。写真や図面で位置関係の照合が必要。"
+    },
+    {
+      "id": "bunka-main-hall",
+      "publisher": "文化庁・文化遺産オンライン",
+      "url": "https://online.bunka.go.jp/db/heritages/detail/145428",
+      "facts": {
+        "mainBaysFront": 9,
+        "mainBaysSide": 7,
+        "roof": "寄棟造・檜皮葺",
+        "features": ["正面舞台", "正面両翼廊と庇", "東西北面の裳階", "西面翼廊"]
+      },
+      "limitations": "これは京都府京都市東山区の本堂。検索結果に出る長崎・佐渡・静岡などの同名寺院を混同しない。"
+    }
+  ],
+  "modelAccuracyPolicy": {
+    "unitScaleToMetres": null,
+    "requiresConsistentScale": true,
+    "declaredBayMetadataIsNotGeometricProof": true,
+    "referenceImageIsStyleNotSurvey": true,
+    "sourcePhotosNotRedistributedAsTextures": true,
+    "notForRouteGuidance": true,
+    "nextChecks": [
+      "本堂の正面幅・奥行き・棟高・舞台高を、同じ縮尺と同じ基準面で比較する。都合のよい寸法ごとに異なる縮尺を使わない。",
+      "mainBays=[9,7]というメタデータに依存せず、実際の柱列と間の数・左右翼廊の接続をモデル上で確認する。",
+      "起り反り屋根の稜線・軒・翼廊の屋根を、公式写真と近い視点で比較する。",
+      "庭園風の配置・樹木分布・参道・石垣は依然として造形解釈。実物の測量配置と混同しない。"
+    ]
+  }
+}
