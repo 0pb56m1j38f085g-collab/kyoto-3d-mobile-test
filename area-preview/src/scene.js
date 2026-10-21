@@ -322,26 +322,26 @@ function makeStudy(){
   for(const side of[-1,1])ball([x+Math.cos(a)*side*1.85*s,y+2.60*s,z-Math.sin(a)*side*1.85*s],[.10*s,.10*s,.10*s],'#d48a64',tiny,1);
  }
  areaTorii(areaAnchor.yasaka[0],areaAnchor.yasaka[1]-3.2,1.08,0);
- const sy=ground(areaAnchor.yasaka[0],areaAnchor.yasaka[1]),sx=areaAnchor.yasaka[0],sz=areaAnchor.yasaka[1];
+ const yasakaY=ground(areaAnchor.yasaka[0],areaAnchor.yasaka[1]),yasakaX=areaAnchor.yasaka[0],yasakaZ=areaAnchor.yasaka[1];
  // Yasaka main massing with layered shrine details
- box([sx,sy+.78,sz],[6.2,1.56,3.8],'#b8553e',0,1);
- hip('yasaka-main-roof',sx,sz,7.05,4.65,sy+1.50,1.18,.29,'#685d57');
- plate([sx,sy+.17,sz+2.05],[6.4,.18,1.15],'#c48658',0,1);
+ box([yasakaX,yasakaY+.78,yasakaZ],[6.2,1.56,3.8],'#b8553e',0,1);
+ hip('yasaka-main-roof',yasakaX,yasakaZ,7.05,4.65,yasakaY+1.50,1.18,.29,'#685d57');
+ plate([yasakaX,yasakaY+.17,yasakaZ+2.05],[6.4,.18,1.15],'#c48658',0,1);
  for(let i=-4;i<=4;i++){
-  pole([sx+i*.68,sy+.18,sz+1.82],[sx+i*.68,sy+1.45,sz+1.82],.055,'#c46748');
-  box([sx+i*.68,sy+1.48,sz+1.82],[.28,.12,.34],'#a64f3b',0,1);
+  pole([yasakaX+i*.68,yasakaY+.18,yasakaZ+1.82],[yasakaX+i*.68,yasakaY+1.45,yasakaZ+1.82],.055,'#c46748');
+  box([yasakaX+i*.68,yasakaY+1.48,yasakaZ+1.82],[.28,.12,.34],'#a64f3b',0,1);
  }
  // lanterns around forecourt
  for(const side of[-1,1])for(let i=0;i<6;i++){
-  const lx=sx+side*(4.0+i*.15),lz=sz-2.2+i*.82,ly=ground(lx,lz);
+  const lx=yasakaX+side*(4.0+i*.15),lz=yasakaZ-2.2+i*.82,ly=ground(lx,lz);
   pole([lx,ly,lz],[lx,ly+.78,lz],.035,'#7f6246');
   box([lx,ly+.92,lz],[.24,.30,.24],'#ead9b6',0,1);
   hip('lantern-cap-'+side+'-'+i,lx,lz,.38,.38,ly+1.05,.16,.20,'#6e5f55');
  }
  // secondary gate structure
- const gy=ground(sx,sz-5.3);
- box([sx,gy+.56,sz-5.3],[4.0,1.12,1.35],'#bd5a42',0,1);
- hip('yasaka-gate-roof',sx,sz-5.3,4.8,2.0,gy+1.05,.62,.28,'#6b5e57');
+ const gy=ground(yasakaX,yasakaZ-5.3);
+ box([yasakaX,gy+.56,yasakaZ-5.3],[4.0,1.12,1.35],'#bd5a42',0,1);
+ hip('yasaka-gate-roof',yasakaX,yasakaZ-5.3,4.8,2.0,gy+1.05,.62,.28,'#6b5e57');
 
  // Precinct vegetation with mixed crowns and clearings around roads
  for(const [cx,cz,rad,count] of [[-22,18,5.5,36],[-18,29,6.2,44],[-29,44,7.3,52],[-12,22,5.0,30]]){
