@@ -1,0 +1,47 @@
+name: Quality preview visual verification
+on:
+  push:
+    branches: [quality-v5-architecture-lighting]
+    paths:
+      - '.github/workflows/quality-preview-check.yml'
+      - 'quality-v5/tests/live-browser.cjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: quality-preview-readonly-check
+  cancel-in-progress: true
+jobs:
+  browser:
+    if: github.repository == '0pb56m1j38f085g-collab/kyoto-3d-mobile-test'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Validate the authored model and reproducible build
+        run: node quality-v5/build.cjs --validate-only
+      - name: Install the fixed browser test dependency
+        run: |
+          npm install --prefix "$RUNNER_TEMP/kyoto-browser" --no-audit --no-fund playwright@1.55.0
+          "$RUNNER_TEMP/kyoto-browser/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Read-only test of published 3D rendering and touch gestures
+        env:
+          NODE_PATH: ${{ runner.temp }}/kyoto-browser/node_modules
+        run: xvfb-run -a node quality-v5/tests/live-browser.cjs
+      - name: Save actual browser renders, test results, and source
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: kiyomizu-quality-v5-browser-verified
+          path: |
+            quality-test-artifacts/
+            quality-v5/
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 6
+          include-hidden-files: false
