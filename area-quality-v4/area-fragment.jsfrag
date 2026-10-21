@@ -20,7 +20,7 @@
  const urbanContains=(x,z)=>x<-6.5&&x>-38&&z>6&&z<53;
  for(const m of scene.meshes)m.instances=m.instances.filter(i=>!(i.group==='landscape'&&urbanContains(i.p[0],i.p[2])));
  const dseg=(x,z,a,b)=>{const dx=b[0]-a[0],dz=b[1]-a[1],q=dx*dx+dz*dz,t=q?clamp(((x-a[0])*dx+(z-a[1])*dz)/q,0,1):0;return Math.hypot(x-a[0]-dx*t,z-a[1]-dz*t);};
- const landmarkClear=(x,z)=>Math.hypot(x-areaAnchor.hokanji[0],z-areaAnchor.hokanji[1])<3.2||Math.hypot(x-areaAnchor.kodaiji[0],z-areaAnchor.kodaiji[1])<4.3||Math.hypot(x-areaAnchor.yasaka[0],z-areaAnchor.yasaka[1])<5.0;
+ const landmarkClear=(x,z)=>Math.hypot(x-areaAnchor.hokanji[0],z-areaAnchor.hokanji[1])<4.1||Math.hypot(x-areaAnchor.kodaiji[0],z-areaAnchor.kodaiji[1])<5.7||Math.hypot(x-areaAnchor.yasaka[0],z-areaAnchor.yasaka[1])<6.4;
  function areaRoad(name,pts,width=1.05,color='#d8ceb8',edge='#cbbda3'){
   for(let n=0;n<pts.length-1;n++){
    const a=pts[n],b=pts[n+1],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz),steps=Math.max(1,Math.ceil(len/.72));
@@ -92,7 +92,15 @@
    }
   }
  }
- ribbonBuildings(eastSpine,2.45);ribbonBuildings(sannenzaka,2.10);ribbonBuildings(ninenzaka,2.05);ribbonBuildings(gionLink,2.35);
+ ribbonBuildings(eastSpine,2.28);ribbonBuildings(sannenzaka,1.95);ribbonBuildings(ninenzaka,1.92);ribbonBuildings(gionLink,2.15);
+ // Secondary lanes close the gaps between the four anchors so the area reads as one townscape.
+ const hokanjiLane=[[areaAnchor.hokanji[0]-7.4,areaAnchor.hokanji[1]+1.2],[areaAnchor.hokanji[0]-3.7,areaAnchor.hokanji[1]+.4],areaAnchor.hokanji,[areaAnchor.hokanji[0]+4.8,areaAnchor.hokanji[1]-1.0]];
+ const kodaijiLane=[[areaAnchor.kodaiji[0]-7.0,areaAnchor.kodaiji[1]+1.8],[areaAnchor.kodaiji[0]-3.2,areaAnchor.kodaiji[1]+.5],[areaAnchor.kodaiji[0]+5.7,areaAnchor.kodaiji[1]-.7]];
+ const yasakaLane=[[areaAnchor.yasaka[0]-7.0,areaAnchor.yasaka[1]-4.8],[areaAnchor.yasaka[0]-3.5,areaAnchor.yasaka[1]-3.6],[areaAnchor.yasaka[0]+5.8,areaAnchor.yasaka[1]-4.0]];
+ for(const [name,pts,w]of[['hokanji-side-lane',hokanjiLane,.78],['kodaiji-side-lane',kodaijiLane,.82],['yasaka-south-lane',yasakaLane,.95]]){areaRoad(name,pts,w,'#ded2bc');ribbonBuildings(pts,1.90);}
+ // Small cross lanes make the streetscape a fabric rather than a single ribbon.
+ const crossLanes=[[[-12.5,17.6],[-18.6,19.0]],[[-20.0,24.0],[-14.5,25.3]],[[-24.0,33.5],[-17.5,34.8]],[[-32.0,40.4],[-24.0,41.0]]];
+ for(let q=0;q<crossLanes.length;q++){areaRoad('cross-lane-'+q,crossLanes[q],.68,'#e0d5bf');ribbonBuildings(crossLanes[q],2.05);}
 
  function hokanjiPagoda(x,z,s=1){
   const y=ground(x,z),wood='#9a694a',deep='#704a36',roof='#625a57';
@@ -122,9 +130,12 @@
   const sx=x+4.2*s,sz=z-.6*s,sy=ground(sx,sz);
   box([sx,sy+.50*s,sz],[2.5*s,1.0*s,1.85*s],'#a27857',-.08,1);
   hip('kodaiji-side-roof',sx,sz,3.0*s,2.35*s,sy+.95*s,.72*s,.28,'#75655d');
-  // stone garden terrace and pond
-  areaStoneWall([x-4.0*s,z+2.45*s],[x+5.0*s,z+2.45*s],.50*s);
+  // Stone garden terrace and pond. A broad pale courtyard gives the precinct visual breathing room.
+  plate([x,y+.08*s,z+3.0*s],[8.8*s,.06*s,3.6*s],'#d8cfbd',0,0);
+  areaStoneWall([x-4.4*s,z+2.70*s],[x+5.4*s,z+2.70*s],.50*s);
+  areaStoneWall([x-4.4*s,z-2.35*s],[x+1.8*s,z-2.35*s],.42*s);
   plate([x+3.2*s,ground(x+3.2*s,z+1.2*s)+.06,z+1.2*s],[4.8*s,.05*s,2.55*s],'#82b8bd',-.12,5);
+  for(let r=0;r<10;r++){const aa=r*2.399,rr=(.65+(.08*r))*s,rx=x-1.3*s+Math.cos(aa)*rr,rz=z+3.1*s+Math.sin(aa)*rr,ry=ground(rx,rz);box([rx,ry+.08*s,rz],[.28*s,.16*s,.20*s],r%2?'#bdb7a7':'#aaa698',aa,3);}
   for(let j=0;j<16;j++){
    const a=j*2.399,rr=1.1*s*Math.sqrt((j+.4)/16),px=x+3.2*s+Math.cos(a)*rr,pz=z+1.2*s+Math.sin(a)*rr,py=ground(px,pz);
    ball([px,py+.18*s,pz],[.22*s,.16*s,.22*s],pick(C.greens),tiny,4);
@@ -162,8 +173,8 @@
  box([yasakaX,gy+.56,yasakaZ-5.3],[4.0,1.12,1.35],'#bd5a42',0,1);
  hip('yasaka-gate-roof',yasakaX,yasakaZ-5.3,4.8,2.0,gy+1.05,.62,.28,'#6b5e57');
 
- // Precinct vegetation with mixed crowns and clearings around roads
- for(const [cx,cz,rad,count] of [[-22,18,5.9,30],[-18,29,6.6,34],[-29,44,7.6,38],[-12,22,5.2,24]]){
+ // Precinct vegetation forms a frame around landmarks, not a blanket over them.
+ for(const [cx,cz,rad,count] of [[-22,18,7.0,24],[-18,29,8.0,28],[-29,44,9.0,30],[-12,22,6.1,22]]){
   for(let j=0;j<count;j++){
    const aa=j*2.399,rr=rad*Math.sqrt((j+.5)/count),x=cx+Math.cos(aa)*rr,z=cz+Math.sin(aa)*rr;
    let roadDistance=99;for(let n=0;n<eastSpine.length-1;n++)roadDistance=Math.min(roadDistance,dseg(x,z,eastSpine[n],eastSpine[n+1]));
@@ -177,4 +188,4 @@
   if(Math.hypot(x-areaAnchor.hokanji[0],z-areaAnchor.hokanji[1])<2.4||Math.hypot(x-areaAnchor.kodaiji[0],z-areaAnchor.kodaiji[1])<2.9||Math.hypot(x-areaAnchor.yasaka[0],z-areaAnchor.yasaka[1])<3.5)continue;
   if(rnd()<.58)ball([x,ground(x,z)+.17,z],[range(.14,.30),range(.10,.22),range(.14,.30)],pick(C.greens),tiny,4);
  }
- scene.areaQuality='v4-cleared-urban-corridor-and-baked-lighting';
+ scene.areaQuality='v4.1-town-fabric-landmark-clearings';
