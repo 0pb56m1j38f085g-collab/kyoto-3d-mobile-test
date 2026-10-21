@@ -1,0 +1,40 @@
+name: Higashiyama area v4 baked visual review
+on:
+  push:
+    branches: [area-higashiyama-quality-v4]
+    paths:
+      - 'area-quality-v4/**'
+      - '.github/workflows/area-quality-v4-visual.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: higashiyama-area-v4-baked-visual
+  cancel-in-progress: true
+jobs:
+  render:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Install fixed browser dependency
+        run: |
+          npm install --prefix "$RUNNER_TEMP/area-v4-browser" --no-audit --no-fund playwright@1.55.0
+          "$RUNNER_TEMP/area-v4-browser/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Build, light, and render the whole area
+        env:
+          NODE_PATH: ${{ runner.temp }}/area-v4-browser/node_modules
+        run: xvfb-run -a node area-quality-v4/tests/visual-check.cjs
+      - name: Upload actual WebGL renders
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: higashiyama-area-v4-baked-renders
+          path: area-v4-artifacts/
+          if-no-files-found: error
+          retention-days: 7
