@@ -20,7 +20,7 @@
  const urbanContains=(x,z)=>x<-6.5&&x>-38&&z>6&&z<53;
  for(const m of scene.meshes)m.instances=m.instances.filter(i=>!(i.group==='landscape'&&urbanContains(i.p[0],i.p[2])));
  const dseg=(x,z,a,b)=>{const dx=b[0]-a[0],dz=b[1]-a[1],q=dx*dx+dz*dz,t=q?clamp(((x-a[0])*dx+(z-a[1])*dz)/q,0,1):0;return Math.hypot(x-a[0]-dx*t,z-a[1]-dz*t);};
- const landmarkClear=(x,z)=>Math.hypot(x-areaAnchor.hokanji[0],z-areaAnchor.hokanji[1])<4.1||Math.hypot(x-areaAnchor.kodaiji[0],z-areaAnchor.kodaiji[1])<5.7||Math.hypot(x-areaAnchor.yasaka[0],z-areaAnchor.yasaka[1])<6.4;
+ const landmarkClear=(x,z)=>Math.hypot(x-areaAnchor.hokanji[0],z-areaAnchor.hokanji[1])<4.4||Math.hypot(x-areaAnchor.kodaiji[0],z-areaAnchor.kodaiji[1])<7.1||Math.hypot(x-areaAnchor.yasaka[0],z-areaAnchor.yasaka[1])<7.6;
  function areaRoad(name,pts,width=1.05,color='#d8ceb8',edge='#cbbda3'){
   for(let n=0;n<pts.length-1;n++){
    const a=pts[n],b=pts[n+1],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz),steps=Math.max(1,Math.ceil(len/.72));
@@ -290,4 +290,57 @@
   if(Math.hypot(x-areaAnchor.hokanji[0],z-areaAnchor.hokanji[1])<2.4||Math.hypot(x-areaAnchor.kodaiji[0],z-areaAnchor.kodaiji[1])<2.9||Math.hypot(x-areaAnchor.yasaka[0],z-areaAnchor.yasaka[1])<3.5)continue;
   if(rnd()<.58)ball([x,ground(x,z)+.17,z],[range(.14,.30),range(.10,.22),range(.14,.30)],pick(C.greens),tiny,4);
  }
- scene.areaQuality='v4.3-architectural-detail-parity';
+
+ // Western Gion transition fills the open side of the diorama with the same machiya language.
+ const gionWest=[[-37.8,28.0],[-39.5,34.5],[-39.0,41.2],[-36.0,47.0],[-32.8,51.2]];
+ areaRoad('gion-west-spine',gionWest,1.02,'#dfd3bd');
+ ribbonBuildings(gionWest,1.82);
+ const gionCross=[
+  [[-39.2,32.0],[-31.5,32.8]],
+  [[-39.5,37.0],[-31.8,37.5]],
+  [[-38.7,42.3],[-31.2,42.5]],
+  [[-36.8,47.1],[-29.4,47.0]]
+ ];
+ for(let q=0;q<gionCross.length;q++){areaRoad('gion-west-cross-'+q,gionCross[q],.70,'#e3d8c4');ribbonBuildings(gionCross[q],1.82);}
+ // A quieter southern lane connects the tower district to the wider urban fabric.
+ const towerSouth=[[-34.5,13.4],[-31.8,15.0],[-29.2,16.4],areaAnchor.hokanji,[-21.7,17.2]];
+ areaRoad('tower-south-lane',towerSouth,.76,'#e0d4bd');ribbonBuildings(towerSouth,1.86);
+ // Low detailed infill closes isolated gaps without inventing landmark names.
+ const infillBands=[
+  {z:24.2,x0:-36.5,x1:-25.5,a:.03},
+  {z:27.3,x0:-35.8,x1:-26.0,a:-.04},
+  {z:52.0,x0:-36.0,x1:-24.0,a:.02}
+ ];
+ for(let b=0;b<infillBands.length;b++){
+  const g=infillBands[b],count=Math.floor((g.x1-g.x0)/2.15);
+  for(let j=0;j<=count;j++){
+   const x=g.x0+(g.x1-g.x0)*(j/(count||1)),z=g.z+Math.sin(j*.9+b)*.20;
+   if(landmarkClear(x,z))continue;
+   areaMachiya(x,z,g.a+range(-.025,.025),range(.82,1.06),b+j,(b+j)%4);
+  }
+ }
+ // Garden-scale planting inside landmark clearings: shrubs and clipped forms, never tall occluding crowns.
+ for(const [cx,cz,rad,count] of [[areaAnchor.kodaiji[0],areaAnchor.kodaiji[1],6.5,42],[areaAnchor.yasaka[0],areaAnchor.yasaka[1],7.0,38]]){
+  for(let j=0;j<count;j++){
+   const aa=j*2.399,rr=rad*Math.sqrt((j+.45)/count),x=cx+Math.cos(aa)*rr,z=cz+Math.sin(aa)*rr;
+   if(rr<2.7||dseg(x,z,[cx,cz-7],[cx,cz+7])<1.05)continue;
+   const y=ground(x,z),sz=range(.14,.28);
+   ball([x,y+sz*.62,z],[sz*1.35,sz*.80,sz*1.18],j%6===0?'#a6b66b':pick(C.greens),tiny,4);
+  }
+ }
+ // Edge screen: low walls, shrubs and a few taller trees conceal the abrupt authored boundary.
+ for(let j=0;j<34;j++){
+  const t=j/33,x=-43.0+Math.sin(j*.65)*.45,z=18+t*36,y=ground(x,z);
+  if(j%3===0){box([x,y+.24,z],[.62,.42,.38],j%2?'#b7b2a2':'#c5c0b0',.04,3);}
+  else{const sz=range(.22,.36);ball([x,y+sz*.62,z],[sz*1.2,sz*.9,sz],j%5===0?'#98aa62':pick(C.greens),tiny,4);}
+  if(j%8===0)tree(x-.8,z+.3,range(.58,.78),j%16===0?'pink':'green',1);
+ }
+ // Small figures continue through the west-side streets so the new blocks retain human scale.
+ for(const pts of [gionWest,...gionCross,towerSouth]){
+  for(let n=0;n<pts.length-1;n++){
+   const a=pts[n],b=pts[n+1],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz),count=Math.max(1,Math.floor(len/4.2));
+   for(let j=0;j<count;j++){const t=(j+.5)/count,x=a[0]+dx*t+range(-.24,.24),z=a[1]+dz*t+range(-.22,.22);person(x,ground(x,z)+.08,z,range(.44,.56),Math.atan2(dx,dz)+range(-.35,.35));}
+  }
+ }
+
+ scene.areaQuality='v4.4-district-continuity-and-landmark-clarity';
