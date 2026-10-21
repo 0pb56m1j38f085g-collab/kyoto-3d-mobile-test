@@ -40,6 +40,10 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  app=app.replace(portraitOld,"if(aspect<1.05){const areaLandmark=['hokanji','kodaiji','yasaka','street'].includes(name);const portraitScale=name==='area'?.42:(areaLandmark?.58:.78);p.span*=portraitScale/aspect;p.target[1]+=name==='area'?-.12:.2;}");
  app=app.replaceAll("lighting.bin?v=quality-v5.4","lighting.bin?v=area-higashiyama-quality-v4.7");
  app=app.replaceAll("quality-v5.4","area-higashiyama-quality-v4.7");
+ app=exact(app,
+  "fetch('./lighting.bin?v=area-higashiyama-quality-v4.7',{signal:controller.signal})",
+  "fetch('./lighting.bin?v=area-higashiyama-quality-v4.7',{signal:controller.signal,cache:'no-store'})",
+  'cache-safe lighting fetch');
  app=app.replace("camera.target[0]=clamp(camera.target[0],-7,10);camera.target[1]=clamp(camera.target[1],3.5,11);camera.target[2]=clamp(camera.target[2],-7,7);",
                  "camera.target[0]=clamp(camera.target[0],-46,18);camera.target[1]=clamp(camera.target[1],2,17);camera.target[2]=clamp(camera.target[2],-14,54);");
  app=app.replaceAll("Math.max(45,30/(canvas.clientWidth/canvas.clientHeight))","Math.max(150,80/(canvas.clientWidth/canvas.clientHeight))");
@@ -83,9 +87,16 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  const lightPath=path.join(site,'lighting.bin');cp.execFileSync(exe,[scenePath,lightPath,rays],{stdio:'inherit',timeout:70*60*1000});
  const light=fs.readFileSync(lightPath);if(light.toString('ascii',0,4)!=='KVL1')throw Error('Invalid light header');
  const lightSamples=light.readUInt32LE(4);if(light.length!==8+lightSamples*4)throw Error('Incomplete light bake');
+ const lightingHash=sha(light),assetToken=modelHash.slice(0,16)+'-'+lightingHash.slice(0,16);
+ // Cache-safe finalization: JS and lighting URLs share the exact geometry/light token.
+ const appPath=path.join(site,'src/app.js'),htmlPath=path.join(site,'index.html');
+ let cacheSafeApp=fs.readFileSync(appPath,'utf8'),cacheSafeHtml=fs.readFileSync(htmlPath,'utf8');
+ cacheSafeApp=cacheSafeApp.replaceAll('lighting.bin?v=area-higashiyama-quality-v4.7','lighting.bin?v='+assetToken);
+ cacheSafeHtml=cacheSafeHtml.replaceAll('area-higashiyama-quality-v4.7',assetToken);
+ fs.writeFileSync(appPath,cacheSafeApp);fs.writeFileSync(htmlPath,cacheSafeHtml);
  const viewerHashes={};for(const file of['src/renderer.js','src/scene.js','src/app.js','index.html'])viewerHashes[file]=sha(fs.readFileSync(path.join(site,file)));
  const triangles=model.meshes.reduce((n,m)=>n+m.p.length/9*m.instances.length,0);
- const info={revision:model.revision,viewerRevision:'area-higashiyama-quality-v4.7',viewerHashes,modelHash,bakerHash:sha(fs.readFileSync(source)),meshes:model.meshes.length,instances,triangles,lightSamples,rays:Number(rays),lightingBytes:light.length,lightingHash:sha(light),architecture:model.stats,areaSites:model.areaSites,surveyed:false,description:'Higashiyama miniature with Kiyomizu v5.4 presentation pipeline and a geometry-matched baked light field. Geographic anchors are real; intermediate streets and structures remain authored.'};
+ const info={revision:model.revision,viewerRevision:'area-higashiyama-quality-v4.7.1-cache-safe',viewerHashes,modelHash,bakerHash:sha(fs.readFileSync(source)),meshes:model.meshes.length,instances,triangles,lightSamples,rays:Number(rays),lightingBytes:light.length,lightingHash,architecture:model.stats,areaSites:model.areaSites,surveyed:false,assetToken,description:'Higashiyama miniature with Kiyomizu v5.4 presentation pipeline and a geometry-matched baked light field. Geographic anchors are real; intermediate streets and structures remain authored.'};
  fs.writeFileSync(path.join(site,'build-info.json'),JSON.stringify(info,null,2));
  console.log('AREA_BUILD_VALIDATED',JSON.stringify({modelHash,meshes:model.meshes.length,instances,triangles,lightSamples,lightingBytes:light.length}));
 })().catch(e=>{console.error(e);process.exitCode=1;});
