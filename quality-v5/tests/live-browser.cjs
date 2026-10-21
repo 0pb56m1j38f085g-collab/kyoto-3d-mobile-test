@@ -10,10 +10,10 @@ function check(name,condition,detail){report.checks.push({name,passed:Boolean(co
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function asset(file){const r=await fetch(BASE+'/'+file,{signal:AbortSignal.timeout(60000)});if(!r.ok)throw Error(file+' HTTP '+r.status);const b=Buffer.from(await r.arrayBuffer());const target=path.join(OUT,'site',file);fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,b);return b;}
 (async()=>{
- let browser;
+ let browser,page;
  try{
   let info;
-  for(let i=0;i<90;i++){try{const r=await fetch(BASE+'/build-info.json',{signal:AbortSignal.timeout(15000)});if(r.ok){const v=await r.json();if(v.modelHash===HASH){info=v;break;}}}catch(e){}await sleep(10000);}
+  for(let i=0;i<90;i++){try{const r=await fetch(BASE+'/build-info.json',{signal:AbortSignal.timeout(15000)});if(r.ok){const v=await r.json();if(v.modelHash===HASH&&v.viewerRevision==='quality-v5.3.1'){info=v;break;}}}catch(e){}await sleep(10000);}
   check('Published build matches validated model hash',!!info,info);report.build=info;
   for(const file of['index.html','src/renderer.js','src/scene.js','src/app.js','build-info.json','lighting.bin','robots.txt'])await asset(file);
   const lighting=fs.readFileSync(path.join(OUT,'site/lighting.bin'));
@@ -23,8 +23,8 @@ async function asset(file){const r=await fetch(BASE+'/'+file,{signal:AbortSignal
   check('Refined scene hash matches approved build input',crypto.createHash('sha256').update(fs.readFileSync(path.join(OUT,'site/src/scene.js'))).digest('hex')==='638cbe336981a49addd8d189067bcbc0cd8287562937b205602aa85daad28d6d');
   browser=await chromium.launch({headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
   const context=await browser.newContext({viewport:{width:1280,height:960},deviceScaleFactor:1,hasTouch:true,reducedMotion:'reduce'});
-  const page=await context.newPage();page.on('pageerror',e=>report.errors.push(String(e)));page.on('console',m=>{if(m.type()==='error')report.errors.push(m.text());});
-  await page.goto(BASE+'/?quality=high&v=quality-v5.3',{waitUntil:'load',timeout:90000});
+  page=await context.newPage();page.setDefaultTimeout(90000);page.on('pageerror',e=>report.errors.push(String(e)));page.on('console',m=>{if(m.type()==='error')report.errors.push(m.text());});
+  await page.goto(BASE+'/?quality=high&v=quality-v5.3.1',{waitUntil:'load',timeout:90000});
   await page.waitForFunction(()=>window.__ready||window.__error,null,{timeout:120000});
   check('3D initializes successfully',await page.evaluate(()=>!!window.__ready&&!window.__error),await page.evaluate(()=>window.__error||null));
   check('Precomputed indirect light and sunlight are active',await page.evaluate(()=>phoneTest.renderer.bakedEnabled));
@@ -35,7 +35,6 @@ async function asset(file){const r=await fetch(BASE+'/'+file,{signal:AbortSignal
   check('WebGL reports no error',await page.evaluate(()=>phoneTest.renderer.gl.getError()===0));
   const snap=async(name)=>{
    await page.waitForTimeout(2000);
-   // Flush the software GPU before capturing a resized canvas. Do not alter scene, quality or camera.
    await page.evaluate(async()=>{await document.fonts.ready;phoneTest.renderer.gl.finish();});
    await page.screenshot({path:path.join(OUT,name),timeout:120000});
    report.screenshots.push(name);
@@ -55,8 +54,11 @@ async function asset(file){const r=await fetch(BASE+'/'+file,{signal:AbortSignal
   await page.locator('[data-view="corner"]').click();await page.waitForTimeout(1000);
   check('Detail view selects correct tab',await page.locator('[data-view="corner"]').getAttribute('aria-pressed')==='true');
   await page.locator('#help-open').click();check('Help opens as dialog',await page.locator('#help').isVisible());
+  const modalFrames=await page.evaluate(()=>phoneTest.renderer.frames);
   await page.locator('#quality').selectOption('light');await page.waitForTimeout(500);check('Light quality mode works',await page.evaluate(()=>phoneTest.quality==='light'));
-  await page.locator('#quality').selectOption('high');await page.locator('#help-close').click();check('Dialog closes',await page.locator('#help').isHidden());
+  await page.locator('#quality').selectOption('high');await page.waitForTimeout(500);
+  check('Quality dialog avoids background GPU work',await page.evaluate(f=>phoneTest.renderer.frames===f,modalFrames));
+  await page.locator('#help-close').click();check('Dialog closes',await page.locator('#help').isHidden());
   await page.setViewportSize({width:430,height:932});await page.waitForTimeout(1000);await page.evaluate(()=>phoneTest.view('temple',false));await snap('mobile.png');
   check('Portrait canvas fits screen',await page.evaluate(()=>document.querySelector('#scene').clientWidth===430&&document.querySelector('#scene').clientHeight===932));
   const cdp=await context.newCDPSession(page);
@@ -84,5 +86,7 @@ async function asset(file){const r=await fetch(BASE+'/'+file,{signal:AbortSignal
   report.screenshots.push('stable-before.png');
   await originalPage.close();
   report.ok=true;
- }catch(e){report.ok=false;report.failure=String(e.stack||e);process.exitCode=1;}finally{if(browser)await browser.close();fs.writeFileSync(path.join(OUT,'test-results.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));}
+ }catch(e){report.ok=false;report.failure=String(e.stack||e);process.exitCode=1;
+  if(page)try{report.failureState=await page.evaluate(()=>({modal:window.phoneTest?.modal,quality:window.phoneTest?.quality,ready:window.__ready,error:window.__error,helpHidden:document.querySelector('#help')?.hidden,sheetScroll:document.querySelector('#help .sheet')?.scrollTop,closeBounds:document.querySelector('#help-close')?.getBoundingClientRect().toJSON(),active:document.activeElement?.id}));await page.screenshot({path:path.join(OUT,'failure-state.png'),timeout:120000});}catch(_){}
+ }finally{if(browser)await browser.close();fs.writeFileSync(path.join(OUT,'test-results.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));}
 })();
