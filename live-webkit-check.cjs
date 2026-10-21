@@ -1,0 +1,41 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const {webkit}=require('playwright');
+const URL='https://higashiyama-quality-v4.onrender.com/?live-webkit=1';
+const OUT=path.resolve('live-webkit-artifacts');fs.mkdirSync(OUT,{recursive:true});
+const report={url:URL,checks:[],errors:[],console:[]};
+const check=(n,v,d)=>{report.checks.push({name:n,passed:!!v,detail:d});assert.ok(v,n)};
+(async()=>{let browser,page;try{
+  const infoRes=await fetch('https://higashiyama-quality-v4.onrender.com/build-info.json?probe='+Date.now(),{cache:'no-store'});
+  check('build-info HTTP 200',infoRes.ok,infoRes.status);
+  const info=await infoRes.json();report.buildInfo=info;
+  check('cache-safe viewer revision',String(info.viewerRevision||'').includes('cache-safe'),info.viewerRevision);
+  check('asset token present',typeof info.assetToken==='string'&&info.assetToken.length>10,info.assetToken);
+  const htmlRes=await fetch('https://higashiyama-quality-v4.onrender.com/?probe='+Date.now(),{cache:'no-store'});
+  const html=await htmlRes.text();
+  report.htmlTokenOccurrences=html.split(info.assetToken).length-1;
+  check('HTML references exact asset token',report.htmlTokenOccurrences>=3,report.htmlTokenOccurrences);
+  const appRes=await fetch('https://higashiyama-quality-v4.onrender.com/src/app.js?v='+info.assetToken,{cache:'no-store'});
+  const app=await appRes.text();
+  check('app requests exact lighting token',app.includes('lighting.bin?v='+info.assetToken),app.match(/lighting\.bin\?v=[^'"]+/)?.[0]||'missing');
+  check('app disables lighting cache',app.includes("cache:'no-store'"),'no-store');
+  const lightRes=await fetch('https://higashiyama-quality-v4.onrender.com/lighting.bin?v='+info.assetToken,{cache:'no-store'});
+  const light=Buffer.from(await lightRes.arrayBuffer());
+  check('live lighting header',light.toString('ascii',0,4)==='KVL1',light.subarray(0,4).toString('ascii'));
+  const count=light.readUInt32LE(4);report.liveLight={bytes:light.length,count};
+  check('live lighting byte count',light.length===8+count*4,{bytes:light.length,count});
+  check('live lighting matches build-info',count===info.lightSamples&&light.length===info.lightingBytes,{count,infoSamples:info.lightSamples,bytes:light.length,infoBytes:info.lightingBytes});
+  browser=await webkit.launch({headless:true});
+  const ctx=await browser.newContext({viewport:{width:430,height:932},deviceScaleFactor:3,isMobile:true,hasTouch:true,userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1'});
+  page=await ctx.newPage();
+  page.on('pageerror',e=>report.errors.push(String(e)));
+  page.on('console',m=>report.console.push({type:m.type(),text:m.text()}));
+  await page.goto(URL,{waitUntil:'load',timeout:120000});
+  await page.waitForFunction(()=>window.phoneTest?.ready||window.__error,null,{timeout:180000});
+  report.webKitState=await page.evaluate(()=>({ready:!!window.phoneTest?.ready,error:window.__error||null,errors:window.phoneTest?.errors||[],diagnostics:window.phoneTest?.diagnostics?.()||null}));
+  check('WebKit initializes 3D',report.webKitState.ready&&!report.webKitState.error,report.webKitState);
+  await page.screenshot({path:path.join(OUT,'webkit-live.png'),fullPage:true,timeout:120000});
+  report.ok=true;
+ }catch(e){report.ok=false;report.failure=String(e.stack||e);if(page)try{await page.screenshot({path:path.join(OUT,'webkit-failure.png'),fullPage:true,timeout:120000});}catch(_){}process.exitCode=1;}
+ finally{if(browser)await browser.close();fs.writeFileSync(path.join(OUT,'report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));}
+})();
