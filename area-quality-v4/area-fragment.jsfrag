@@ -245,7 +245,7 @@
   beam([x-dx*1.10,y+2.60*s,z-dz*1.10],[x+dx*1.10,y+2.60*s,z+dz*1.10],.19*s,c,.20*s);
   for(const side of[-1,1])ball([x+Math.cos(a)*side*1.85*s,y+2.60*s,z-Math.sin(a)*side*1.85*s],[.10*s,.10*s,.10*s],'#d48a64',tiny,1);
  }
- areaTorii(areaAnchor.yasaka[0],areaAnchor.yasaka[1]-3.2,1.08,0);
+ areaTorii(areaAnchor.yasaka[0],areaAnchor.yasaka[1]-8.3,1.14,0);
  const yasakaY=ground(areaAnchor.yasaka[0],areaAnchor.yasaka[1]),yasakaX=areaAnchor.yasaka[0],yasakaZ=areaAnchor.yasaka[1];
  // Yasaka main massing with layered shrine details
  box([yasakaX,yasakaY+.78,yasakaZ],[6.2,1.56,3.8],'#b8553e',0,1);
@@ -282,13 +282,23 @@
   hip('lantern-cap-'+side+'-'+i,lx,lz,.38,.38,ly+1.05,.16,.20,'#6e5f55');
  }
  // secondary gate structure
- const gy=ground(yasakaX,yasakaZ-5.3);
- box([yasakaX,gy+.56,yasakaZ-5.3],[4.0,1.12,1.35],'#bd5a42',0,1);
- hip('yasaka-gate-roof',yasakaX,yasakaZ-5.3,4.8,2.0,gy+1.05,.62,.28,'#6b5e57');
+ const gateZ=yasakaZ-5.55,gy=ground(yasakaX,gateZ);
+ // South tower gate: open central passage, vermilion lower frame, white upper wall and two eave lines.
+ for(const side of[-1,1]){
+  const gx=yasakaX+side*1.55;
+  box([gx,gy+.62,gateZ],[.72,1.24,1.55],'#bd5a42',0,1);
+  pole([gx-.22,gy+.12,gateZ+.62],[gx-.22,gy+1.20,gateZ+.62],.055,'#a94434');
+  pole([gx+.22,gy+.12,gateZ+.62],[gx+.22,gy+1.20,gateZ+.62],.055,'#a94434');
+ }
+ plate([yasakaX,gy+1.22,gateZ],[4.25,.15,1.58],'#a94b38',0,1);
+ box([yasakaX,gy+1.66,gateZ],[3.72,.72,1.28],'#eadfc8',0,1);
+ for(let i=-3;i<=3;i++)pole([yasakaX+i*.48,gy+1.34,gateZ+.62],[yasakaX+i*.48,gy+1.98,gateZ+.62],.035,'#b5543e');
+ hip('yasaka-south-roumon-lower',yasakaX,gateZ,4.95,2.18,gy+1.18,.58,.27,'#6b5e57');
+ hip('yasaka-south-roumon-upper',yasakaX,gateZ,4.40,1.92,gy+1.92,.52,.26,'#675b56');
 
  // Open dance pavilion (maiden) gives the precinct its characteristic layered sequence.
  {
-  const x=yasakaX,z=yasakaZ-2.25,y=ground(x,z);
+  const x=yasakaX,z=yasakaZ-2.85,y=ground(x,z);
   plate([x,y+.20,z],[3.35,.18,2.40],'#b68156',0,1);
   for(const sx of[-1,1])for(const sz of[-1,1])pole([x+sx*1.30,y+.22,z+sz*.88],[x+sx*1.30,y+1.58,z+sz*.88],.060,'#ba523d');
   hip('yasaka-maiden-roof',x,z,4.25,3.25,y+1.48,.82,.27,'#675c57');
@@ -302,8 +312,8 @@
  // Yasaka forecourt: broad approach, flanking shrine halls and denser lantern rhythm.
  {
   const x=yasakaX,z=yasakaZ,y=yasakaY;
-  plate([x,y+.085,z-4.0],[9.6,.06,5.1],'#d8cbb4',0,0);
-  areaSteps([x,z-7.0],[x,z-4.8],3.4,8);
+  plate([x,y+.085,z-4.2],[9.8,.06,6.0],'#d8cbb4',0,0);
+  areaSteps([x,z-7.9],[x,z-5.7],3.6,9);
   for(const side of[-1,1]){
    const px=x+side*5.15,pz=z-.35,py=ground(px,pz);
    box([px,py+.54,pz],[2.5,1.08,2.0],side<0?'#bd5c42':'#b95640',0,1);
@@ -480,4 +490,4 @@
   ball([px,py+.34,pz],[.23,.24,.23],pick(C.greens),tiny,4);
  }
 
- scene.areaQuality='accuracy-v1-kodaiji-corridor-yasaka-roof-maiden';
+ scene.areaQuality='accuracy-v1.1-yasaka-south-sequence';
