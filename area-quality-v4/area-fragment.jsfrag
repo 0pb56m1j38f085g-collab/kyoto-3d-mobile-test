@@ -307,6 +307,32 @@
   if(rnd()<.58)ball([x,ground(x,z)+.17,z],[range(.14,.30),range(.10,.22),range(.14,.30)],pick(C.greens),tiny,4);
  }
 
+ // Foreground hillside tissue closes the large empty lower field in the reviewed area camera.
+ // This remains authored visual tissue, not surveyed street geometry.
+ const foregroundSpine=[[-5.5,20.0],[.5,22.7],[6.5,26.0],[11.8,30.4],[14.0,35.2]];
+ const foregroundCrossA=[[-1.5,27.8],[5.0,30.0],[11.8,31.2]];
+ const foregroundCrossB=[[3.8,21.5],[4.8,27.2],[4.2,34.2]];
+ areaRoad('foreground-spine',foregroundSpine,.78,'#e3d7c1');ribbonBuildings(foregroundSpine,1.90);
+ areaRoad('foreground-cross-a',foregroundCrossA,.66,'#e0d4bd');ribbonBuildings(foregroundCrossA,2.0);
+ areaRoad('foreground-cross-b',foregroundCrossB,.62,'#e1d5bf');ribbonBuildings(foregroundCrossB,2.1);
+ // Terraced pocket gardens make the foreground read as inhabited hillside rather than a blank lawn.
+ for(const [cx,cz,w,d,a] of [[8.7,22.6,4.2,2.4,.08],[10.6,27.0,3.8,2.1,-.08],[7.8,33.1,4.5,2.5,.04],[.8,35.0,4.0,2.2,-.04]]){
+  const y=ground(cx,cz);
+  plate([cx,y+.055,cz],[w,.05,d],'#d7cfbc',a,0);
+  for(let j=0;j<7;j++){
+   const aa=j*2.399,rr=.35+Math.sqrt((j+.4)/7)*Math.min(w,d)*.34,x=cx+Math.cos(aa)*rr,z=cz+Math.sin(aa)*rr,yy=ground(x,z),sz=range(.14,.25);
+   ball([x,yy+sz*.62,z],[sz*1.32,sz*.82,sz*1.15],j%4===0?'#a9b86f':pick(C.greens),tiny,4);
+  }
+  areaStoneWall([cx-w*.48,cz+d*.48],[cx+w*.48,cz+d*.48],.34);
+  for(let j=-2;j<=2;j++){const px=cx+j*w*.16,pz=cz,py=ground(px,pz);box([px,py+.07,pz],[.27,.13,.20],j%2?'#b8b3a3':'#c4bfb0',j*.17,3);}
+ }
+ // Small open timber pavilions break the sea of roofs without becoming false landmarks.
+ for(const [x,z,a]of[[9.2,24.7,.08],[2.0,33.4,-.10]]){
+  const y=ground(x,z);plate([x,y+.13,z],[1.55,.14,1.15],'#b18a61',a,1);
+  for(const sx of[-1,1])for(const sz of[-1,1])pole([x+sx*.54,y+.15,z+sz*.38],[x+sx*.54,y+.92,z+sz*.38],.042,'#78563f');
+  hip('foreground-pavilion-'+areaHouseId++,x,z,1.95,1.55,y+.84,.48,.24,'#74665e');
+ }
+
  // Western Gion transition fills the open side of the diorama with the same machiya language.
  const gionWest=[[-37.8,28.0],[-39.5,34.5],[-39.0,41.2],[-36.0,47.0],[-32.8,51.2]];
  areaRoad('gion-west-spine',gionWest,1.02,'#dfd3bd');
@@ -359,4 +385,4 @@
   }
  }
 
- scene.areaQuality='v4.4-district-continuity-and-landmark-clarity';
+ scene.areaQuality='v4.5-foreground-fabric-and-mobile-composition';
