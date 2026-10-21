@@ -386,4 +386,59 @@
   }
  }
 
- scene.areaQuality='v4.6-yasaka-clearance-and-material-unity';
+
+ // Fine-grain street furniture for close mobile views. These are illustrative Kyoto-like details,
+ // not an inventory of actual signs, lanterns or fences at surveyed coordinates.
+ function streetLantern(x,z,a=0,scale=1){
+  const y=ground(x,z);
+  pole([x,y+.02,z],[x,y+.92*scale,z],.028*scale,'#735945');
+  box([x,y+1.01*scale,z],[.20*scale,.28*scale,.20*scale],'#ead8b3',a,1);
+  hip('street-lantern-cap-'+areaHouseId++,x,z,.32*scale,.32*scale,y+1.13*scale,.12*scale,.18,'#6f635b');
+ }
+ function lowFence(a,b,side=1){
+  const dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz),nx=-dz/len,nz=dx/len,steps=Math.max(2,Math.floor(len/.75));
+  const yy=[];
+  for(let j=0;j<=steps;j++){
+   const t=j/steps,x=a[0]+dx*t+nx*.68*side,z=a[1]+dz*t+nz*.68*side,y=ground(x,z);
+   pole([x,y+.02,z],[x,y+.48,z],.025,'#80654d');yy.push([x,y+.42,z]);
+  }
+  for(let j=0;j<yy.length-1;j++)beam(yy[j],yy[j+1],.023,'#94765a');
+ }
+ // Lantern rhythm follows only selected portions of the authored street spine.
+ for(let n=1;n<eastSpine.length-1;n+=2){
+  const a=eastSpine[n],b=eastSpine[n+1],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz),nx=-dz/len,nz=dx/len;
+  const x=a[0]+dx*.48+nx*1.18,z=a[1]+dz*.48+nz*1.18;
+  if(!landmarkClear(x,z))streetLantern(x,z,Math.atan2(dx,dz),.92);
+ }
+ for(const [a,b,side]of[
+  [[-8.5,14.8],[-14.8,17.8],-1],
+  [[-22.8,21.0],[-21.2,25.0],1],
+  [[-19.5,32.0],[-22.8,36.7],-1],
+  [[2.0,28.0],[7.5,31.0],1]
+ ])lowFence(a,b,side);
+ // Small wooden vertical shop signs sit beside a limited number of machiya.
+ for(const [x,z,a]of[[-15.1,15.1,.25],[-21.7,20.0,.05],[-24.9,24.0,-.10],[-33.8,32.1,.02],[-35.4,38.1,-.03],[6.2,26.4,.28],[9.4,31.1,.18]]){
+  const y=ground(x,z);
+  pole([x,y+.02,z],[x,y+.73,z],.025,'#6f523d');
+  box([x,y+.72,z],[.25,.58,.075],'#9b6f4f',a,1);
+  plate([x,y+.72,z],[.13,.42,.085],'#d7c6a5',a,1);
+ }
+ // Two water basins anchor temple approaches without blocking the sightline.
+ for(const [x,z,a]of[[areaAnchor.kodaiji[0]-3.0,areaAnchor.kodaiji[1]+1.2,.05],[yasakaX+3.1,yasakaZ-4.7,0]]){
+  const y=ground(x,z);
+  box([x,y+.23,z],[.72,.38,.48],'#aaa697',a,3);
+  plate([x,y+.43,z],[.58,.08,.34],'#89aeb0',a,5);
+  pole([x-.37,y+.22,z],[x-.37,y+.77,z],.032,'#78604b');
+  beam([x-.37,y+.72,z],[x+.10,y+.72,z],.025,'#87684f');
+ }
+ // Discreet benches and planter pots add small-scale depth at open pockets.
+ for(const [x,z,a]of[[4.5,24.8,.24],[8.0,34.5,-.10],[-30.8,36.9,.04],[-18.4,31.8,.06]]){
+  const y=ground(x,z);
+  plate([x,y+.28,z],[.92,.10,.34],'#9f7958',a,1);
+  for(const side of[-1,1])box([x+Math.cos(a)*side*.34,y+.12,z-Math.sin(a)*side*.34],[.10,.28,.20],'#765640',a,1);
+  const px=x+Math.cos(a)*.66,pz=z-Math.sin(a)*.66,py=ground(px,pz);
+  box([px,py+.12,pz],[.26,.22,.26],'#92715b',a,1);
+  ball([px,py+.34,pz],[.23,.24,.23],pick(C.greens),tiny,4);
+ }
+
+ scene.areaQuality='v4.7-street-detail-and-soft-presentation';
