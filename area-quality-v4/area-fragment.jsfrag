@@ -19,6 +19,22 @@
  // urban extension, then rebuild the greenery as controlled precinct edges.
  const urbanContains=(x,z)=>x<-6.5&&x>-38&&z>6&&z<53;
  for(const m of scene.meshes)m.instances=m.instances.filter(i=>!(i.group==='landscape'&&urbanContains(i.p[0],i.p[2])));
+ // Extend the authored terrain north of the original Kiyomizu study so Yasaka and the Gion edge sit on continuous ground.
+ const northTerrain=mesh('higashiyama-north-terrain-extension');
+ const NT=(i,j)=>{const x=-62+i*.65,z=37.35+j*.65;return[x,ground(x,z),z];};
+ for(let i=0;i<126;i++)for(let j=0;j<39;j++){
+  const a=NT(i,j),b=NT(i+1,j),c=NT(i+1,j+1),d=NT(i,j+1);
+  northTerrain.tri(a,d,c,N(a),N(d),N(c));northTerrain.tri(a,c,b,N(a),N(c),N(b));
+ }
+ I(northTerrain,[0,0,0],[1,1,1],'#9cab76',undefined,0);
+ // Northern park edge keeps the expanded ground visually connected to the wooded Higashiyama slope.
+ for(let j=0;j<72;j++){
+  const a=j*2.399,rad=3.0+Math.sqrt((j+.4)/72)*12.0,x=-19+Math.cos(a)*rad,z=51+Math.sin(a)*rad*.55;
+  if(x<-39||x>2||z<39||z>61)continue;
+  const sz=range(.62,1.12);
+  if(rnd()<.16)pine(x,z,sz*.80);else tree(x,z,sz,rnd()<.23?'pink':rnd()<.08?'cream':'green',1);
+ }
+
  const dseg=(x,z,a,b)=>{const dx=b[0]-a[0],dz=b[1]-a[1],q=dx*dx+dz*dz,t=q?clamp(((x-a[0])*dx+(z-a[1])*dz)/q,0,1):0;return Math.hypot(x-a[0]-dx*t,z-a[1]-dz*t);};
  const landmarkClear=(x,z)=>Math.hypot(x-areaAnchor.hokanji[0],z-areaAnchor.hokanji[1])<4.4||Math.hypot(x-areaAnchor.kodaiji[0],z-areaAnchor.kodaiji[1])<7.1||Math.hypot(x-areaAnchor.yasaka[0],z-areaAnchor.yasaka[1])<7.6;
  function areaRoad(name,pts,width=1.05,color='#d8ceb8',edge='#cbbda3'){
