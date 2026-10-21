@@ -185,6 +185,104 @@ function makeStudy(){
  const coats=['#a7b0a0','#c59882','#a4bbc0','#d6ba91','#b5a7b5','#687f80','#c4c0ab'];
  function person(x,y,z,s=.62,a=0){const col=pick(coats),skin=pick(['#cda889','#d8b99a','#be9574']);const local=(xx,yy,zz)=>[x+Math.cos(a)*xx+Math.sin(a)*zz,y+yy,z-Math.sin(a)*xx+Math.cos(a)*zz];plate(local(-s*.09,s*.22,0),[s*.10,s*.38,s*.12],'#6c7065',a);plate(local(s*.09,s*.22,.02),[s*.10,s*.38,s*.12],'#676e68',a);box(local(0,s*.54,0),[s*.34,s*.38,s*.21],col,a);ball(local(0,s*.87,0),[s*.12,s*.14,s*.12],skin,tiny,0);for(let side of[-1,1])pole(local(side*s*.23,s*.67,0),local(side*s*.26,s*.38,.035),s*.043,col);if(rnd()<.45){pole(local(0,s*.99,0),local(0,s*1.035,0),s*.18,'#d5c5a2');ball(local(0,s*1.04,0),[s*.11,s*.07,s*.10],'#d8c6a4',tiny,0);}}
  group='visitors';for(let i=0;i<32;i++){let x=range(-3.75,3.75),z=range(1.9,4.7);person(x,FL+.05,z,range(.53,.65),range(-1.5,2));}for(let i=0;i<16;i++)person(range(-6.4,6.4),FL+.05,range(-.2,.9),range(.53,.64),range(-1,3));for(let i=0;i<37;i++){let p=walk[Math.floor(range(2,walk.length-2))],x=p[0]+range(-.47,.47),z=p[1]+range(-.35,.35);person(x,ground(x,z)+.1,z,range(.52,.64),range(-2,3));}
+
+ // --- Higashiyama / Gion area composition study ---------------------------------
+ // Geographic anchors are derived from published coordinates, scaled for this
+ // miniature at roughly 20 metres per scene unit. Roads and building footprints
+ // between anchors are authored for composition until OSM/GIS geometry is ingested.
+ group='higashiyama-area';
+ const areaAnchor={kiyomizu:[0,-3],hokanji:[-26.22,16.62],kodaiji:[-17.72,28.84],yasaka:[-29.14,44.59]};
+ scene.areaSites={
+  scaleMetresPerUnit:20,
+  geographicAnchors:{
+   kiyomizu:{lat:34.99500,lon:135.78500,local:areaAnchor.kiyomizu},
+   hokanji:{lat:34.99855,lon:135.77925,local:areaAnchor.hokanji},
+   kodaiji:{lat:35.0007611,lon:135.7811139,local:areaAnchor.kodaiji},
+   yasaka:{lat:35.00361,lon:135.77861,local:areaAnchor.yasaka}
+  },
+  placementAccuracy:'anchor-based; connecting streets and intermediate buildings are authored, not surveyed'
+ };
+ function areaRoad(name,pts,width=1.05,color='#d8ceb8'){
+  for(let n=0;n<pts.length-1;n++){
+   const a=pts[n],b=pts[n+1],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz),steps=Math.max(1,Math.ceil(len/.9));
+   for(let k=0;k<steps;k++){
+    const t=(k+.5)/steps,x=a[0]+dx*t,z=a[1]+dz*t,ang=Math.atan2(dx,dz);
+    plate([x,ground(x,z)+.07,z],[width,.075,len/steps+.12],color,ang,0);
+   }
+  }
+ }
+ const eastSpine=[[-1,6],[-5,9],[-10,11.5],[-15,13.5],[-20,15.2],areaAnchor.hokanji,[-23.4,22.2],[-20.6,25.5],areaAnchor.kodaiji,[-21.8,35.3],[-25.0,39.6],areaAnchor.yasaka];
+ areaRoad('higashiyama-spine-border',eastSpine,1.55,'#cbbda3');
+ areaRoad('higashiyama-spine',eastSpine,1.16,'#e4dac7');
+ areaRoad('sannenzaka-link',[[-5,8.8],[-9,14],[-15.2,18.2],[-20.6,18.5]],.78,'#ddd0b8');
+ areaRoad('ninenzaka-link',[[-20.6,18.5],[-21.7,22.5],[-20.8,26.8],[-18.0,28.7]],.82,'#dfd2ba');
+ areaRoad('gion-link',[areaAnchor.kodaiji,[-20.5,34],[-24.8,39],areaAnchor.yasaka],1.05,'#e0d3ba');
+ let areaHouseId=0;
+ function areaMachiya(x,z,a=0,s=1,tone=0){
+  const y=ground(x,z),w=1.55*s,d=1.18*s,h=1.30*s;
+  box([x,y+h*.50,z],[w,h,d],tone%3===0?'#c9a77d':tone%3===1?'#b99571':'#d0b58f',a,1);
+  plate([x,y+h+.10*s,z],[w+0.25*s,.16*s,d+0.28*s],tone%2?'#75685f':'#817167',a,1);
+  for(let j=-2;j<=2;j++)plate([x+Math.cos(a)*j*w*.17,y+h*.54,z-Math.sin(a)*j*w*.17],[.035*s,.70*s,d+.03*s],'#66513e',a,1);
+  plate([x,y+h*.38,z],[w*.78,.06*s,d+.045*s],'#e1d2b6',a,1);
+  areaHouseId++;
+ }
+ // A deliberately varied ribbon of machiya instead of a uniform grid.
+ for(let n=0;n<eastSpine.length-1;n++){
+  const a=eastSpine[n],b=eastSpine[n+1],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz),ang=Math.atan2(dx,dz),nx=-dz/len,nz=dx/len;
+  const count=Math.max(1,Math.floor(len/2.4));
+  for(let k=0;k<count;k++){
+   const t=(k+.55)/count,cx=a[0]+dx*t,cz=a[1]+dz*t;
+   for(const side of[-1,1]){
+    if(rnd()<.13)continue;
+    const off=2.0+range(.05,.55),x=cx+nx*off*side,z=cz+nz*off*side;
+    if(Math.hypot(x-areaAnchor.hokanji[0],z-areaAnchor.hokanji[1])<3.1||Math.hypot(x-areaAnchor.kodaiji[0],z-areaAnchor.kodaiji[1])<3.4||Math.hypot(x-areaAnchor.yasaka[0],z-areaAnchor.yasaka[1])<4.2)continue;
+    areaMachiya(x,z,ang+range(-.08,.08),range(.78,1.18),n+k+(side>0?1:0));
+   }
+  }
+ }
+ function areaPagoda(x,z,s=1){
+  const y=ground(x,z);
+  for(let k=0;k<5;k++){
+   const w=(2.8-k*.30)*s,h=.78*s,yy=y+.45*s+k*.93*s;
+   box([x,yy,z],[w*.58,h,w*.58],'#9c6849',0,1);
+   plate([x,yy+h*.57,z],[w,.13*s,w],'#665b58',0,1);
+   for(const side of[-1,1])for(const axis of[0,1]){
+    const p=axis?[x+side*w*.30,yy,z]:[x,yy,z+side*w*.30];
+    pole([p[0],yy-h*.34,p[2]],[p[0],yy+h*.34,p[2]],.045*s,'#744d37');
+   }
+  }
+  pole([x,y+4.9*s,z],[x,y+6.15*s,z],.055*s,'#9a7447');
+  ball([x,y+6.28*s,z],[.13*s,.18*s,.13*s],'#c7a057',tiny,1);
+ }
+ areaPagoda(areaAnchor.hokanji[0],areaAnchor.hokanji[1],1.06);
+ function areaTemple(x,z,s=1){
+  const y=ground(x,z);
+  box([x,y+.65*s,z],[4.1*s,1.30*s,2.75*s],'#9f7554',0,1);
+  hip('area-temple-roof-'+areaHouseId++,x,z,4.9*s,3.4*s,y+1.26*s,1.05*s,.30,'#75645b');
+  plate([x,y+.10*s,z+2.25*s],[5.4*s,.10*s,2.0*s],'#d6c5a8',0,0);
+  for(let i=-2;i<=2;i++)pole([x+i*.75*s,y+.05*s,z+1.25*s],[x+i*.75*s,y+1.20*s,z+1.25*s],.06*s,'#805b42');
+ }
+ areaTemple(areaAnchor.kodaiji[0],areaAnchor.kodaiji[1],1.03);
+ // Small reflective garden pond at Kodaiji: graphic and non-navigational.
+ plate([areaAnchor.kodaiji[0]+3.2,ground(areaAnchor.kodaiji[0]+3.2,areaAnchor.kodaiji[1]+1.2)+.055,areaAnchor.kodaiji[1]+1.2],[4.5,.045,2.35],'#83b9be',-.12,5);
+ function areaTorii(x,z,s=1,a=0){
+  const y=ground(x,z),c='#c9583f';
+  for(const side of[-1,1])pole([x+Math.cos(a)*side*1.15*s,y,z-Math.sin(a)*side*1.15*s],[x+Math.cos(a)*side*1.15*s,y+2.45*s,z-Math.sin(a)*side*1.15*s],.12*s,c);
+  const dx=Math.cos(a)*1.55*s,dz=-Math.sin(a)*1.55*s;
+  beam([x-dx,y+2.18*s,z-dz],[x+dx,y+2.18*s,z+dz],.14*s,c,.16*s);
+  beam([x-dx*1.12,y+2.58*s,z-dz*1.12],[x+dx*1.12,y+2.58*s,z+dz*1.12],.18*s,c,.18*s);
+ }
+ areaTorii(areaAnchor.yasaka[0],areaAnchor.yasaka[1]-2.9,1.05,0);
+ // Yasaka shrine massing: vermilion precinct marker, not a surveyed reconstruction.
+ const sy=ground(areaAnchor.yasaka[0],areaAnchor.yasaka[1]);
+ box([areaAnchor.yasaka[0],sy+.72,areaAnchor.yasaka[1]],[5.7,1.45,3.6],'#b85640',0,1);
+ hip('yasaka-area-roof',areaAnchor.yasaka[0],areaAnchor.yasaka[1],6.5,4.3,sy+1.40,1.10,.28,'#6e6259');
+ for(let i=-3;i<=3;i++)pole([areaAnchor.yasaka[0]+i*.72,sy+.08,areaAnchor.yasaka[1]+1.52],[areaAnchor.yasaka[0]+i*.72,sy+1.32,areaAnchor.yasaka[1]+1.52],.055,'#c56647');
+ // Trees are grouped around precincts, leaving routes readable from the area view.
+ for(const [cx,cz,rad] of [[-22,18,5],[-18,29,5.8],[-29,44,6.8],[-12,22,4.8]]){
+  for(let j=0;j<28;j++){const a=j*2.399,rr=rad*Math.sqrt((j+.5)/28),x=cx+Math.cos(a)*rr,z=cz+Math.sin(a)*rr;if(rnd()<.18)pine(x,z,range(.55,.9));else tree(x,z,range(.55,1.05),rnd()<.32?'pink':'green',1);}
+ }
+
  group='distant-context';
  // Distant city is context only, to the west. No generic tower is mislabelled as Yasaka.
  for(let row=0;row<8;row++)for(let k=0;k<15;k++){let x=-66+k*2.3+range(-.25,.25),z=-46+row*2.4+range(-.2,.2);if(x>-30&&z>-29)continue;let y=ground(x,z),h=range(.65,1.65),w=range(1.1,1.65),d=range(.9,1.5);box([x,y+h/2,z],[w,h,d],pick(['#d6d2be','#c4ccbd','#dac9b5','#bbcfce','#d4c5c4']),range(-.05,.05),0);plate([x,y+h+.07,z],[w+.16,.14,d+.18],pick(['#939da1','#9ba4a0','#aaa698']),0,0);}
@@ -193,8 +291,8 @@ function makeStudy(){
  // Three-dimensional soft clouds remain deliberately small and peripheral.
  for(let [x,y,z,s]of[[-29,20,-30,1.4],[21,23,-38,1.6],[-7,24,-50,1.2]])for(let k=0;k<6;k++)ball([x+(k-2)*s*.66,y+Math.sin(k)*s*.13,z],[s*.63,s*(k===2?.51:.31),s*.40],'#fff4e3',distant,7);
  scene.stats={mainHallInstances:scene.meshes.reduce((n,m)=>n+m.instances.filter(i=>i.group==='main-hall').length,0),trees:centres.length,stageSupportCount:18,mainBays:[9,7],surveyed:false};
- scene.revision='quality-v5.1';scene.modelNotice='建築資料を基に制作したミニチュアです。寸法・境内配置は測量モデルではありません。';
- scene.named={temple:{target:[-1,7.2,-.4],span:29,yaw:.64,pitch:.43},corner:{target:[1.9,8.5,1.4],span:15.7,yaw:.65,pitch:.31},reverse:{target:[-1,7.4,-.4],span:29,yaw:-.54,pitch:.43}};
+ scene.revision='area-higashiyama-v1';scene.modelNotice='建築資料を基に制作したミニチュアです。寸法・境内配置は測量モデルではありません。';
+ scene.named={area:{target:[-15,6,22],span:76,yaw:.62,pitch:.49},temple:{target:[-1,7.2,-.4],span:29,yaw:.64,pitch:.43},corner:{target:[1.9,8.5,1.4],span:15.7,yaw:.65,pitch:.31},reverse:{target:[-1,7.4,-.4],span:29,yaw:-.54,pitch:.43}};
  scene.meshes=scene.meshes.filter(m=>m.p.length&&m.instances.length);
  return scene;
 }
