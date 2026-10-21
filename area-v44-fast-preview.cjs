@@ -21,6 +21,17 @@ const check=(n,v,d)=>{report.checks.push({name:n,passed:!!v,detail:d});assert.ok
   {target:[-5,5.7,18],span:38,yaw:.58,pitch:.48}
  ];
  for(let i=0;i<candidates.length;i++){await page.evaluate(c=>phoneTest.setCamera(c),candidates[i]);await page.waitForTimeout(400);await page.screenshot({path:path.join(OUT,'area-candidate-'+i+'.png'),timeout:120000});report.shots.push('area-candidate-'+i+'.png');}
- await snap('hokanji','hokanji-mobile.png');await snap('kodaiji','kodaiji-mobile.png');await snap('yasaka','yasaka-mobile.png');await snap('street','street-mobile.png');await snap('area','area-wide.png',1280,960);
+ await snap('hokanji','hokanji-mobile.png');await snap('kodaiji','kodaiji-mobile.png');await snap('yasaka','yasaka-mobile.png');
+ const landmarkStudies={
+  yasaka:{target:[-29.1,4.7,44.6],span:12.4,pitch:.36,yaws:[.35,.75,1.15,1.55,1.95,2.35]},
+  kodaiji:{target:[-17.7,4.9,28.8],span:11.5,pitch:.36,yaws:[.20,.60,1.00,1.40,1.80,2.20]}
+ };
+ for(const [name,g]of Object.entries(landmarkStudies))for(let i=0;i<g.yaws.length;i++){
+  await page.evaluate(c=>phoneTest.setCamera(c),{target:g.target,span:g.span,pitch:g.pitch,yaw:g.yaws[i]});
+  await page.waitForTimeout(350);
+  const file=name+'-study-'+i+'.png';
+  await page.screenshot({path:path.join(OUT,file),timeout:120000});report.shots.push(file);
+ }
+ await snap('street','street-mobile.png');await snap('area','area-wide.png',1280,960);
  check('runtime errors',report.errors.length===0,report.errors);report.ok=true;
  }catch(e){report.ok=false;report.failure=String(e.stack||e);process.exitCode=1;}finally{if(browser)await browser.close();if(server)server.kill('SIGTERM');fs.writeFileSync(path.join(OUT,'results.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));}})();
