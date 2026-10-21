@@ -19,7 +19,8 @@ for(const patch of JSON.parse(fs.readFileSync(path.join(root,'patches.json'),'ut
 fs.writeFileSync(path.join(site,'src/scene.js'),require('./refine.cjs')(fs.readFileSync(path.join(root,'scene.js'),'utf8')));
 fs.writeFileSync(path.join(site,'robots.txt'),'User-agent: *\nDisallow: /\n');
 require('./finish.cjs')(site);
-const viewerHashes=require('./presentation.cjs')(site);
+require('./presentation.cjs')(site);
+const viewerHashes=require('./interaction.cjs')(site);
 fs.writeFileSync(path.join(out,'viewer-hashes.json'),JSON.stringify(viewerHashes,null,2));
 for(const file of ['renderer.js','scene.js','app.js'])cp.execFileSync(process.execPath,['--check',path.join(site,'src',file)],{stdio:'inherit'});
 const context=vm.createContext({console,performance});
@@ -62,7 +63,7 @@ async function buildLighting(){
  else{cp.execFileSync('g++',['-O3','-std=c++17','-fopenmp',source,'-o',exe],{stdio:'inherit'});cp.execFileSync(exe,[scenePath,lightPath,rays],{stdio:'inherit',timeout:55*60*1000});}
  const light=fs.readFileSync(lightPath);
  if(light.toString('ascii',0,4)!=='KVL1'||light.length!==lightSize||light.readUInt32LE(4)!==lightCount)throw Error('Light bake is incomplete or mismatched');
- fs.writeFileSync(path.join(site,'build-info.json'),JSON.stringify({revision:scene.revision,viewerRevision:'quality-v5.3',viewerHashes,modelHash:hash,bakerHash,meshes:scene.meshes.length,instances,triangles:scene.meshes.reduce((n,m)=>n+m.p.length/9*m.instances.length,0),lightSamples:lightCount,rays:Number(rays),lightingBytes:light.length,lightingHash:sha(light),architecture:scene.stats,surveyed:false,description:'Native WebGL2 miniature. Actual geometry with matching four-bounce light bake, indexed vertices and native MSAA. No reference-image planes.'},null,2));
- console.log('BUILD_VALIDATED',JSON.stringify({meshes:scene.meshes.length,instances,lighting:light.length,viewerRevision:'quality-v5.3'}));
+ fs.writeFileSync(path.join(site,'build-info.json'),JSON.stringify({revision:scene.revision,viewerRevision:'quality-v5.3.1',viewerHashes,modelHash:hash,bakerHash,meshes:scene.meshes.length,instances,triangles:scene.meshes.reduce((n,m)=>n+m.p.length/9*m.instances.length,0),lightSamples:lightCount,rays:Number(rays),lightingBytes:light.length,lightingHash:sha(light),architecture:scene.stats,surveyed:false,description:'Native WebGL2 miniature. Actual geometry with matching four-bounce light bake, indexed vertices and native MSAA. No reference-image planes.'},null,2));
+ console.log('BUILD_VALIDATED',JSON.stringify({meshes:scene.meshes.length,instances,lighting:light.length,viewerRevision:'quality-v5.3.1'}));
 }
 buildLighting().catch(e=>{console.error(e);process.exitCode=1;});
