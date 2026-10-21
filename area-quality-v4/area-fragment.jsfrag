@@ -12,7 +12,7 @@
    kodaiji:{lat:35.0007611,lon:135.7811139,local:areaAnchor.kodaiji},
    yasaka:{lat:35.00361,lon:135.77861,local:areaAnchor.yasaka}
   },
-  placementAccuracy:'anchor-based landmarks; authored intermediate streets/buildings'
+  placementAccuracy:'landmark anchors plus selected OSM historic streets; remaining intermediate buildings/streets authored',roadReference:'OpenStreetMap contributors / ODbL 1.0'
  };
  // The Kiyomizu study originally planted woodland across the full art board.
  // Remove only those pre-existing landscape instances that fall inside the new
@@ -62,14 +62,33 @@
    plate([x,y+.08,z],[width,.11,Math.hypot(dx,dz)/count+.09],'#d5c9b4',ang,3);
   }
  }
+ // Broad composition spine remains useful for visual density, but named historic streets below use OSM reference geometry.
  const eastSpine=[[-1,6],[-5,9],[-10,11.5],[-15,13.5],[-20,15.2],areaAnchor.hokanji,[-23.4,22.2],[-20.6,25.5],areaAnchor.kodaiji,[-21.8,35.3],[-25.0,39.6],areaAnchor.yasaka];
- areaRoad('higashiyama-spine',eastSpine,1.20,'#e7dcc8');
- const sannenzaka=[[-5,8.8],[-9,14],[-15.2,18.2],[-20.6,18.5]];
- const ninenzaka=[[-20.6,18.5],[-21.7,22.5],[-20.8,26.8],[-18.0,28.7]];
+
+ // OpenStreetMap-referenced historic lanes (ODbL; approximately 20 m per scene unit).
+ const kiyomizuzaka=[[-19.49,6.639],[-16.859,5.496],[-14.495,4.025],[-13.099,2.953],[-12.212,2.772],[-9.498,2.838]];
+ const sannenzaka=[[-19.191,6.512],[-19.115,6.683],[-18.491,8.147],[-18.153,9.157],[-18.111,10.763],[-17.951,13.788],[-18.029,15.293],[-18.399,16.010],[-19.130,16.568]];
+ const ninenzaka=[[-19.130,16.568],[-19.088,16.705],[-18.913,17.475],[-19.078,20.633],[-19.525,22.448],[-19.587,23.588]];
+ const ichinenzaka=[[-19.525,22.448],[-22.504,22.167],[-22.934,22.759],[-23.420,22.987],[-23.509,23.568]];
+ const yasakaDori=[[-35.611,20.479],[-27.246,19.597],[-27.314,18.987]];
+ const ishobeiKoji=[[-23.347,27.271],[-25.104,27.424]];
+ const neneNoMichi=[[-23.885,31.321],[-24.878,31.402],[-24.860,31.694],[-24.996,31.702],[-26.064,31.676]];
  const gionLink=[areaAnchor.kodaiji,[-20.5,34],[-24.8,39],areaAnchor.yasaka];
- areaRoad('sannenzaka',sannenzaka,.84,'#dfd1b8');areaRoad('ninenzaka',ninenzaka,.88,'#e2d4ba');areaRoad('gion-link',gionLink,1.08,'#e4d7bd');
- areaSteps([-12.2,15.3],[-15.8,18.4],1.05,11);areaSteps([-20.2,19.3],[-21.5,22.0],1.0,9);
- areaStoneWall([-13.0,12.5],[-20.7,15.1],.55);areaStoneWall([-20.2,23.0],[-18.8,28.0],.62);
+
+ areaRoad('kiyomizuzaka-osm',kiyomizuzaka,.92,'#e2d5bd');
+ areaRoad('sannenzaka-osm',sannenzaka,.78,'#dfd1b8');
+ areaRoad('ninenzaka-osm',ninenzaka,.82,'#e2d4ba');
+ areaRoad('ichinenzaka-osm',ichinenzaka,.72,'#e2d5bf');
+ areaRoad('yasaka-dori-osm',yasakaDori,.90,'#ddd0b9');
+ areaRoad('ishibei-koji-osm',ishobeiKoji,.62,'#e0d4be');
+ areaRoad('nene-no-michi-osm',neneNoMichi,.66,'#e0d4be');
+ areaRoad('gion-link',gionLink,1.02,'#e4d7bd');
+
+ // Steps are placed on the OSM step segments rather than the previous approximate diagonals.
+ areaSteps([-19.115,6.683],[-18.491,8.147],.94,10);
+ areaSteps([-19.088,16.705],[-18.913,17.475],.92,7);
+ areaStoneWall([-19.45,6.45],[-18.55,9.30],.48);
+ areaStoneWall([-19.45,17.1],[-19.20,22.2],.50);
 
  let areaHouseId=0;
  function areaMachiya(x,z,a=0,s=1,tone=0,variant=0){
@@ -109,7 +128,15 @@
    }
   }
  }
- ribbonBuildings(eastSpine,2.28);ribbonBuildings(sannenzaka,1.95);ribbonBuildings(ninenzaka,1.92);ribbonBuildings(gionLink,2.15);
+ ribbonBuildings(eastSpine,2.45);
+ ribbonBuildings(kiyomizuzaka,1.90);
+ ribbonBuildings(sannenzaka,1.78);
+ ribbonBuildings(ninenzaka,1.75);
+ ribbonBuildings(ichinenzaka,1.82);
+ ribbonBuildings(yasakaDori,1.90);
+ ribbonBuildings(ishobeiKoji,1.70);
+ ribbonBuildings(neneNoMichi,1.72);
+ ribbonBuildings(gionLink,2.15);
  // Secondary lanes close the gaps between the four anchors so the area reads as one townscape.
  const hokanjiLane=[[areaAnchor.hokanji[0]-7.4,areaAnchor.hokanji[1]+1.2],[areaAnchor.hokanji[0]-3.7,areaAnchor.hokanji[1]+.4],areaAnchor.hokanji,[areaAnchor.hokanji[0]+4.8,areaAnchor.hokanji[1]-1.0]];
  const kodaijiLane=[[areaAnchor.kodaiji[0]-7.0,areaAnchor.kodaiji[1]+1.8],[areaAnchor.kodaiji[0]-3.2,areaAnchor.kodaiji[1]+.5],[areaAnchor.kodaiji[0]+5.7,areaAnchor.kodaiji[1]-.7]];
@@ -490,4 +517,4 @@
   ball([px,py+.34,pz],[.23,.24,.23],pick(C.greens),tiny,4);
  }
 
- scene.areaQuality='accuracy-v1.1-yasaka-south-sequence';
+ scene.areaQuality='accuracy-v1.2-osm-historic-street-shapes';
