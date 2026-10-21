@@ -126,6 +126,25 @@
   // front veranda and columns
   plate([x,y+.18*s,z+1.75*s],[5.0*s,.18*s,1.2*s],'#b58f65',0,1);
   for(let i=-3;i<=3;i++)pole([x+i*.65*s,y+.20*s,z+1.60*s],[x+i*.65*s,y+1.35*s,z+1.60*s],.05*s,'#76513b');
+  // Five front bays with recessed light plaster and dark lattice under the eaves.
+  for(let i=-2;i<=2;i++){
+   const px=x+i*.82*s;
+   plate([px,y+.82*s,z+1.49*s],[.68*s,.88*s,.055*s],i===0?'#d8ccb4':'#e6dcc6',0,1);
+   for(let j=-1;j<=1;j++)plate([px+j*.19*s,y+.82*s,z+1.455*s],[.025*s,.86*s,.035*s],'#674a37',0,1);
+   plate([px,y+.57*s,z+1.43*s],[.66*s,.025*s,.04*s],'#76523a',0,1);
+  }
+  // Veranda rail, bracket blocks and small stone lanterns make the hall readable up close.
+  for(let i=-4;i<=4;i++){
+   const px=x+i*.55*s;
+   pole([px,y+.22*s,z+2.05*s],[px,y+.66*s,z+2.05*s],.028*s,'#76513b');
+  }
+  beam([x-2.35*s,y+.66*s,z+2.05*s],[x+2.35*s,y+.66*s,z+2.05*s],.035*s,'#8b6448');
+  for(const side of[-1,1]){
+   const lx=x+side*2.9*s,lz=z+2.25*s,ly=ground(lx,lz);
+   pole([lx,ly,lz],[lx,ly+.55*s,lz],.035*s,'#858172');
+   box([lx,ly+.66*s,lz],[.26*s,.22*s,.26*s],'#b9b4a5',0,3);
+   hip('kodaiji-lantern-'+side,lx,lz,.38*s,.38*s,ly+.78*s,.15*s,.18,'#8a8578');
+  }
   // smaller side hall
   const sx=x+4.2*s,sz=z-.6*s,sy=ground(sx,sz);
   box([sx,sy+.50*s,sz],[2.5*s,1.0*s,1.85*s],'#a27857',-.08,1);
@@ -170,6 +189,14 @@
    beam([xx,by+.48,bz-1.28],[xx,by+.48,bz+1.28],.035,'#8d6548');
   }
  }
+ // Small garden pavilion establishes a second architectural scale inside Kodaiji.
+ {
+  const x=areaAnchor.kodaiji[0]-4.7,z=areaAnchor.kodaiji[1]+4.2,y=ground(x,z);
+  plate([x,y+.16,z],[2.15,.18,1.65],'#ad895f',.12,1);
+  for(const sx of[-1,1])for(const sz of[-1,1])pole([x+sx*.78,y+.18,z+sz*.58],[x+sx*.78,y+1.15,z+sz*.58],.055,'#7a573f');
+  hip('kodaiji-garden-pavilion',x,z,2.65,2.15,y+1.02,.62,.25,'#71645d');
+  for(let i=-2;i<=2;i++)plate([x+i*.28,y+.65,z+.62],[.025,.72,.035],'#6d503b',.12,1);
+ }
 
  function areaTorii(x,z,s=1,a=0){
   const y=ground(x,z),c='#c9573f';
@@ -185,6 +212,21 @@
  box([yasakaX,yasakaY+.78,yasakaZ],[6.2,1.56,3.8],'#b8553e',0,1);
  hip('yasaka-main-roof',yasakaX,yasakaZ,7.05,4.65,yasakaY+1.50,1.18,.29,'#685d57');
  plate([yasakaX,yasakaY+.17,yasakaZ+2.05],[6.4,.18,1.15],'#c48658',0,1);
+ // Bright plaster bays and deep vermilion framing under the main eave.
+ for(let i=-3;i<=3;i++){
+  const px=yasakaX+i*.80;
+  plate([px,yasakaY+.87,yasakaZ+1.88],[.62,.92,.06],i===0?'#ead9b8':'#f0e4cb',0,1);
+  pole([px-.34,yasakaY+.25,yasakaZ+1.82],[px-.34,yasakaY+1.48,yasakaZ+1.82],.045,'#b94e38');
+  pole([px+.34,yasakaY+.25,yasakaZ+1.82],[px+.34,yasakaY+1.48,yasakaZ+1.82],.045,'#b94e38');
+  for(let r=-1;r<=1;r++)plate([px+r*.18,yasakaY+.88,yasakaZ+1.84],[.022,.88,.035],'#7c4c38',0,1);
+ }
+ // Wide front stair and under-eave lantern row.
+ areaSteps([yasakaX,yasakaZ+3.1],[yasakaX,yasakaZ+1.95],4.8,8);
+ for(let i=-5;i<=5;i++){
+  const px=yasakaX+i*.53;
+  pole([px,yasakaY+1.56,yasakaZ+2.06],[px,yasakaY+1.72,yasakaZ+2.06],.018,'#69513f');
+  ball([px,yasakaY+1.47,yasakaZ+2.06],[.10,.14,.10],i%3===0?'#d8aa6f':'#ead9b6',tiny,1);
+ }
  for(let i=-4;i<=4;i++){
   pole([yasakaX+i*.68,yasakaY+.18,yasakaZ+1.82],[yasakaX+i*.68,yasakaY+1.45,yasakaZ+1.82],.055,'#c46748');
   box([yasakaX+i*.68,yasakaY+1.48,yasakaZ+1.82],[.28,.12,.34],'#a64f3b',0,1);
@@ -248,4 +290,4 @@
   if(Math.hypot(x-areaAnchor.hokanji[0],z-areaAnchor.hokanji[1])<2.4||Math.hypot(x-areaAnchor.kodaiji[0],z-areaAnchor.kodaiji[1])<2.9||Math.hypot(x-areaAnchor.yasaka[0],z-areaAnchor.yasaka[1])<3.5)continue;
   if(rnd()<.58)ball([x,ground(x,z)+.17,z],[range(.14,.30),range(.10,.22),range(.14,.30)],pick(C.greens),tiny,4);
  }
- scene.areaQuality='v4.2-landmark-precincts-and-human-scale';
+ scene.areaQuality='v4.3-architectural-detail-parity';
