@@ -24,4 +24,18 @@ jobs:
         with:
           node-version: '24'
       - name: Compose and validate the full area geometry
-        run: node area-quality-v4/build.cjs --validate-only
+        shell: bash
+        run: |
+          set +e
+          node area-quality-v4/build.cjs --validate-only > area-v4-validation.log 2>&1
+          code=$?
+          cat area-v4-validation.log
+          exit $code
+      - name: Save validation log
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: higashiyama-area-v4-validation-log
+          path: area-v4-validation.log
+          if-no-files-found: error
+          retention-days: 7
