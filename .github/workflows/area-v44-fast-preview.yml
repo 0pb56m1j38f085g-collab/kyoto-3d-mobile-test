@@ -1,7 +1,7 @@
 name: Higashiyama v4.4 fast geometry preview
 on:
   push:
-    branches: [area-higashiyama-quality-v4, area-higashiyama-accuracy-v1]
+    branches: [area-higashiyama-quality-v4, area-higashiyama-accuracy-v1, area-higashiyama-accuracy-v1.2]
     paths:
       - 'area-v44-fast-preview.cjs'
       - '.github/workflows/area-v44-fast-preview.yml'
