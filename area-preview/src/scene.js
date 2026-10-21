@@ -356,7 +356,7 @@ function makeStudy(){
   if(Math.hypot(x-areaAnchor.hokanji[0],z-areaAnchor.hokanji[1])<2.4||Math.hypot(x-areaAnchor.kodaiji[0],z-areaAnchor.kodaiji[1])<2.9||Math.hypot(x-areaAnchor.yasaka[0],z-areaAnchor.yasaka[1])<3.5)continue;
   if(rnd()<.58)ball([x,ground(x,z)+.17,z],[range(.14,.30),range(.10,.22),range(.14,.30)],pick(C.greens),tiny,4);
  }
- scene.areaQuality='v2-landmark-and-streetscape-pass';
+ scene.areaQuality='v3-detailed-landmarks-and-streetscape';
  group='distant-context';
  // Distant city is context only, to the west. No generic tower is mislabelled as Yasaka.
  for(let row=0;row<8;row++)for(let k=0;k<15;k++){let x=-66+k*2.3+range(-.25,.25),z=-46+row*2.4+range(-.2,.2);if(x>-30&&z>-29)continue;let y=ground(x,z),h=range(.65,1.65),w=range(1.1,1.65),d=range(.9,1.5);box([x,y+h/2,z],[w,h,d],pick(['#d6d2be','#c4ccbd','#dac9b5','#bbcfce','#d4c5c4']),range(-.05,.05),0);plate([x,y+h+.07,z],[w+.16,.14,d+.18],pick(['#939da1','#9ba4a0','#aaa698']),0,0);}
@@ -365,7 +365,7 @@ function makeStudy(){
  // Three-dimensional soft clouds remain deliberately small and peripheral.
  for(let [x,y,z,s]of[[-29,20,-30,1.4],[21,23,-38,1.6],[-7,24,-50,1.2]])for(let k=0;k<6;k++)ball([x+(k-2)*s*.66,y+Math.sin(k)*s*.13,z],[s*.63,s*(k===2?.51:.31),s*.40],'#fff4e3',distant,7);
  scene.stats={mainHallInstances:scene.meshes.reduce((n,m)=>n+m.instances.filter(i=>i.group==='main-hall').length,0),trees:centres.length,stageSupportCount:18,mainBays:[9,7],surveyed:false};
- scene.revision='area-higashiyama-quality-v2';scene.modelNotice='建築資料を基に制作したミニチュアです。寸法・境内配置は測量モデルではありません。';
+ scene.revision='area-higashiyama-quality-v3';scene.modelNotice='建築資料を基に制作したミニチュアです。寸法・境内配置は測量モデルではありません。';
  scene.named={area:{target:[-15,6,22],span:76,yaw:.62,pitch:.49},temple:{target:[-1,7.2,-.4],span:29,yaw:.64,pitch:.43},corner:{target:[1.9,8.5,1.4],span:15.7,yaw:.65,pitch:.31},reverse:{target:[-1,7.4,-.4],span:29,yaw:-.54,pitch:.43}};
  scene.meshes=scene.meshes.filter(m=>m.p.length&&m.instances.length);
  return scene;
