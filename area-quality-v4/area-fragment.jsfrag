@@ -206,6 +206,28 @@
    beam([xx,by+.48,bz-1.28],[xx,by+.48,bz+1.28],.035,'#8d6548');
   }
  }
+ // Covered garden corridor inspired by Kodaiji's characteristic roofed walks around the pond.
+ // Geometry is stylized from visual references; it is not a measured reconstruction.
+ {
+  const bx=areaAnchor.kodaiji[0],bz=areaAnchor.kodaiji[1];
+  const pts=[[bx+1.65,bz+2.15],[bx+.95,bz+2.50],[bx+.05,bz+2.83],[bx-.95,bz+3.10],[bx-2.00,bz+3.38],[bx-3.15,bz+3.72],[bx-4.05,bz+4.02]];
+  for(let i=0;i<pts.length-1;i++){
+   const a=pts[i],b=pts[i+1],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz),ang=Math.atan2(dx,dz),mx=(a[0]+b[0])/2,mz=(a[1]+b[1])/2,my=ground(mx,mz)+.32+i*.018;
+   // raised timber deck and slim tiled canopy
+   plate([mx,my,mz],[.92,.12,len+.12],'#a87f59',ang,1);
+   plate([mx,my+.92,mz],[1.30,.12,len+.30],'#746760',ang,1);
+   for(const side of[-1,1]){
+    const nx=Math.cos(ang)*side*.38,nz=-Math.sin(ang)*side*.38;
+    pole([mx+nx,my-.05,mz+nz],[mx+nx,my+.86,mz+nz],.040,'#75543d');
+   }
+   // low rail rhythm
+   for(const side of[-1,1]){
+    const nx=Math.cos(ang)*side*.47,nz=-Math.sin(ang)*side*.47;
+    beam([a[0]+nx,ground(a[0]+nx,a[1]+nz)+.58,a[1]+nz],[b[0]+nx,ground(b[0]+nx,b[1]+nz)+.58,b[1]+nz],.025,'#866248');
+   }
+  }
+ }
+
  // Small garden pavilion establishes a second architectural scale inside Kodaiji.
  {
   const x=areaAnchor.kodaiji[0]-4.7,z=areaAnchor.kodaiji[1]+4.2,y=ground(x,z);
@@ -227,7 +249,11 @@
  const yasakaY=ground(areaAnchor.yasaka[0],areaAnchor.yasaka[1]),yasakaX=areaAnchor.yasaka[0],yasakaZ=areaAnchor.yasaka[1];
  // Yasaka main massing with layered shrine details
  box([yasakaX,yasakaY+.78,yasakaZ],[6.2,1.56,3.8],'#b8553e',0,1);
- hip('yasaka-main-roof',yasakaX,yasakaZ,7.05,4.65,yasakaY+1.50,1.18,.29,'#685d57');
+ hip('yasaka-main-roof',yasakaX,yasakaZ,8.15,5.55,yasakaY+1.48,1.32,.30,'#685d57');
+ // Yasaka's main hall has a notably dominant unified roof and lower eaves on three sides.
+ hip('yasaka-matahisa-east',yasakaX+3.35,yasakaZ-.18,2.15,4.05,yasakaY+1.06,.58,.22,'#6d625b');
+ hip('yasaka-matahisa-west',yasakaX-3.35,yasakaZ-.18,2.15,4.05,yasakaY+1.06,.58,.22,'#6d625b');
+ hip('yasaka-matahisa-north',yasakaX,yasakaZ-2.20,6.35,1.85,yasakaY+1.04,.48,.22,'#6d625b');
  plate([yasakaX,yasakaY+.17,yasakaZ+2.05],[6.4,.18,1.15],'#c48658',0,1);
  // Bright plaster bays and deep vermilion framing under the main eave.
  for(let i=-3;i<=3;i++){
@@ -259,6 +285,19 @@
  const gy=ground(yasakaX,yasakaZ-5.3);
  box([yasakaX,gy+.56,yasakaZ-5.3],[4.0,1.12,1.35],'#bd5a42',0,1);
  hip('yasaka-gate-roof',yasakaX,yasakaZ-5.3,4.8,2.0,gy+1.05,.62,.28,'#6b5e57');
+
+ // Open dance pavilion (maiden) gives the precinct its characteristic layered sequence.
+ {
+  const x=yasakaX,z=yasakaZ-2.25,y=ground(x,z);
+  plate([x,y+.20,z],[3.35,.18,2.40],'#b68156',0,1);
+  for(const sx of[-1,1])for(const sz of[-1,1])pole([x+sx*1.30,y+.22,z+sz*.88],[x+sx*1.30,y+1.58,z+sz*.88],.060,'#ba523d');
+  hip('yasaka-maiden-roof',x,z,4.25,3.25,y+1.48,.82,.27,'#675c57');
+  for(const side of[-1,1])for(let j=-3;j<=3;j++){
+   const px=x+j*.45,pz=z+side*1.14;
+   pole([px,y+1.30,pz],[px,y+1.52,pz],.018,'#6d5140');
+   ball([px,y+1.23,pz],[.09,.13,.09],j%2?'#ead7ad':'#d6a96d',tiny,1);
+  }
+ }
 
  // Yasaka forecourt: broad approach, flanking shrine halls and denser lantern rhythm.
  {
@@ -441,4 +480,4 @@
   ball([px,py+.34,pz],[.23,.24,.23],pick(C.greens),tiny,4);
  }
 
- scene.areaQuality='v4.7-street-detail-and-soft-presentation';
+ scene.areaQuality='accuracy-v1-kodaiji-corridor-yasaka-roof-maiden';
