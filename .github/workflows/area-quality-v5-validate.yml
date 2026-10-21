@@ -1,0 +1,27 @@
+name: Higashiyama area quality v5 validation
+on:
+  push:
+    branches: [area-higashiyama-quality-v5]
+    paths:
+      - 'area-quality-v5/**'
+      - 'quality-v5/bake_vertex.cpp'
+      - '.github/workflows/area-quality-v5-validate.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: higashiyama-area-quality-v5-validation
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Compose and validate quality-v5 area geometry
+        run: node area-quality-v5/build.cjs --validate-only
