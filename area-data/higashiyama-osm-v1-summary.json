@@ -1,0 +1,11 @@
+{
+  "source": "OpenStreetMap contributors / Overpass API",
+  "license": "ODbL 1.0",
+  "retrievedAt": "2026-10-21T23:52:43.766Z",
+  "stats": {
+    "roads": 1320,
+    "buildings": 3116,
+    "roadPoints": 3929,
+    "buildingPoints": 18547
+  }
+}
