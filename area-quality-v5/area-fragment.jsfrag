@@ -1,0 +1,337 @@
+// --- Higashiyama / Gion area quality pass v2 ---------------------------------
+ // Geographic anchors are derived from published coordinates, scaled for this
+ // miniature at roughly 20 metres per scene unit. Roads and intermediate
+ // footprints remain authored until GIS ingestion; landmark geometry is custom.
+ group='higashiyama-area';
+ const areaAnchor={kiyomizu:[0,-3],hokanji:[-26.22,16.62],kodaiji:[-17.72,28.84],yasaka:[-29.14,44.59]};
+ scene.areaSites={
+  scaleMetresPerUnit:20,
+  geographicAnchors:{
+   kiyomizu:{lat:34.99500,lon:135.78500,local:areaAnchor.kiyomizu},
+   hokanji:{lat:34.99855,lon:135.77925,local:areaAnchor.hokanji},
+   kodaiji:{lat:35.0007611,lon:135.7811139,local:areaAnchor.kodaiji},
+   yasaka:{lat:35.00361,lon:135.77861,local:areaAnchor.yasaka}
+  },
+  placementAccuracy:'anchor-based landmarks; authored intermediate streets/buildings'
+ };
+ // The Kiyomizu study originally planted woodland across the full art board.
+ // Remove only those pre-existing landscape instances that fall inside the new
+ // urban extension, then rebuild the greenery as controlled precinct edges.
+ const urbanContains=(x,z)=>x<-6.5&&x>-38&&z>6&&z<53;
+ for(const m of scene.meshes)m.instances=m.instances.filter(i=>!(i.group==='landscape'&&urbanContains(i.p[0],i.p[2])));
+ const dseg=(x,z,a,b)=>{const dx=b[0]-a[0],dz=b[1]-a[1],q=dx*dx+dz*dz,t=q?clamp(((x-a[0])*dx+(z-a[1])*dz)/q,0,1):0;return Math.hypot(x-a[0]-dx*t,z-a[1]-dz*t);};
+ const landmarkClear=(x,z)=>Math.hypot(x-areaAnchor.hokanji[0],z-areaAnchor.hokanji[1])<3.2||Math.hypot(x-areaAnchor.kodaiji[0],z-areaAnchor.kodaiji[1])<4.3||Math.hypot(x-areaAnchor.yasaka[0],z-areaAnchor.yasaka[1])<5.0;
+ function areaRoad(name,pts,width=1.05,color='#d8ceb8',edge='#cbbda3'){
+  for(let n=0;n<pts.length-1;n++){
+   const a=pts[n],b=pts[n+1],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz),steps=Math.max(1,Math.ceil(len/.72));
+   for(let k=0;k<steps;k++){
+    const t=(k+.5)/steps,x=a[0]+dx*t,z=a[1]+dz*t,ang=Math.atan2(dx,dz);
+    plate([x,ground(x,z)+.052,z],[width+.22,.055,len/steps+.11],edge,ang,0);
+    plate([x,ground(x,z)+.082,z],[width,.052,len/steps+.10],color,ang,0);
+   }
+  }
+ }
+ function areaStoneWall(a,b,h=.7){
+  const dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz),steps=Math.max(1,Math.ceil(len/.72)),ang=Math.atan2(dx,dz);
+  for(let i=0;i<steps;i++){
+   const t=(i+.5)/steps,x=a[0]+dx*t,z=a[1]+dz*t,y=ground(x,z);
+   box([x,y+h*.46,z],[.70,h,.42],i%3===0?'#bbb7a7':i%3===1?'#c8c4b6':'#aaa89c',ang+(i%2?-.04:.04),3);
+  }
+ }
+ function areaSteps(a,b,width=1.2,count=10){
+  const dx=b[0]-a[0],dz=b[1]-a[1],ang=Math.atan2(dx,dz);
+  for(let i=0;i<count;i++){
+   const t=(i+.5)/count,x=a[0]+dx*t,z=a[1]+dz*t,y=ground(x,z);
+   plate([x,y+.08,z],[width,.11,Math.hypot(dx,dz)/count+.09],'#d5c9b4',ang,3);
+  }
+ }
+ const eastSpine=[[-1,6],[-5,9],[-10,11.5],[-15,13.5],[-20,15.2],areaAnchor.hokanji,[-23.4,22.2],[-20.6,25.5],areaAnchor.kodaiji,[-21.8,35.3],[-25.0,39.6],areaAnchor.yasaka];
+ areaRoad('higashiyama-spine',eastSpine,1.20,'#e7dcc8');
+ const sannenzaka=[[-5,8.8],[-9,14],[-15.2,18.2],[-20.6,18.5]];
+ const ninenzaka=[[-20.6,18.5],[-21.7,22.5],[-20.8,26.8],[-18.0,28.7]];
+ const gionLink=[areaAnchor.kodaiji,[-20.5,34],[-24.8,39],areaAnchor.yasaka];
+ areaRoad('sannenzaka',sannenzaka,.84,'#dfd1b8');areaRoad('ninenzaka',ninenzaka,.88,'#e2d4ba');areaRoad('gion-link',gionLink,1.08,'#e4d7bd');
+ areaSteps([-12.2,15.3],[-15.8,18.4],1.05,11);areaSteps([-20.2,19.3],[-21.5,22.0],1.0,9);
+ areaStoneWall([-13.0,12.5],[-20.7,15.1],.55);areaStoneWall([-20.2,23.0],[-18.8,28.0],.62);
+
+ let areaHouseId=0;
+ function areaMachiya(x,z,a=0,s=1,tone=0,variant=0){
+  const y=ground(x,z),w=(1.58+variant*.08)*s,d=(1.15+(variant%2)*.17)*s;
+  const twoStorey=variant%4!==3,h=(twoStorey?2.05:1.48)*s;
+  const wall=['#c9a77d','#b99571','#d0b58f','#b78e6e'][tone%4],upper=['#d9c5a7','#ccb594','#e1cfb2','#c5aa89'][tone%4],trim=['#604a38','#70513d','#594536'][tone%3],roof=variant%2?'#75675f':'#817169';
+  // Ground floor and subtly recessed upper floor create readable machiya proportions.
+  box([x,y+(twoStorey?.54:.48)*s,z],[w,1.08*s,d],wall,a,1);
+  if(twoStorey)box([x,y+1.48*s,z],[w*.94,.80*s,d*.94],upper,a,1);
+  hip('machiya-roof-'+areaHouseId,x,z,w*1.22,d*1.24,y+h-.12*s,.55*s,.27,roof);
+  // Deep street eave / hisashi.
+  const frontX=x+Math.sin(a)*d*.54,frontZ=z+Math.cos(a)*d*.54;
+  plate([frontX,y+.98*s,frontZ],[w*1.04,.10*s,.47*s],roof,a,1);
+  for(let j=-4;j<=4;j++){
+   const xx=j*w*.105;
+   plate([frontX+Math.cos(a)*xx,y+.48*s,frontZ-Math.sin(a)*xx],[.030*s,.80*s,.06*s],trim,a,1);
+  }
+  for(let j=0;j<3;j++)plate([frontX,y+.24*s+j*.28*s,frontZ],[w*.92,.026*s,.065*s],trim,a,1);
+  if(twoStorey){
+   // Upper paper windows framed by dark timber.
+   for(let j=-2;j<=2;j++){
+    const xx=j*w*.18;
+    plate([frontX+Math.cos(a)*xx,y+1.48*s,frontZ-Math.sin(a)*xx],[w*.16,.49*s,.055*s],'#e7dcc4',a,1);
+    plate([frontX+Math.cos(a)*xx,y+1.48*s,frontZ-Math.sin(a)*xx],[.025*s,.52*s,.065*s],trim,a,1);
+   }
+   plate([frontX,y+1.24*s,frontZ],[w*.92,.035*s,.07*s],trim,a,1);
+   plate([frontX,y+1.72*s,frontZ],[w*.92,.035*s,.07*s],trim,a,1);
+  }
+  // Noren, sign, entrance stone and paired planters.
+  if(variant%2===0){
+   plate([frontX+Math.cos(a)*w*.22,y+.55*s,frontZ-Math.sin(a)*w*.22],[w*.34,.34*s,.072*s],variant%4===0?'#9d6654':'#718b82',a,1);
+   box([frontX-Math.cos(a)*w*.36,y+.72*s,frontZ+Math.sin(a)*w*.36],[.12*s,.44*s,.08*s],'#8c674b',a,1);
+  }
+  plate([frontX,y+.045*s,frontZ],[.52*s,.09*s,.38*s],'#bdb7a7',a,3);
+  for(const side of[-1,1]){
+   const px=frontX+Math.cos(a)*side*w*.36,pz=frontZ-Math.sin(a)*side*w*.36;
+   box([px,y+.11*s,pz],[.20*s,.20*s,.20*s],'#8f7960',a,1);
+   ball([px,y+.28*s,pz],[.18*s,.20*s,.18*s],pick(C.greens),tiny,4);
+  }
+  areaHouseId++;
+ }
+ function ribbonBuildings(pts,spacing=2.25){
+  for(let n=0;n<pts.length-1;n++){
+   const a=pts[n],b=pts[n+1],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz),ang=Math.atan2(dx,dz),nx=-dz/len,nz=dx/len;
+   const count=Math.max(1,Math.floor(len/spacing));
+   for(let k=0;k<count;k++){
+    const t=(k+.55)/count,cx=a[0]+dx*t,cz=a[1]+dz*t;
+    for(const side of[-1,1]){
+     if(rnd()<.11)continue;
+     const off=2.02+range(.08,.62),x=cx+nx*off*side,z=cz+nz*off*side;
+     if(Math.hypot(x-areaAnchor.hokanji[0],z-areaAnchor.hokanji[1])<3.5||Math.hypot(x-areaAnchor.kodaiji[0],z-areaAnchor.kodaiji[1])<4.2||Math.hypot(x-areaAnchor.yasaka[0],z-areaAnchor.yasaka[1])<5.0)continue;
+     areaMachiya(x,z,ang+range(-.07,.07),range(.82,1.20),n+k+(side>0?1:0),(n*3+k+(side>0?2:0))%4);
+    }
+   }
+  }
+ }
+ ribbonBuildings(eastSpine,2.45);ribbonBuildings(sannenzaka,2.10);ribbonBuildings(ninenzaka,2.05);ribbonBuildings(gionLink,2.35);
+
+ function hokanjiPagoda(x,z,s=1){
+  const y=ground(x,z),wood='#98694c',deep='#654735',roof='#625957',floorC='#b58d65';
+  for(let k=0;k<5;k++){
+   const bodyW=(2.55-k*.19)*s,levelY=y+.58*s+k*.98*s,bodyH=.80*s;
+   box([x,levelY,z],[bodyW*.56,bodyH,bodyW*.56],k%2? '#a06f50':wood,0,1);
+   // Four corner columns and visible interior corner infill.
+   for(const sx of[-1,1])for(const sz of[-1,1]){
+    const cx=x+sx*bodyW*.24,cz=z+sz*bodyW*.24;
+    pole([cx,levelY-bodyH*.42,cz],[cx,levelY+bodyH*.43,cz],.047*s,deep);
+    box([cx,levelY+bodyH*.39,cz],[.20*s,.12*s,.20*s],'#b1845d',0,1);
+   }
+   // Bracket clusters beneath broad eaves.
+   for(const side of[-1,1])for(let j=-1;j<=1;j++){
+    box([x+j*bodyW*.20,levelY+bodyH*.44,z+side*bodyW*.30],[.23*s,.12*s,.34*s],floorC,0,1);
+    box([x+side*bodyW*.30,levelY+bodyH*.44,z+j*bodyW*.20],[.34*s,.12*s,.23*s],floorC,0,1);
+   }
+   plate([x,levelY+bodyH*.17,z],[bodyW*.88,.065*s,bodyW*.88],floorC,0,1);
+   // Fine balustrade at each storey.
+   for(let j=-3;j<=3;j++){
+    const o=j*bodyW*.11;
+    pole([x+o,levelY+bodyH*.16,z+bodyW*.42],[x+o,levelY+bodyH*.46,z+bodyW*.42],.025*s,deep);
+    pole([x+bodyW*.42,levelY+bodyH*.16,z+o],[x+bodyW*.42,levelY+bodyH*.46,z+o],.025*s,deep);
+   }
+   beam([x-bodyW*.42,levelY+bodyH*.42,z+bodyW*.42],[x+bodyW*.42,levelY+bodyH*.42,z+bodyW*.42],.035*s,deep,.05*s);
+   beam([x+bodyW*.42,levelY+bodyH*.42,z-bodyW*.42],[x+bodyW*.42,levelY+bodyH*.42,z+bodyW*.42],.035*s,deep,.05*s);
+   hip('hokanji-roof-'+k,x,z,bodyW*1.34,bodyW*1.34,levelY+bodyH*.45,.42*s,.25,roof);
+   // Layered eave line to avoid a single slab silhouette.
+   plate([x,levelY+bodyH*.37,z],[bodyW*1.20,.055*s,bodyW*1.20],'#75645e',0,1);
+  }
+  pole([x,y+5.20*s,z],[x,y+6.38*s,z],.052*s,'#927246');
+  for(let k=0;k<6;k++)ball([x,y+(6.42+k*.13)*s,z],[.105*s,.075*s,.105*s],'#c2a055',tiny,1);
+  // Small compound, gate and stone terrace frame the tower as a place, not a prop.
+  areaStoneWall([x-2.9*s,z-2.4*s],[x+2.9*s,z-2.4*s],.50*s);
+  areaStoneWall([x-2.9*s,z-2.4*s],[x-2.9*s,z+2.1*s],.50*s);
+  const gateY=ground(x,z-2.65*s);
+  pole([x-.65*s,gateY,z-2.65*s],[x-.65*s,gateY+1.35*s,z-2.65*s],.08*s,deep);
+  pole([x+.65*s,gateY,z-2.65*s],[x+.65*s,gateY+1.35*s,z-2.65*s],.08*s,deep);
+  hip('hokanji-gate-roof',x,z-2.65*s,2.1*s,1.1*s,gateY+1.20*s,.42*s,.25,roof);
+  plate([x,gateY+.05,z-1.5*s],[1.4*s,.08*s,2.5*s],'#d9cbb3',0,3);
+ }
+ hokanjiPagoda(x,z,s=1){
+  const y=ground(x,z),wood='#9a694a',deep='#704a36',roof='#625a57';
+  for(let k=0;k<5;k++){
+   const bodyW=(2.45-k*.18)*s,levelY=y+.54*s+k*.94*s;
+   box([x,levelY,z],[bodyW*.58,.82*s,bodyW*.58],wood,0,1);
+   // corner posts and balustrade
+   for(const sx of[-1,1])for(const sz of[-1,1])pole([x+sx*bodyW*.23,levelY-.33*s,z+sz*bodyW*.23],[x+sx*bodyW*.23,levelY+.34*s,z+sz*bodyW*.23],.045*s,deep);
+   hip('hokanji-roof-'+k,x,z,bodyW*1.26,bodyW*1.26,levelY+.35*s,.40*s,.24,roof);
+   plate([x,levelY+.18*s,z],[bodyW*.88,.06*s,bodyW*.88],'#b08863',0,1);
+  }
+  pole([x,y+5.08*s,z],[x,y+6.12*s,z],.05*s,'#927246');
+  for(let k=0;k<5;k++)ball([x,y+(6.18+k*.13)*s,z],[.10*s,.08*s,.10*s],'#c09b50',tiny,1);
+  areaStoneWall([x-2.4*s,z-2.1*s],[x+2.3*s,z-2.1*s],.48*s);
+ }
+ hokanjiPagoda(areaAnchor.hokanji[0],areaAnchor.hokanji[1],1.06);
+
+ function templeCompound(x,z,s=1){
+  const y=ground(x,z),wood='#956a4d',deep='#684a37',roof='#71635c',paper='#e4d8c0';
+  // Main hall with recessed wall and veranda.
+  box([x,y+.72*s,z],[4.85*s,1.44*s,3.00*s],deep,0,1);
+  box([x,y+.82*s,z+1.32*s],[4.55*s,1.25*s,.22*s],paper,0,1);
+  for(let i=-4;i<=4;i++){
+   const px=x+i*.52*s;
+   pole([px,y+.18*s,z+1.58*s],[px,y+1.48*s,z+1.58*s],.055*s,wood);
+   plate([px,y+.82*s,z+1.49*s],[.035*s,1.05*s,.06*s],deep,0,1);
+  }
+  plate([x,y+.20*s,z+1.86*s],[5.15*s,.18*s,1.28*s],'#b48e65',0,1);
+  hip('kodaiji-main-roof',x,z,5.65*s,3.85*s,y+1.38*s,1.12*s,.30,roof);
+  // Layered eave brackets.
+  for(let i=-4;i<=4;i++)box([x+i*.58*s,y+1.54*s,z+1.45*s],[.30*s,.14*s,.36*s],'#a37a55',0,1);
+
+  // Covered side hall and short connecting corridor.
+  const sideX=x+4.35*s,sideZ=z-.55*s,sideY=ground(sideX,sideZ);
+  box([sideX,sideY+.54*s,sideZ],[2.65*s,1.08*s,1.90*s],'#a17656',-.08,1);
+  hip('kodaiji-side-roof',sideX,sideZ,3.2*s,2.4*s,sideY+1.02*s,.76*s,.28,'#75655d');
+  for(let i=0;i<5;i++){
+   const cx=x+2.45*s+i*.42*s,cz=z+.18*s-i*.13*s,cy=ground(cx,cz);
+   pole([cx,cy+.04,cz],[cx,y+.76*s,cz],.045*s,deep);
+   plate([cx,y+.79*s,cz],[.46*s,.12*s,1.05*s],'#b58f65',-.30,1);
+  }
+
+  // Garden terraces, pond, arched bridge and pavilion.
+  areaStoneWall([x-4.4*s,z+2.55*s],[x+5.4*s,z+2.55*s],.52*s);
+  areaStoneWall([x-4.4*s,z+2.55*s],[x-4.4*s,z+6.0*s],.45*s);
+  const pondX=x+3.0*s,pondZ=z+4.15*s,pondY=ground(pondX,pondZ);
+  plate([pondX,pondY+.065,pondZ],[5.4*s,.055*s,3.0*s],'#82b8bd',-.11,5);
+  // Simple red bridge with posts and rails.
+  for(let i=-3;i<=3;i++){
+   const bx=pondX+i*.46*s,by=pondY+.20*s+.12*s*(1-Math.abs(i)/3);
+   plate([bx,by,pondZ],[.43*s,.10*s,.82*s],'#b8674d',0,1);
+   for(const side of[-1,1])pole([bx,by+.05*s,pondZ+side*.48*s],[bx,by+.55*s,pondZ+side*.48*s],.028*s,'#9c4d3e');
+  }
+  for(const side of[-1,1])beam([pondX-1.55*s,pondY+.63*s,pondZ+side*.48*s],[pondX+1.55*s,pondY+.63*s,pondZ+side*.48*s],.035*s,'#a44e3f',.045*s);
+  const pavX=x-3.0*s,pavZ=z+4.5*s,pavY=ground(pavX,pavZ);
+  for(const px of[-.75,.75])for(const pz of[-.55,.55])pole([pavX+px*s,pavY+.1,pavZ+pz*s],[pavX+px*s,pavY+1.25*s,pavZ+pz*s],.05*s,deep);
+  plate([pavX,pavY+.20*s,pavZ],[1.9*s,.14*s,1.45*s],'#b79068',0,1);
+  hip('kodaiji-garden-pavilion',pavX,pavZ,2.5*s,2.0*s,pavY+1.20*s,.68*s,.26,roof);
+  // Stones and clipped shrubs give the garden a deliberately composed edge.
+  for(let j=0;j<34;j++){
+   const aa=j*2.399,rr=2.4*s*Math.sqrt((j+.4)/34),px=pondX+Math.cos(aa)*rr,pz=pondZ+Math.sin(aa)*rr,py=ground(px,pz);
+   if(j%4===0)box([px,py+.10*s,pz],[.28*s,.20*s,.24*s],pick(['#aaa99a','#b9b6a5','#cbc6b3']),aa,3);
+   else ball([px,py+.18*s,pz],[.24*s,.17*s,.25*s],pick(C.greens),tiny,4);
+  }
+ }
+ templeCompound(x,z,s=1){
+  const y=ground(x,z),wood='#966b4d',roof='#72645c';
+  // main hall
+  box([x,y+.68*s,z],[4.6*s,1.36*s,2.95*s],wood,0,1);
+  hip('kodaiji-main-roof',x,z,5.4*s,3.7*s,y+1.30*s,1.10*s,.30,roof);
+  // front veranda and columns
+  plate([x,y+.18*s,z+1.75*s],[5.0*s,.18*s,1.2*s],'#b58f65',0,1);
+  for(let i=-3;i<=3;i++)pole([x+i*.65*s,y+.20*s,z+1.60*s],[x+i*.65*s,y+1.35*s,z+1.60*s],.05*s,'#76513b');
+  // smaller side hall
+  const sx=x+4.2*s,sz=z-.6*s,sy=ground(sx,sz);
+  box([sx,sy+.50*s,sz],[2.5*s,1.0*s,1.85*s],'#a27857',-.08,1);
+  hip('kodaiji-side-roof',sx,sz,3.0*s,2.35*s,sy+.95*s,.72*s,.28,'#75655d');
+  // stone garden terrace and pond
+  areaStoneWall([x-4.0*s,z+2.45*s],[x+5.0*s,z+2.45*s],.50*s);
+  plate([x+3.2*s,ground(x+3.2*s,z+1.2*s)+.06,z+1.2*s],[4.8*s,.05*s,2.55*s],'#82b8bd',-.12,5);
+  for(let j=0;j<16;j++){
+   const a=j*2.399,rr=1.1*s*Math.sqrt((j+.4)/16),px=x+3.2*s+Math.cos(a)*rr,pz=z+1.2*s+Math.sin(a)*rr,py=ground(px,pz);
+   ball([px,py+.18*s,pz],[.22*s,.16*s,.22*s],pick(C.greens),tiny,4);
+  }
+ }
+ templeCompound(areaAnchor.kodaiji[0],areaAnchor.kodaiji[1],1.02);
+
+ function areaTorii(x,z,s=1,a=0){
+  const y=ground(x,z),c='#c9573f';
+  for(const side of[-1,1])pole([x+Math.cos(a)*side*1.18*s,y,z-Math.sin(a)*side*1.18*s],[x+Math.cos(a)*side*1.18*s,y+2.48*s,z-Math.sin(a)*side*1.18*s],.12*s,c);
+  const dx=Math.cos(a)*1.62*s,dz=-Math.sin(a)*1.62*s;
+  beam([x-dx,y+2.18*s,z-dz],[x+dx,y+2.18*s,z+dz],.14*s,c,.17*s);
+  beam([x-dx*1.10,y+2.60*s,z-dz*1.10],[x+dx*1.10,y+2.60*s,z+dz*1.10],.19*s,c,.20*s);
+  for(const side of[-1,1])ball([x+Math.cos(a)*side*1.85*s,y+2.60*s,z-Math.sin(a)*side*1.85*s],[.10*s,.10*s,.10*s],'#d48a64',tiny,1);
+ }
+ const yasakaX=areaAnchor.yasaka[0],yasakaZ=areaAnchor.yasaka[1],yasakaY=ground(yasakaX,yasakaZ),shrineRed='#bd5a42',shrineDeep='#8d4336',shrineRoof='#625a55';
+ // Entrance torii and broad forecourt.
+ areaTorii(yasakaX,yasakaZ-7.2,1.10,0);
+ plate([yasakaX,ground(yasakaX,yasakaZ-4.2)+.06,yasakaZ-4.2],[7.5,.07,6.4],'#d9cdb9',0,0);
+ // Two-storey gate gives a clear threshold to the precinct.
+ const gateZ=yasakaZ-4.2,gateY=ground(yasakaX,gateZ);
+ for(const side of[-1,1]){
+  box([yasakaX+side*1.60,gateY+.72,gateZ],[.50,1.44,.70],shrineRed,0,1);
+  pole([yasakaX+side*1.60,gateY+.12,gateZ],[yasakaX+side*1.60,gateY+2.65,gateZ],.10,shrineDeep);
+ }
+ box([yasakaX,gateY+1.05,gateZ],[3.7,.36,.88],shrineRed,0,1);
+ box([yasakaX,gateY+2.06,gateZ],[3.2,.72,1.05],shrineRed,0,1);
+ for(let i=-3;i<=3;i++)pole([yasakaX+i*.42,gateY+1.65,gateZ+.50],[yasakaX+i*.42,gateY+2.42,gateZ+.50],.035,shrineDeep);
+ hip('yasaka-lower-gate-roof',yasakaX,gateZ,5.1,2.25,gateY+1.35,.60,.28,shrineRoof);
+ hip('yasaka-upper-gate-roof',yasakaX,gateZ,4.35,2.15,gateY+2.40,.65,.27,'#685f58');
+ // Main hall and broad veranda.
+ box([yasakaX,yasakaY+.84,yasakaZ],[6.45,1.68,4.0],shrineRed,0,1);
+ box([yasakaX,yasakaY+1.02,yasakaZ+1.85],[6.05,1.26,.20],'#e0c8a7',0,1);
+ hip('yasaka-main-roof',yasakaX,yasakaZ,7.35,4.85,yasakaY+1.57,1.22,.29,shrineRoof);
+ plate([yasakaX,yasakaY+.18,yasakaZ+2.15],[6.7,.18,1.30],'#c4885c',0,1);
+ for(let i=-4;i<=4;i++){
+  const px=yasakaX+i*.70;
+  pole([px,yasakaY+.18,yasakaZ+1.86],[px,yasakaY+1.52,yasakaZ+1.86],.06,shrineRed);
+  box([px,yasakaY+1.50,yasakaZ+1.86],[.30,.13,.36],'#a64f3b',0,1);
+  plate([px,yasakaY+.95,yasakaZ+1.96],[.025,1.02,.07],shrineDeep,0,1);
+ }
+ // Side shrine buildings and precinct fences.
+ for(const side of[-1,1]){
+  const bx=yasakaX+side*5.15,bz=yasakaZ+.25,by=ground(bx,bz);
+  box([bx,by+.52,bz],[2.6,1.04,1.9],'#b85a42',0,1);
+  hip('yasaka-side-hall-'+side,bx,bz,3.15,2.35,by+.98,.72,.26,shrineRoof);
+  for(let j=-2;j<=2;j++)pole([bx+j*.47,by+.08,bz+1.02],[bx+j*.47,by+1.02,bz+1.02],.04,shrineRed);
+ }
+ areaStoneWall([yasakaX-6.5,yasakaZ+3.0],[yasakaX+6.5,yasakaZ+3.0],.46);
+ // Lantern rows and shrine banners around the central approach.
+ for(const side of[-1,1])for(let i=0;i<7;i++){
+  const lx=yasakaX+side*3.75,lz=yasakaZ-2.65+i*.85,ly=ground(lx,lz);
+  pole([lx,ly,lz],[lx,ly+.82,lz],.035,'#7f6246');
+  box([lx,ly+.97,lz],[.25,.31,.25],'#ead9b6',0,1);
+  hip('yasaka-lantern-cap-'+side+'-'+i,lx,lz,.39,.39,ly+1.10,.16,.20,'#6e5f55');
+  if(i%2===0)plate([lx+side*.18,ly+1.05,lz],[.22,.55,.05],'#c85842',0,1);
+ }
+ // Visitors create human scale, kept sparse so architecture remains legible.
+ for(let i=0;i<34;i++){
+  const t=(i+.5)/34,px=yasakaX+range(-2.8,2.8),pz=yasakaZ-5.7+t*7.2,py=ground(px,pz);
+  person(px,py+.08,pz,range(.45,.58),range(-.3,.3));
+ }
+
+ // Human-scale life and small street furniture along Sannenzaka / Ninenzaka.
+ function routePoint(pts,t){
+  let lens=[],total=0;for(let i=0;i<pts.length-1;i++){const l=Math.hypot(pts[i+1][0]-pts[i][0],pts[i+1][1]-pts[i][1]);lens.push(l);total+=l;}
+  let d=t*total;for(let i=0;i<lens.length;i++){if(d<=lens[i]){const u=d/lens[i];return [pts[i][0]+(pts[i+1][0]-pts[i][0])*u,pts[i][1]+(pts[i+1][1]-pts[i][1])*u,Math.atan2(pts[i+1][0]-pts[i][0],pts[i+1][1]-pts[i][1])];}d-=lens[i];}
+  const q=pts.at(-1),p=pts.at(-2);return[q[0],q[1],Math.atan2(q[0]-p[0],q[1]-p[1])];
+ }
+ for(let i=0;i<76;i++){
+  const path=i%3===0?sannenzaka:(i%3===1?ninenzaka:eastSpine),q=routePoint(path,(i+.65)/(76+1)),side=i%2?1:-1;
+  const x=q[0]+Math.cos(q[2])*side*range(.12,.36),z=q[1]-Math.sin(q[2])*side*range(.12,.36),y=ground(x,z);
+  if(!landmarkClear(x,z))person(x,y+.08,z,range(.42,.57),q[2]+range(-.25,.25));
+ }
+ // Stone lanterns, low fences and shop-side greenery create a continuous street edge.
+ for(let i=0;i<28;i++){
+  const q=routePoint(i%2?sannenzaka:ninenzaka,(i+.5)/28),side=i%2?1:-1,x=q[0]+Math.cos(q[2])*side*1.20,z=q[1]-Math.sin(q[2])*side*1.20,y=ground(x,z);
+  if(i%3===0){
+   box([x,y+.18,z],[.28,.36,.28],'#aaa99b',q[2],3);box([x,y+.50,z],[.38,.25,.38],'#bbb7a6',q[2],3);hip('street-lantern-cap-'+i,x,z,.50,.50,y+.62,.18,.18,'#a9a695');
+  }else{
+   pole([x,y+.05,z],[x,y+.58,z],.035,'#7c6249');
+   ball([x,y+.46,z],[.25,.20,.26],pick(C.greens),tiny,4);
+  }
+ }
+ // Small retaining walls follow parts of the slopes instead of exposing raw terrain.
+ areaStoneWall([-8.2,10.6],[-13.5,14.8],.42);
+ areaStoneWall([-15.8,19.2],[-20.3,20.2],.48);
+ areaStoneWall([-20.0,27.5],[-18.2,31.8],.45);
+
+ // Precinct vegetation with mixed crowns and clearings around roads
+ for(const [cx,cz,rad,count] of [[-22,18,5.9,30],[-18,29,6.6,34],[-29,44,7.6,38],[-12,22,5.2,24]]){
+  for(let j=0;j<count;j++){
+   const aa=j*2.399,rr=rad*Math.sqrt((j+.5)/count),x=cx+Math.cos(aa)*rr,z=cz+Math.sin(aa)*rr;
+   let roadDistance=99;for(let n=0;n<eastSpine.length-1;n++)roadDistance=Math.min(roadDistance,dseg(x,z,eastSpine[n],eastSpine[n+1]));
+   if(landmarkClear(x,z)||roadDistance<1.65)continue;
+   if(rnd()<.14)pine(x,z,range(.52,.90));else tree(x,z,range(.58,1.05),rnd()<.28?'pink':rnd()<.07?'cream':'green',j%5?1:0);
+  }
+ }
+ // Additional garden shrubs / stone edges to remove empty gaps
+ for(let j=0;j<95;j++){
+  const x=range(-34,-8),z=range(12,49);
+  if(Math.hypot(x-areaAnchor.hokanji[0],z-areaAnchor.hokanji[1])<2.4||Math.hypot(x-areaAnchor.kodaiji[0],z-areaAnchor.kodaiji[1])<2.9||Math.hypot(x-areaAnchor.yasaka[0],z-areaAnchor.yasaka[1])<3.5)continue;
+  if(rnd()<.58)ball([x,ground(x,z)+.17,z],[range(.14,.30),range(.10,.22),range(.14,.30)],pick(C.greens),tiny,4);
+ }
+ scene.areaQuality='v5-detailed-landmarks-machiya-and-street-life';
