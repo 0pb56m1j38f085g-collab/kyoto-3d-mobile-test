@@ -1,0 +1,18 @@
+'use strict';
+// Reproducible geometry-only refinement against the reviewed v5 source.
+const crypto=require('node:crypto');
+const sha=s=>crypto.createHash('sha256').update(s).digest('hex');
+const edits=[
+ [2699,2975," const leaf=sph('rounded-foliage',16,10,.055),flower=sph('cherry-blossom-clusters',16,10,.035),largeLeaf=sph('smooth-near-canopy',18,12,.05),largeFlower=sph('smooth-near-blossom-crowns',20,12,.035),tiny=sph('small-rounded-details',8,5,.015),distant=sph('distant-canopy',12,8,.035);\n"],
+ [16114,16114," // Foundations under the west approach floor, aligned with the existing hill.\n for(let x=-12.1;x<-7.5;x+=1.10)for(let z of[-4.45,-2.95]){\n  const y=ground(x,z);if(FL-.22>y+.18){box([x,y+.09,z],[.37,.19,.37],C.stone,0,3);pole([x,y+.16,z],[x,FL-.22,z],.10,C.dark);}\n }\n"],
+ [17741,18084," for(let k=0;k<steps;k++){\n  let a=V.add(stair[0],V.mul(V.sub(stair[1],stair[0]),k/steps)),b=V.add(stair[0],V.mul(V.sub(stair[1],stair[0]),(k+1)/steps)),ang=Math.atan2(b[0]-a[0],b[2]-a[2]);\n  const low=Math.min(ground(a[0],a[2]),ground(b[0],b[2]))-.10,top=a[1]-.16;\n  if(top>low+.02)box([a[0],(top+low)/2,a[2]],[1.49,top-low,.37],'#b4b5a3',ang,3);\n  box([a[0],a[1]-.10,a[2]],[1.5,.20,.35],'#c9c7b3',ang,3);\n  for(let side of[-1,1]){\n   let x=a[0]+Math.cos(ang)*side*.86,z=a[2]-Math.sin(ang)*side*.86;\n   const colour=pick(['#aaa995','#b8b6a1']),bottom=ground(x,z)-.12,cap=a[1]+.04;\n   if(cap>bottom+.04)box([x,(cap+bottom)/2,z],[.24,cap-bottom,.39],colour,ang,3);\n   if(k%4===0)pole([x,a[1]+.03,z],[x,a[1]+.66,z],.034,'#8a8774');\n   beam([x,a[1]+.66,z],[b[0]+Math.cos(ang)*side*.86,b[1]+.66,b[2]-Math.sin(ang)*side*.86],.042,'#8f8a75');\n  }\n }\n // Supported landing links the upper step and the covered west approach.\n for(let k=0;k<7;k++){\n  const x=-14.65+k*.34,z=-3.70,lo=ground(x,z)-.08,hi=FL-.12;\n  if(hi>lo+.02)box([x,(hi+lo)/2,z],[.35,hi-lo,1.7],'#b9b9a4',0,3);\n  plate([x,FL-.035,z],[.33,.12,1.72],'#d3cbb4',0,3);\n }\n // End-grain pegs and joint collars are geometric details, not painted silhouettes.\n for(const x of sx)for(const z of sz)for(let h=3.34;h<FL-.25;h+=1.44){\n  if(h>ground(x,z)+.18){\n   pole([x-.21,h,z+.14],[x+.21,h,z+.14],.024,'#b89b73');\n   box([x,h-.035,z],[.40,.07,.31],'#9b7854');\n  }\n }\n\n"],
+ [18941,18941,"  // A tree has one coherent colour family, instead of random coloured balls.\n  const colourSeed=(Math.sin(x*17.7+z*31.3)*43758.5453)%1;\n  const crownColour=rgb(palette[Math.floor(Math.abs(colourSeed)*palette.length)%palette.length]);\n  const crownTint=t=>crownColour.map((v,k)=>clamp(v*(.90+.16*t)+(isFlower?.015:.005),0,1));\n"],
+ [19523,19880,"   const cc=crownTint(rnd());ball(p,[sz*1.02,sz*.93,sz],cc,lod?distant:(isFlower?largeFlower:largeLeaf));\n   if(!lod){const n=isFlower?5:3;for(let j=0;j<n;j++){const a=j*2.399+offset+k*.6,xx=p[0]+Math.cos(a)*sz*.68,zz=p[2]+Math.sin(a)*sz*.64,yy=p[1]+sz*range(-.13,.58),rr=sz*range(.42,.55);ball([xx,yy,zz],[rr,rr*.96,rr],crownTint(rnd()),isFlower?flower:leaf);}}\n"],
+ [24567,24660," scene.revision='quality-v5.3';scene.modelNotice='建築資料を基に制作したミニチュアです。寸法・境内配置は測量モデルではありません。';\n"]
+];
+module.exports=function(source){
+ if(sha(source)!=='f0c993ac41cc20e62dcaf7e3cf36a7bf40190f031dd155c73427c8bbe5fb9b90')throw Error('Unexpected source for geometry refinement');
+ let result='',last=0;for(const [start,end,value] of edits){if(start<last||end<start||end>source.length)throw Error('Invalid model edit range');result+=source.slice(last,start)+value;last=end;}result+=source.slice(last);
+ if(sha(result)!=='638cbe336981a49addd8d189067bcbc0cd8287562937b205602aa85daad28d6d')throw Error('Unexpected refined scene hash');
+ return result;
+};
