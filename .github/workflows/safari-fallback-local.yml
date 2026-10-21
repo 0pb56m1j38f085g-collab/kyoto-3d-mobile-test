@@ -1,0 +1,35 @@
+name: Safari fallback local WebKit check
+on:
+  push:
+    branches: [safari-webkit-fallback-test]
+    paths:
+      - 'safari-fallback-local-check.cjs'
+      - '.github/workflows/safari-fallback-local.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  webkit:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: |
+          npm install --prefix "$RUNNER_TEMP/safari-fallback" --no-audit --no-fund playwright@1.55.0
+          "$RUNNER_TEMP/safari-fallback/node_modules/.bin/playwright" install --with-deps webkit
+      - name: Verify graceful WebKit lighting fallback
+        env:
+          NODE_PATH: ${{ runner.temp }}/safari-fallback/node_modules
+        run: node safari-fallback-local-check.cjs
+      - if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: safari-fallback-local-check
+          path: safari-fallback-artifacts/
+          if-no-files-found: error
+          retention-days: 7
