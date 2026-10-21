@@ -4,7 +4,9 @@ on:
     branches: [quality-v5-architecture-lighting]
     paths:
       - '.github/workflows/quality-preview-check.yml'
-      - 'quality-v5/tests/live-browser.cjs'
+      - 'quality-v5/tests/*.cjs'
+      - 'quality-v5/finish.cjs'
+      - 'quality-v5/build.cjs'
   workflow_dispatch:
 permissions:
   contents: read
@@ -29,10 +31,10 @@ jobs:
         run: |
           npm install --prefix "$RUNNER_TEMP/kyoto-browser" --no-audit --no-fund playwright@1.55.0
           "$RUNNER_TEMP/kyoto-browser/node_modules/.bin/playwright" install --with-deps chromium
-      - name: Read-only test of published 3D rendering and touch gestures
+      - name: Read-only test of the exact published viewer and touch gestures
         env:
           NODE_PATH: ${{ runner.temp }}/kyoto-browser/node_modules
-        run: xvfb-run -a node quality-v5/tests/live-browser.cjs
+        run: xvfb-run -a node quality-v5/tests/verify-final.cjs
       - name: Save actual browser renders, test results, and source
         if: always()
         uses: actions/upload-artifact@v5
