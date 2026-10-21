@@ -27,17 +27,17 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  scene=scene.replace("scene.areaQuality='v3-detailed-landmarks-and-streetscape';","scene.areaQuality='v4-cleared-urban-corridor-and-baked-lighting';");
  scene=exact(scene,
   "scene.named={temple:{target:[-1,7.2,-.4],span:29,yaw:.64,pitch:.43},corner:{target:[1.9,8.5,1.4],span:15.7,yaw:.65,pitch:.31},reverse:{target:[-1,7.4,-.4],span:29,yaw:-.54,pitch:.43}};",
-  "scene.named={area:{target:[-8,5.7,23],span:44,yaw:.58,pitch:.48},temple:{target:[-1,7.2,-.4],span:29,yaw:.64,pitch:.43},hokanji:{target:[-26.2,5.2,16.6],span:12.5,yaw:.58,pitch:.39},kodaiji:{target:[-17.7,4.9,28.8],span:11.8,yaw:1.15,pitch:.38},yasaka:{target:[-29.1,4.7,44.6],span:12.8,yaw:1.85,pitch:.38},street:{target:[-20.3,4.0,22.0],span:12.8,yaw:.78,pitch:.37},corner:{target:[1.9,8.5,1.4],span:15.7,yaw:.65,pitch:.31},reverse:{target:[-1,7.4,-.4],span:29,yaw:-.54,pitch:.43}};",
+  "scene.named={area:{target:[-5,5.7,18],span:42,yaw:.58,pitch:.48},temple:{target:[-1,7.2,-.4],span:29,yaw:.64,pitch:.43},hokanji:{target:[-26.2,5.2,16.6],span:12.5,yaw:.58,pitch:.39},kodaiji:{target:[-17.7,4.9,28.8],span:11.8,yaw:1.15,pitch:.38},yasaka:{target:[-29.1,4.7,44.6],span:12.8,yaw:1.85,pitch:.38},street:{target:[-20.3,4.0,22.0],span:12.8,yaw:.78,pitch:.37},corner:{target:[1.9,8.5,1.4],span:15.7,yaw:.65,pitch:.31},reverse:{target:[-1,7.4,-.4],span:29,yaw:-.54,pitch:.43}};",
   'area camera metadata');
  app=exact(app,
   "const presets={temple:{target:[.7,7.2,-.85],span:30.5,yaw:.61,pitch:.37},corner:{target:[1.9,8.5,1.4],span:15.7,yaw:.65,pitch:.31},reverse:{target:[-1,7.4,-.4],span:29,yaw:-.54,pitch:.43}};",
-  "const presets={area:{target:[-8,5.7,23],span:44,yaw:.58,pitch:.48},temple:{target:[.7,7.2,-.85],span:30.5,yaw:.61,pitch:.37},hokanji:{target:[-26.2,5.2,16.6],span:12.5,yaw:.58,pitch:.39},kodaiji:{target:[-17.7,4.9,28.8],span:11.8,yaw:1.15,pitch:.38},yasaka:{target:[-29.1,4.7,44.6],span:12.8,yaw:1.85,pitch:.38},street:{target:[-20.3,4.0,22.0],span:12.8,yaw:.78,pitch:.37},corner:{target:[1.9,8.5,1.4],span:15.7,yaw:.65,pitch:.31},reverse:{target:[-1,7.4,-.4],span:29,yaw:-.54,pitch:.43}};",
+  "const presets={area:{target:[-5,5.7,18],span:42,yaw:.58,pitch:.48},temple:{target:[.7,7.2,-.85],span:30.5,yaw:.61,pitch:.37},hokanji:{target:[-26.2,5.2,16.6],span:12.5,yaw:.58,pitch:.39},kodaiji:{target:[-17.7,4.9,28.8],span:11.8,yaw:1.15,pitch:.38},yasaka:{target:[-29.1,4.7,44.6],span:12.8,yaw:1.85,pitch:.38},street:{target:[-20.3,4.0,22.0],span:12.8,yaw:.78,pitch:.37},corner:{target:[1.9,8.5,1.4],span:15.7,yaw:.65,pitch:.31},reverse:{target:[-1,7.4,-.4],span:29,yaw:-.54,pitch:.43}};",
   'area camera presets');
  app=exact(app,"let model,renderer,camera,selected='temple'","let model,renderer,camera,selected='area'",'initial selected view');
  app=exact(app,"camera=authored('temple');ready=true;","camera=authored(params.get('view')||'area');ready=true;",'initial area camera');
  const portraitOld="if(aspect<1.05){p.span*=.78/aspect;p.target[1]+=.2;}";
  if(!app.includes(portraitOld))throw Error('Unexpected portrait camera scaling input');
- app=app.replace(portraitOld,"if(aspect<1.05){const portraitScale=name==='area'?.42:.78;p.span*=portraitScale/aspect;p.target[1]+=name==='area'?-.12:.2;}");
+ app=app.replace(portraitOld,"if(aspect<1.05){const areaLandmark=['hokanji','kodaiji','yasaka','street'].includes(name);const portraitScale=name==='area'?.42:(areaLandmark?.58:.78);p.span*=portraitScale/aspect;p.target[1]+=name==='area'?-.12:.2;}");
  app=app.replaceAll("lighting.bin?v=quality-v5.4","lighting.bin?v=area-higashiyama-quality-v4.6");
  app=app.replaceAll("quality-v5.4","area-higashiyama-quality-v4.6");
  app=app.replace("camera.target[0]=clamp(camera.target[0],-7,10);camera.target[1]=clamp(camera.target[1],3.5,11);camera.target[2]=clamp(camera.target[2],-7,7);",
