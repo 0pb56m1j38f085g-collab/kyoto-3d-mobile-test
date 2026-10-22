@@ -15,6 +15,9 @@
   // Preserve the recognisable main-hall/stage and all thirteen architectural
   // models. Old dense landscape and footprint blocks are intentionally omitted.
   for(const m of scene.meshes)m.instances=m.instances.filter(i=>{
+   // The old uniformly scaled precinct slab reaches the new west-side river.
+   // Replace it with bounded courtyard patches below, rather than covering water.
+   if(m.name==='metric-yasaka-gravel')return false;
    const l=layoutFor(i.group||'');if(!l)return false;
    const heightScale=i.group.includes('garden')||i.group.includes('landscape')?1:(l.heightEmphasis||1);
    i.p=QGA([(i.p[0]-l.source[0])*l.scale+l.at[0],base+(l.lift||0)+(i.p[1]-base)*l.scale*heightScale,(i.p[2]-l.source[1])*l.scale+l.at[1]]);
@@ -72,8 +75,10 @@
    surface.tri(aa,cc,dd,surfaceNormal(aa),surfaceNormal(cc),surfaceNormal(dd));
    if(r===rings-1){const aa=P(a,1),bb=P(b,1);edgeMini.quad(aa,bb,[bb[0],.55,bb[2]],[aa[0],.55,aa[2]]);}
   }
-  I(terrainMini,[0,0,0],[1,1,1],'#b8bd8d',undefined,0);
-  I(hillMini,[0,0,0],[1,1,1],'#8ca572',undefined,0);
+  // One continuous soil tint: lighting/normals and woodland communicate relief,
+  // without a saw-tooth colour band along the radial triangulation.
+  I(terrainMini,[0,0,0],[1,1,1],'#b2bc8e',undefined,0);
+  I(hillMini,[0,0,0],[1,1,1],'#b2bc8e',undefined,0);
   I(edgeMini,[0,0,0],[1,1,1],'#c6b59b',undefined,3);
   group='storybook-waterways';
   const waterMini=mesh('storybook-river-water'),bankMini=mesh('storybook-river-banks'),rippleMini=mesh('storybook-water-glints');
@@ -88,6 +93,11 @@
    }
   }
   I(waterMini,[0,0,0],[1,1,1],'#72bdc4',undefined,0);I(bankMini,[0,0,0],[1,1,1],'#c5c5b1',undefined,3);I(rippleMini,[0,0,0],[1,1,1],'#b9e0da',undefined,0);
+  for(const m of scene.meshes)m.instances=m.instances.filter(i=>{
+   if(!i.anchor||!['metric-precinct-landscape','metric-kodaiji-garden'].includes(i.group))return true;
+   if(waterKeepout(i.anchor[0],i.anchor[2],.5))return false;
+   const dy=storyGround(i.anchor[0],i.anchor[2])-i.anchor[1];i.p[1]=GEOQ(i.p[1]+dy);i.anchor[1]=GEOQ(i.anchor[1]+dy);return true;
+  });
   // Actual displayed architecture bounds provide clearings for illustrative houses
   // and crowns. No unrelated generic building is placed through a named temple.
   function world(p,i){const[x,y,z]=p.map((v,k)=>v*i.s[k]),[a,b,c,w]=i.q,tx=2*(b*z-c*y),ty=2*(c*x-a*z),tz=2*(a*y-b*x);return[x+w*tx+b*tz-c*ty+i.p[0],y+w*ty+c*tx-a*tz+i.p[1],z+w*tz+a*ty-b*tx+i.p[2]];}

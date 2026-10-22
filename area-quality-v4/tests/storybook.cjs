@@ -19,6 +19,7 @@ assert.ok(model.areaBuildings.every(b=>b.height<=.71&&b.width<.7),'ordinary hous
 assert.ok(model.cartography.relief.eastRidgeHeight-model.cartography.relief.plainHeight>5,'readable mountain/plain contrast');
 assert.ok(model.cartography.landmarks.temple.scale>3&&model.cartography.landmarks.yasaka.scale>2&&model.cartography.landmarks.kodaiji.heightEmphasis>1.5,'emphasise all named districts, not just Kiyomizu');
 assert.equal(model.cartography.waterways.channels.length,2);
+assert.ok(!model.meshes.some(m=>m.name==='metric-yasaka-gravel'&&m.instances.length),'no inherited enlarged precinct slab across the river');
 for(const name of ['storybook-river-water','storybook-river-banks','storybook-water-glints','storybook-wooded-ridge'])assert.ok(model.meshes.some(m=>m.name===name&&m.instances.length&&m.p.length>0),name+' rendered as geometry');
 const distance=(x,z,a,b)=>{const dx=b[0]-a[0],dz=b[1]-a[1],t=Math.max(0,Math.min(1,((x-a[0])*dx+(z-a[1])*dz)/(dx*dx+dz*dz)));return Math.hypot(x-a[0]-dx*t,z-a[1]-dz*t);};
 for(const b of model.areaBuildings)for(const r of model.cartography.waterways.channels)assert.ok(Math.min(...r.points.slice(1).map((p,j)=>distance(b.x,b.z,r.points[j],p)))>r.width/2+.8,'house clear of river bank');
