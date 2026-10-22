@@ -31,6 +31,7 @@ let server,browser;
   check(kind+' focal plane follows overview camera',await page.evaluate(()=>{const r=phoneTest.renderer,g=r.gl,focus=g.getUniform(r.composite,g.getUniformLocation(r.composite,'focus'));return phoneTest.camera.target.every((v,i)=>Math.abs(v-focus[i])<1e-4);}));
   check(kind+' no bottom menu, direction visible',await page.evaluate(()=>!document.querySelector('section.bottom')&&!document.querySelector('nav.tabs')&&document.querySelector('#orientation').textContent==='画面上：南 · 右：西'&&Math.abs(Math.abs(Number(document.querySelector('#compass').dataset.northAngle))-180)<.1));
   check(kind+' Kamo on right in south-up view',await page.evaluate(()=>{const c=phoneTest.model.cartography,r=c.waterways.channels.find(r=>r.name==='鴨川'),p=r.points[Math.floor(r.points.length/2)],vp=phoneTest.renderer.lastVP;return M.point(vp,[p[0],2.15,p[1]])[0]>M.point(vp,c.landmarkPins.yasaka)[0];}));
+  check(kind+' north label remains upright',await page.evaluate(()=>{const angle=Number(document.querySelector('#compass').dataset.northAngle),label=document.querySelector('#north-needle b').style.transform;return Math.abs(parseFloat(label.slice(7))+angle)<.01;}));
   if(mobile){
    record.memory=await page.evaluate(()=>({
     ...phoneTest.model.mobileMemory,modelBuildMs:window.__modelMs,startupMs:window.__startupMs,

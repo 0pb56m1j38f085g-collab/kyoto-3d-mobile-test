@@ -46,6 +46,7 @@ module.exports=({renderer,app,html})=>{
   const centre=M.point(renderer.lastVP,camera.target),north=M.point(renderer.lastVP,V.add(camera.target,[0,0,-10]));
   const dx=(north[0]-centre[0])*w,dy=-(north[1]-centre[1])*h,angle=Math.atan2(dx,-dy)*180/Math.PI;
   $('north-needle').style.transform='rotate('+angle+'deg)';$('compass').dataset.northAngle=String(angle);
+  $('north-needle').querySelector('b').style.transform='rotate('+(-angle)+'deg)';
   const dirs=['北','北東','東','南東','南','南西','西','北西'],bearing=(-camera.yaw*180/Math.PI%360+360)%360;
   $('orientation').textContent='画面上：'+dirs[Math.round(bearing/45)%8]+' · 右：'+dirs[Math.round((bearing+90)/45)%8];
   $('compass').setAttribute('aria-label','北を上にする。現在の'+$('orientation').textContent);
