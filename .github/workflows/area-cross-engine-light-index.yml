@@ -1,0 +1,36 @@
+name: Higashiyama cross-engine light index
+on:
+  push:
+    branches: [area-higashiyama-webkit-deterministic]
+    paths:
+      - 'area-quality-v4/**'
+      - '.github/workflows/area-cross-engine-light-index.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  determinism:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Install browser engines
+        run: |
+          npm install --prefix "$RUNNER_TEMP/cross-engine" --no-audit --no-fund playwright@1.55.0
+          "$RUNNER_TEMP/cross-engine/node_modules/.bin/playwright" install --with-deps chromium webkit
+      - name: Compare Node Chromium and WebKit light indexing
+        env:
+          NODE_PATH: ${{ runner.temp }}/cross-engine/node_modules
+        run: xvfb-run -a node area-quality-v4/tests/cross-engine-light-index.cjs
+      - if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: higashiyama-cross-engine-light-index
+          path: cross-engine-artifacts/
+          if-no-files-found: error
+          retention-days: 7
