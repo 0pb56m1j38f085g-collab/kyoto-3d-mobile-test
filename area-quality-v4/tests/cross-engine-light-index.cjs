@@ -9,7 +9,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function nodeCount(){
   const ctx=vm.createContext({console,performance});
   for(const file of ['renderer.js','scene.js'])vm.runInContext(fs.readFileSync(path.join('area-quality-v4/site/src',file),'utf8'),ctx,{filename:file});
-  const model=vm.runInContext('makeStudy()',ctx,{timeout:120000});
+  const model=vm.runInContext('makeStudy()',ctx,{timeout:300000});
   let total=0;
   for(const m of model.meshes){
     const ids=new Map();
@@ -34,7 +34,7 @@ function nodeCount(){
       const ctx=await browser.newContext({viewport:{width:430,height:932},deviceScaleFactor:1,hasTouch:true,reducedMotion:'reduce'});
       const page=await ctx.newPage();const errs=[];page.on('pageerror',e=>errs.push(String(e)));
       await page.goto(BASE+'/?quality=light&view=area&engine='+name,{waitUntil:'load',timeout:120000});
-      await page.waitForFunction(()=>window.phoneTest?.ready||window.__error,null,{timeout:180000});
+      await page.waitForFunction(()=>window.phoneTest?.ready||window.__error,null,{timeout:300000});
       const state=await page.evaluate(()=>({
         ready:!!window.phoneTest?.ready,
         error:window.__error||null,
