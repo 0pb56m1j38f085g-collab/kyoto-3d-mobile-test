@@ -137,7 +137,7 @@
   // create illegible fragments once building footprints are intentionally edited.
   const roadIds=new Set(footprintData.roads.map(r=>r.id));
   const townRoads=[...footprintData.roads,...westReference.roads.filter(r=>!roadIds.has(r.id))].filter(r=>!historicIds.has(r.id)&&['residential','unclassified','living_street','pedestrian'].includes(r.highway));
-  const inTown=p=>p[0]<-6.4&&p[1]>-4&&p[1]<59&&islandInside(...p,.6);
+  const inTown=p=>p[0]<-6.4&&p[1]>-12&&p[1]<59&&islandInside(...p,.6);
   const lanes=[...historicalStreets.map(r=>({...r,hero:true})),...townRoads].map(r=>({id:r.id,name:r.name,highway:r.highway,hero:!!r.hero,points:r.points.map(display)})).filter(r=>r.hero||r.points.some(inTown));
   const streetSurface=mesh('storybook-cream-lanes'),streetBorder=mesh('storybook-lane-borders'),pavingJoints=mesh('storybook-stone-paving-joints'),stairRisers=mesh('storybook-historic-stair-risers');
   const segments=[];
