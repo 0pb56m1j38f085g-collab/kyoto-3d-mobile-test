@@ -8,24 +8,29 @@
   const layouts={
    temple:{source:kCentre,at:[0,-1],scale:2.6},
    hokanji:{source:tower.center,at:tower.center.map(v=>v*displayScale),scale:3.0},
-   yasaka:{source:[-29.4,46.6],at:[-16.17,25.63],scale:1.65},
-   kodaiji:{source:[-15.8,32.1],at:[-7.5,17.2],scale:1.4}
+   yasaka:{source:[-29.4,46.6],at:[-16.17,25.63],scale:1.65,heightEmphasis:1.15},
+   kodaiji:{source:[-15.8,32.1],at:[-7.5,17.2],scale:1.4,heightEmphasis:1.30}
   };
   function layoutFor(g){if(g==='main-hall')return layouts.temple;if(g==='metric-hokanji')return layouts.hokanji;if(g.startsWith('metric-yasaka')||g==='metric-precinct-landscape')return layouts.yasaka;if(g.startsWith('metric-kodaiji'))return layouts.kodaiji;return null;}
   // Preserve the recognisable main-hall/stage and all thirteen architectural
   // models. Old dense landscape and footprint blocks are intentionally omitted.
   for(const m of scene.meshes)m.instances=m.instances.filter(i=>{
    const l=layoutFor(i.group||'');if(!l)return false;
-   i.p=QGA([(i.p[0]-l.source[0])*l.scale+l.at[0],base+(i.p[1]-base)*l.scale,(i.p[2]-l.source[1])*l.scale+l.at[1]]);
-   i.s=QGA(i.s.map(v=>v*l.scale));
+   const heightScale=i.group.includes('garden')||i.group.includes('landscape')?1:(l.heightEmphasis||1);
+   i.p=QGA([(i.p[0]-l.source[0])*l.scale+l.at[0],base+(i.p[1]-base)*l.scale*heightScale,(i.p[2]-l.source[1])*l.scale+l.at[1]]);
+   i.s=QGA(i.s.map((v,k)=>v*l.scale*(k===1?heightScale:1)));
+   // More legible roof/eave contrast, retaining bark brown on Kiyomizu.
+   if(i.mat===2){const c=rgb(i.group==='main-hall'?'#625145':'#56656b');i.c=QGA(i.c.map((v,k)=>v*.65+c[k]*.35));}
    if(i.anchor)i.anchor=QGA([(i.anchor[0]-l.source[0])*l.scale+l.at[0],base+(i.anchor[1]-base)*l.scale,(i.anchor[2]-l.source[1])*l.scale+l.at[1]]);
+   if(i.anchor&&i.group==='metric-kodaiji-garden'){i.p=QGA(i.p.map((v,k)=>i.anchor[k]+(v-i.anchor[k])*1.45));i.s=QGA(i.s.map(v=>v*1.45));}
    return true;
   });
   group='storybook-terrain';
   const K=layouts.temple;
   function storyGround(x,z){
    const dx=x-K.at[0],dz=z-K.at[1],fade=1-smooth((Math.hypot(dx/1.2,dz)-4.2)/3.0);
-   return base+(srcGround(K.source[0]+dx/K.scale,K.source[1]+dz/K.scale)-base)*K.scale*fade;
+   const woodedHill=smooth((x-.8)/2)*(1.7*Math.exp(-((x-4)**2/18+(z-7)**2/30))+1.2*Math.exp(-((x-4)**2/18+(z-25)**2/30)));
+   return base+(srcGround(K.source[0]+dx/K.scale,K.source[1]+dz/K.scale)-base)*K.scale*fade+woodedHill;
   }
   // Rounded, finite diorama edge instead of an empty infinite green plane.
   const bounds={x0:-26,x1:8,z0:-8,z1:32,r:4.5};
@@ -42,13 +47,16 @@
   const coarseBoundary=boundary.slice();boundary.length=0;
   for(let j=0;j<coarseBoundary.length;j++){const a=coarseBoundary[j],b=coarseBoundary[(j+1)%coarseBoundary.length],n=Math.max(1,Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1])/.65));for(let k=0;k<n;k++)boundary.push([a[0]+(b[0]-a[0])*k/n,a[1]+(b[1]-a[1])*k/n]);}
   const centre=[-9,base,12],rings=64;
+  const surfaceNormal=p=>V.unit([storyGround(p[0]-.025,p[2])-storyGround(p[0]+.025,p[2]),.05,storyGround(p[0],p[2]-.025)-storyGround(p[0],p[2]+.025)]);
   // Concentric strips meet exactly; no stair-stepped silhouette at the boundary.
   for(let j=0;j<boundary.length;j++)for(let r=0;r<rings;r++){
    const a=boundary[j],b=boundary[(j+1)%boundary.length],P=(p,t)=>{const x=centre[0]+(p[0]-centre[0])*t,z=centre[2]+(p[1]-centre[2])*t;return[x,storyGround(x,z),z];};
-   terrainMini.quad(P(a,r/rings),P(b,r/rings),P(b,(r+1)/rings),P(a,(r+1)/rings));
+   const aa=P(a,r/rings),bb=P(b,r/rings),cc=P(b,(r+1)/rings),dd=P(a,(r+1)/rings);
+   terrainMini.tri(aa,bb,cc,surfaceNormal(aa),surfaceNormal(bb),surfaceNormal(cc));
+   terrainMini.tri(aa,cc,dd,surfaceNormal(aa),surfaceNormal(cc),surfaceNormal(dd));
    if(r===rings-1){const aa=P(a,1),bb=P(b,1);edgeMini.quad(aa,bb,[bb[0],.55,bb[2]],[aa[0],.55,aa[2]]);}
   }
-  I(terrainMini,[0,0,0],[1,1,1],'#b7c997',undefined,0);
+  I(terrainMini,[0,0,0],[1,1,1],'#a4b97c',undefined,0);
   I(edgeMini,[0,0,0],[1,1,1],'#c6b59b',undefined,3);
   // Actual displayed architecture bounds provide clearings for illustrative houses
   // and crowns. No unrelated generic building is placed through a named temple.
@@ -62,56 +70,99 @@
   const gardenKeepout=(x,z,pad=0)=>x>-12.8-pad&&x<.7+pad&&z>15.1-pad&&z<21.2+pad;
   const inClearing=(x,z,pad=0)=>clearings.some(c=>x>c.x0-pad&&x<c.x1+pad&&z>c.z0-pad&&z<c.z1+pad);
   group='storybook-lanes';
-  const lanes=historicalStreets.map(r=>({id:r.id,name:r.name,points:r.points.map(p=>p.map(v=>v*displayScale))}));
+  const historicIds=new Set(historicalStreets.map(r=>r.id));
+  // Keep the main town lanes, not every short service/entrance footway: those
+  // create illegible fragments once building footprints are intentionally edited.
+  const townRoads=footprintData.roads.filter(r=>!historicIds.has(r.id)&&['residential','unclassified','living_street','pedestrian'].includes(r.highway));
+  const inTown=p=>p[0]<-11.8&&p[1]>-4&&p[1]<22.2&&islandInside(...p,.6);
+  const lanes=[...historicalStreets.map(r=>({...r,hero:true})),...townRoads].map(r=>({id:r.id,name:r.name,hero:!!r.hero,points:r.points.map(p=>p.map(v=>v*displayScale))})).filter(r=>r.hero||r.points.some(inTown));
   const streetSurface=mesh('storybook-cream-lanes'),streetBorder=mesh('storybook-lane-borders');
   const segments=[];
   for(const road of lanes)for(let j=1;j<road.points.length;j++){
    const a=road.points[j-1],b=road.points[j],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz);if(len<.01)continue;
+   if(!road.hero&&![a,b].some(inTown))continue;
    segments.push({a,b});const steps=Math.ceil(len/.35),nx=-dz/len,nz=dx/len;
    for(let k=0;k<steps;k++){
-    const t=(k+.5)/steps,x=a[0]+dx*t,z=a[1]+dz*t;if(!islandInside(x,z,.45)||inClearing(x,z,.12))continue;
-    for(const [m,width,lift]of[[streetBorder,.60,.020],[streetSurface,.48,.025]]){
+    const t=(k+.5)/steps,x=a[0]+dx*t,z=a[1]+dz*t;if(!islandInside(x,z,.45)||inClearing(x,z,.12)||gardenKeepout(x,z,.2)||(!road.hero&&(x>-11.8||z< -4||z>22.2)))continue;
+    for(const [m,width,lift]of[[streetBorder,road.hero?.80:.58,.020],[streetSurface,road.hero?.65:.46,.025]]){
      const P=(t,s)=>{const x=a[0]+dx*t+nx*s*width/2,z=a[1]+dz*t+nz*s*width/2;return[x,storyGround(x,z)+lift,z];};
      m.quad(P(k/steps,-1),P(k/steps,1),P((k+1)/steps,1),P((k+1)/steps,-1));
     }
    }
   }
-  I(streetBorder,[0,0,0],[1,1,1],'#c5b69b',undefined,3);I(streetSurface,[0,0,0],[1,1,1],'#efe2c8',undefined,3);
+  I(streetBorder,[0,0,0],[1,1,1],'#b6ac91',undefined,3);I(streetSurface,[0,0,0],[1,1,1],'#d9cdb2',undefined,3);
   const laneDistance=(x,z)=>Math.min(...segments.map(s=>dseg(x,z,s.a,s.b)));
+  // Lightweight shared solids let the street become richer without restoring
+  // the old millions of small bevelled joinery triangles.
+  const townBox=mesh('storybook-joinery-box');
+  const cubeFaces=[[[1,0,0],[0,1,0],[0,0,1]],[[-1,0,0],[0,1,0],[0,0,-1]],[[0,1,0],[1,0,0],[0,0,-1]],[[0,-1,0],[1,0,0],[0,0,1]],[[0,0,1],[1,0,0],[0,1,0]],[[0,0,-1],[-1,0,0],[0,1,0]]];
+  for(const[n,u,v]of cubeFaces){const P=(a,b)=>V.add(V.mul(n,.5),V.add(V.mul(u,a),V.mul(v,b)));townBox.quad(P(-.5,-.5),P(.5,-.5),P(.5,.5),P(-.5,.5),n);}
+  const smallBox=(p,s,c,yaw=0,mat=1)=>I(townBox,p,s,c,Q.y(yaw),mat);
+  group='storybook-courtyards';
+  for(const c of clearings){if(c.group==='main-hall'||c.group.includes('kodaiji'))continue;smallBox([(c.x0+c.x1)/2,base+.012,(c.z0+c.z1)/2],[c.x1-c.x0+.55,.035,c.z1-c.z0+.65],'#d8c8a9',0,3);}
   group='storybook-town';
-  const roofMini=mesh('storybook-machiya-roof'),roofEdge=mesh('storybook-machiya-eaves');
-  const roofP=(x,t,s)=>[x,.42*(1-t)+.10*t**5,s*.62*t];
-  for(const s of[-1,1])for(let j=0;j<8;j++){
-   const t=j/8,tt=(j+1)/8;roofMini.quad(roofP(-.62,t,s),roofP(.62,t,s),roofP(.62,tt,s),roofP(-.62,tt,s));
+  const roofMini=mesh('storybook-machiya-roof'),roofEdge=mesh('storybook-machiya-eaves'),gableMini=mesh('storybook-machiya-gables');
+  const roofP=(x,t,s)=>[x,.40*(1-t)+.075*t**5,s*.59*t];
+  for(const s of[-1,1])for(let j=0;j<6;j++){
+   const t=j/6,tt=(j+1)/6;roofMini.quad(roofP(-.60,t,s),roofP(.60,t,s),roofP(.60,tt,s),roofP(-.60,tt,s));
   }
-  for(const s of[-1,1])roofEdge.quad([-.62,.1,s*.62],[.62,.1,s*.62],[.62,.04,s*.62],[-.62,.04,s*.62]);
+  for(const s of[-1,1]){
+   roofEdge.quad([-.60,.075,s*.59],[.60,.075,s*.59],[.60,.015,s*.59],[-.60,.015,s*.59]);
+   for(const front of[-1,1])for(let j=0;j<6;j++){
+    const t=j/6,u=(j+1)/6,H=t=>.40*(1-t*.5/.59)+.075*(t*.5/.59)**5;
+    gableMini.quad([s*.50,0,front*.5*t],[s*.50,0,front*.5*u],[s*.50,H(u),front*.5*u],[s*.50,H(t),front*.5*t],[s,0,0]);
+   }
+  }
+  const nearestLane=(x,z)=>{let best=null;for(const s of segments){const dx=s.b[0]-s.a[0],dz=s.b[1]-s.a[1],t=clamp(((x-s.a[0])*dx+(z-s.a[1])*dz)/(dx*dx+dz*dz),0,1),p=[s.a[0]+dx*t,s.a[1]+dz*t],d=Math.hypot(x-p[0],z-p[1]);if(!best||d<best.d)best={p,d};}return best;};
   const houses=[],used=[];
   for(const b of footprintData.buildings){
    if(footprintData.customLandmarkIds.includes(b.id)||b.name||b.footprintArea>2.2)continue;
-   const x=b.center[0]*displayScale,z=b.center[1]*displayScale,dist=laneDistance(x,z);
-   if(!islandInside(x,z,1.4)||dist<.65||dist>3.4||inClearing(x,z,1.1)||gardenKeepout(x,z,.5)||Math.hypot(x,z+1)<5.4)continue;
-   if(used.some(p=>Math.hypot(p[0]-x,p[1]-z)<1.05))continue;
-   used.push([x,z]);const h=.52+(b.id%5)*.08,w=.68+(b.id%3)*.13,d=.70+(b.id%4)*.07,y=storyGround(x,z),yaw=-Math.atan2(b.axes.u[1],b.axes.u[0]);
-   const plaster=['#f0dfc0','#e4cdb4','#eac4bb','#dbe0c5'][b.id%4],tile=['#788b8a','#758177','#8b8e9a','#839b97'][b.id%4];
-   box([x,y+h/2,z],[w,h,d],plaster,yaw,1);
-   I(roofMini,[x,y+h-.03,z],[w,Math.min(w,d),d],tile,Q.y(yaw),2);I(roofEdge,[x,y+h-.03,z],[w,Math.min(w,d),d],'#596d69',Q.y(yaw),1);
+   const x=b.center[0]*displayScale,z=b.center[1]*displayScale,near=nearestLane(x,z),dist=near.d;
+   if(!islandInside(x,z,1.25)||dist<.76||dist>4.6||inClearing(x,z,.85)||gardenKeepout(x,z,.4)||Math.hypot(x,z+1)<4.7)continue;
+   if(used.some(p=>Math.hypot(p[0]-x,p[1]-z)<.96))continue;
+   used.push([x,z]);const h=.73+(b.id%5)*.085,w=.69+(b.id%3)*.10,d=.74+(b.id%4)*.055,y=storyGround(x,z),yaw=dist<1.8?Math.atan2(near.p[0]-x,near.p[1]-z):-Math.atan2(b.axes.u[1],b.axes.u[0]);
+   const plaster=['#e8cd9f','#eddcbb','#dba58a','#e8d6be','#d6d7b7'][b.id%5],tile=['#607a80','#68766f','#797d8c','#688b8c','#536c71'][b.id%5],wood=['#805b3e','#976b46','#8b6244'][b.id%3];
+   smallBox([x,y+.012,z],[w*1.22,.025,d*1.27],'#c4bda0',yaw,3);
+   smallBox([x,y+h/2,z],[w,h,d],plaster,yaw,0);
+   I(gableMini,[x,y+h-.03,z],[w,Math.min(w,d),d],plaster,Q.y(yaw),0);
+   I(roofMini,[x,y+h-.03,z],[w,Math.min(w,d),d],tile,Q.y(yaw),2);I(roofEdge,[x,y+h-.03,z],[w,Math.min(w,d),d],'#455d60',Q.y(yaw),1);
    const co=Math.cos(yaw),si=Math.sin(yaw),P=(xx,yy,zz)=>[x+co*xx+si*zz,y+yy,z-si*xx+co*zz];
-   plate(P(0,h*.34,d*.505),[w*.80,h*.46,.015],'#6d5c4a',yaw,1);
-   plate(P(0,h*.76,d*.51),[w*.69,h*.19,.018],'#9aacaa',yaw,1);
-   for(let j=-2;j<=2;j++)box(P(j*w*.15,h*.31,d*.523),[.022,h*.43,.025],'#b29975',yaw,1);
-   if(b.id%4===0)plate(P(0,h*.57,d*.58),[w*.72,.12,.05],['#d89aa9','#94b9ad','#b6b4cc'][b.id%3],yaw,1);
-   houses.push({sourceWay:b.id,x,z,illustrative:true});
-   if(houses.length>=280)break;
+   smallBox(P(0,h*.30,d*.505),[w*.86,h*.48,.025],'#534b40',yaw);
+   smallBox(P(0,h*.77,d*.51),[w*.68,h*.20,.027],'#879e98',yaw);
+   for(let j=-3;j<=3;j++)smallBox(P(j*w*.125,h*.29,d*.54),[.025,h*.48,.03],wood,yaw);
+   for(const side of[-1,1]){smallBox(P(side*w*.46,h*.5,d*.52),[.045,h,.05],wood,yaw);smallBox(P(side*w*.35,h*.77,d*.54),[.028,h*.23,.03],wood,yaw);}
+   smallBox(P(0,h*.66,d*.54),[w*.82,.055,.04],wood,yaw);
+   smallBox(P(0,.09,0),[w+.025,.18,d+.025],wood,yaw);
+   for(const side of[-1,1]){
+    smallBox(P(side*w*.51,h*.72,0),[.022,h*.22,d*.45],'#84918b',yaw);
+    smallBox(P(side*w*.46,h*.53,-d*.48),[.045,h*.94,.045],wood,yaw);
+   }
+   smallBox(P(0,h*.72,-d*.51),[w*.64,h*.22,.022],'#84918b',yaw);
+   smallBox(P(0,h*.30,-d*.51),[w*.56,h*.38,.022],'#665a47',yaw);
+   for(const side of[-1,1])smallBox(P(side*w*.17,h*.72,-d*.53),[.025,h*.24,.025],wood,yaw);
+   // Deep shop eave and visible ridge, not only a coloured box.
+   I(roofMini,P(0,h*.51,d*.46),[w*.92,.30,d*.28],tile,Q.y(yaw),2);
+   smallBox(P(0,h+.40*Math.min(w,d),0),[w*1.18,.055,.075],'#526668',yaw);
+   if(b.id%3!==0){const curtain=['#bb6d7e','#789d8c','#caa269','#8b90ad'][b.id%4];smallBox(P(0,h*.48,d*.65),[w*.63,.14,.022],curtain,yaw,0);smallBox(P(0,h*.46,d*.666),[.018,.11,.012],plaster,yaw,0);}
+   if(b.id%4===0){smallBox(P(w*.38,h*.66,d*.69),[.08,.15,.08],'#dc997f',yaw,0);smallBox(P(w*.38,h*.75,d*.69),[.09,.025,.09],wood,yaw);}
+   houses.push({sourceWay:b.id,x,z,yaw,illustrative:true});
+   if(houses.length>=160)break;
   }
-  group='storybook-groves';const trees=[];
-  // Three shared low-poly crowns per tree replace thousands of sub-leaf meshes.
-  for(let k=0;k<1600&&trees.length<270;k++){
-   const x=-25+range(0,32),z=-7+range(0,38),r=range(.36,.55);
-   if(!islandInside(x,z,r+.5)||inClearing(x,z,r+.35)||gardenKeepout(x,z,r)||laneDistance(x,z)<r+.40||used.some(p=>Math.hypot(x-p[0],z-p[1])<r+.8)||trees.some(p=>Math.hypot(x-p.x,z-p.z)<r+p.radius+.15))continue;
-   const y=storyGround(x,z),h=range(.80,1.25),pink=k%5===0,c=pink?['#eda9bb','#f2c0cc','#e6a0b2']:['#8eae78','#a4be80','#729b71'];
-   pole([x,y,z],[x,y+h*.75,z],.055,'#9b8162',true);
-   for(const [dx,dy,dz,s]of[[0,1,0,.83],[-.36,.77,.1,.67],[.35,.72,-.13,.64]])ball([x+dx*r,y+dy*h,z+dz*r],[r*s,h*.36,r*s],c[trees.length%3],tiny,4);
-   trees.push({x,z,radius:r,height:h});
+  group='storybook-groves';const trees=[],canopy=sph('storybook-sculpted-canopy',10,6,.075);
+  // Clustered layered groves instead of evenly scattered lollipop trees.
+  // Three reusable crowns plus a branch silhouette; no individual leaf geometry.
+  const groves=[[-1,7,4.8,4.6],[4,2,3,6],[3,25,4.8,6.5],[-5,28,5,3],[-22,27,3.2,4],[-22,2,4,5],[-3,-5,5,2],[-11,5,3,4],[4.5,17.5,2.4,5.8],[-2,12,3,3]];
+  for(let k=0;k<7000&&trees.length<480;k++){
+   const g=groves[k%groves.length],a=range(0,Math.PI*2),rad=Math.sqrt(rnd()),x=g[0]+Math.cos(a)*rad*g[2],z=g[1]+Math.sin(a)*rad*g[3],r=range(.46,.84);
+   if(!islandInside(x,z,r+.25)||inClearing(x,z,r+.22)||gardenKeepout(x,z,r*.65)||laneDistance(x,z)<r*.65+.38||used.some(p=>Math.hypot(x-p[0],z-p[1])<r*.7+.60)||trees.some(p=>Math.hypot(x-p.x,z-p.z)<(r+p.radius)*.72))continue;
+   const y=storyGround(x,z),h=range(.95,1.55),pink=(k%7<2),c=pink?['#e692ad','#efadc3','#f4bfce','#d781a0']:['#538453','#6c984f','#8ba75d','#507d60','#a8b66b'];
+   pole([x,y,z],[x,y+h*.78,z],.045,'#90714d',true);
+   pole([x,y+h*.40,z],[x+r*.40,y+h*.75,z+r*.16],.027,'#90714d',true);
+   const color=c[trees.length%c.length];
+   ball([x,y+h*.83,z],[r*.70,h*.31,r*.70],color,canopy,4);
+   ball([x+r*.46,y+h*.65,z+r*.12],[r*.64,h*.27,r*.62],color,canopy,4);
+   ball([x-r*.45,y+h*.62,z-r*.13],[r*.61,h*.27,r*.63],color,canopy,4);
+   trees.push({x,z,radius:r,height:h,pink});
   }
   scene.areaBuildings=houses;scene.areaStreets=lanes;
   scene.footprintBuildings=[];

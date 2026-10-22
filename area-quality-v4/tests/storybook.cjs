@@ -10,7 +10,10 @@ assert.equal(model.metricLandmarks.length,13);
 assert.equal(model.meshes.reduce((n,m)=>n+m.instances.filter(i=>i.group==='main-hall').length,0),2158,'main hall and stage construction retained');
 for(const record of model.metricLandmarks)assert.ok(model.meshes.some(m=>m.instances.some(i=>i.group===record.group)),record.key+' remains present');
 assert.ok(model.areaBuildings.length>60&&model.areaBuildings.length<=280);
-assert.ok(model.cartography.trees<=270);
+assert.ok(model.cartography.trees>=300&&model.cartography.trees<=480,'clustered grove budget');
+assert.ok(model.meshes.some(m=>m.name==='storybook-sculpted-canopy'));
+assert.ok(model.meshes.some(m=>m.name==='storybook-machiya-gables'),'closed gables avoid hollow toy roofs');
+assert.ok(model.areaBuildings.length>=100,'continuous town density');
 assert.ok(model.areaBuildings.every(b=>b.illustrative&&Number.isFinite(b.x)&&Number.isFinite(b.z)));
 assert.ok(!model.meshes.some(m=>m.instances.some(i=>['kiyomizu-landscape','gion-footprint-blocks','district-terrain'].includes(i.group))),'retire dense non-display geometry');
 const asset=JSON.parse(fs.readFileSync(path.join(root,'.build/mobile-pack.json')));
@@ -18,5 +21,6 @@ assert.ok(asset.bytes<8*1024*1024&&asset.compressedBytes<2*1024*1024&&asset.mani
 assert.ok(asset.maxChunkBytes<=2*1024*1024&&asset.chunkCount>=2);
 assert.equal(asset.triangles,triangles);assert.equal(asset.instances,instances);
 const sourceHashes={};for(const file of ['historic-streets.json','gion-footprints.json'])sourceHashes[file]=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'../area-data',file))).digest('hex');
+assert.deepEqual(sourceHashes,{'historic-streets.json':'170bb89edda78d10fd84b45ce089fdcc7f6906abf913a3bacecdcc2f92a39151','gion-footprints.json':'d0d1e9120fe00f0c2e242bbc350475dc23cc49ce023cbbedcb54fe446058792b'},'geographic sources unchanged by visual work');
 const report={ok:true,revision:model.revision,triangles,instances,trees:model.cartography.trees,houses:model.areaBuildings.length,mobile:asset,geographicSourceHashes:sourceHashes,limitations:model.cartography.notice};
 fs.mkdirSync('district-v49-artifacts',{recursive:true});fs.writeFileSync('district-v49-artifacts/storybook-geometry.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));

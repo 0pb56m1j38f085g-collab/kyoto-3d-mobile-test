@@ -3,7 +3,7 @@ const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_pro
 const {chromium,webkit}=require('playwright');
 const out=path.resolve('district-v49-artifacts');fs.mkdirSync(out,{recursive:true});
 const base=process.env.CHECK_BASE_URL||'http://127.0.0.1:4189';
-const report={revision:'area-higashiyama-quality-v4.17',base,cases:[],checks:[]};
+const report={revision:'area-higashiyama-quality-v4.18',base,cases:[],checks:[]};
 const check=(name,passed,detail)=>{report.checks.push({name,passed:!!passed,detail});assert.ok(passed,name);};
 let server,browser;
 (async()=>{try{
@@ -50,6 +50,7 @@ let server,browser;
    const qualityFrames=await page.evaluate(()=>{const frames=phoneTest.renderer.frames;phoneTest.setQuality('high');return frames;});
    await page.waitForFunction(f=>phoneTest.renderer.frames>=f+2,qualityFrames,{timeout:30000});
    check(kind+' settings cannot bypass memory guard',await page.evaluate(()=>phoneTest.quality==='light'));
+   check(kind+' all four landmarks visible in overview',s.labels.length===4,s.labels);
   }else{
    check('mismatched lighting gracefully falls back',!!s.bakedMismatch&&!s.bakedEnabled,s);
    check('fallback allocates usable shadow map',s.shadowSize===3072,s.shadowSize);
