@@ -1,0 +1,94 @@
+{
+  "ok": true,
+  "environment": "Host HTTP and SHA-256 verification only; no public browser or physical device test",
+  "verifiedAt": "2026-10-22T18:25:26.475Z",
+  "revision": "area-higashiyama-quality-v4.20",
+  "assetToken": "7b13a14c40cd-8f7dbdd43b4d-ee8cc7f50718",
+  "modelHash": "7b13a14c40cd771754ed382da89db2a0fe3aec9a08b3c0d6dfb246e6200e125c",
+  "lightingHash": "8f7dbdd43b4d5839c0a5fdf9eaa6b8a7c64efb7a9056976a4e9fd8c7a6817834",
+  "mobile": {
+    "url": "./mobile/f7e116b397f998d1b59b42b0.json",
+    "manifestBytes": 102173,
+    "sha256": "f7e116b397f998d1b59b42b06153b368c15b4cc431b67ee9b38ee8c9338b1ee6",
+    "revision": "area-higashiyama-quality-v4.20",
+    "sourceModelHash": "7b13a14c40cd771754ed382da89db2a0fe3aec9a08b3c0d6dfb246e6200e125c",
+    "bytes": 5924320,
+    "compressedBytes": 1589500,
+    "maxChunkBytes": 2036852,
+    "maxCompressedChunkBytes": 601938,
+    "chunkCount": 3,
+    "triangles": 839412,
+    "instances": 11533,
+    "meshes": 155,
+    "batches": 155,
+    "geometry": "identical Float32 positions, normals, triangle order/winding and instance transforms; no LOD; unused UV omitted"
+  },
+  "checks": [
+    {
+      "path": "/build-info.json?verify=1792693494836",
+      "status": 200,
+      "bytes": 34373,
+      "sha256": "9b4634b64bd40b2e1aff4bc2fd47d6e47748b964e602808f84492e67c0beb565"
+    },
+    {
+      "path": "/src/renderer.js?v=7b13a14c40cd-8f7dbdd43b4d-ee8cc7f50718",
+      "status": 200,
+      "bytes": 67010,
+      "sha256": "482dd61c732ffa0c4a4fddeb3532f8ad47101a22e4fff06dd6468c8181f7d995"
+    },
+    {
+      "path": "/src/scene.js?v=7b13a14c40cd-8f7dbdd43b4d-ee8cc7f50718",
+      "status": 200,
+      "bytes": 3516076,
+      "sha256": "b2fa72cbcc5b0d453a55cb7785e737f59d30773e72b3a3ff1f2cd5183e22dd87"
+    },
+    {
+      "path": "/src/app.js?v=7b13a14c40cd-8f7dbdd43b4d-ee8cc7f50718",
+      "status": 200,
+      "bytes": 20693,
+      "sha256": "dd48ac425231f34a5f76bed1712ef3f4969fdaa0cff7269cce9d56dfecd107f7"
+    },
+    {
+      "path": "/index.html?v=7b13a14c40cd-8f7dbdd43b4d-ee8cc7f50718",
+      "status": 200,
+      "bytes": 19274,
+      "sha256": "0617a170fc37ba023f48b2f1321380fb4483434a95cef6d533cd65415f83a3c6"
+    },
+    {
+      "path": "/?v=4.20",
+      "status": 200,
+      "bytes": 19274,
+      "sha256": "0617a170fc37ba023f48b2f1321380fb4483434a95cef6d533cd65415f83a3c6"
+    },
+    {
+      "path": "./mobile/f7e116b397f998d1b59b42b0.json",
+      "status": 200,
+      "bytes": 102173,
+      "sha256": "f7e116b397f998d1b59b42b06153b368c15b4cc431b67ee9b38ee8c9338b1ee6"
+    },
+    {
+      "path": "./mobile/f20be25052c4950071b8a7cf.bin.gz",
+      "status": 200,
+      "bytes": 534256,
+      "sha256": "0493b2973013c03e160a9fef8a9fb2f7c862ed87c5ced121e69a49d681e350c5"
+    },
+    {
+      "path": "./mobile/a60f4c2a8965e31532a38bf7.bin.gz",
+      "status": 200,
+      "bytes": 453306,
+      "sha256": "a89031ef32544f854ddda5d22e97b18805eba79f1e5958f10b75e730a1ab033b"
+    },
+    {
+      "path": "./mobile/fb0f48f99b9e9ed485ff223b.bin.gz",
+      "status": 200,
+      "bytes": 601938,
+      "sha256": "6497f1e4e189846d6faca63fd321a37b1b149b679b6754dd20a9f8cac844d842"
+    },
+    {
+      "path": "/lighting.bin?v=7b13a14c40cd-8f7dbdd43b4d-ee8cc7f50718",
+      "status": 200,
+      "bytes": 2360720,
+      "sha256": "8f7dbdd43b4d5839c0a5fdf9eaa6b8a7c64efb7a9056976a4e9fd8c7a6817834"
+    }
+  ]
+}
