@@ -47,7 +47,7 @@
    const dx=x-K.at[0],dz=z-K.at[1],fade=1-smooth((Math.hypot(dx/1.2,dz)-5.3)/3.3);
    const terrace=.65*(1-smooth((Math.abs(x+6.5)-7.4)/1.8))*(1-smooth((Math.abs(z-17.2)-3.3)/1.4));
    const hill=mountainRelief(x,z)*(1-fade);
-   const channel=Math.max(...waterways.map(r=>(1-smooth((riverDistance(x,z,r)-r.width*.44)/.8))*.72));
+   const channel=Math.max(...waterways.map(r=>(1-smooth((riverDistance(x,z,r)-r.width*.50-.15)/.7))*.72));
    return base+((srcGround(K.source[0]+dx/K.scale,K.source[1]+dz/K.scale)-base)*K.scale+K.lift)*fade+hill+terrace-channel;
   }
   // Rounded, finite diorama edge instead of an empty infinite green plane.
@@ -64,16 +64,23 @@
   // shadow streaks across otherwise flat ground between distant vertex samples.
   const coarseBoundary=boundary.slice();boundary.length=0;
   for(let j=0;j<coarseBoundary.length;j++){const a=coarseBoundary[j],b=coarseBoundary[(j+1)%coarseBoundary.length],n=Math.max(1,Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1])/.65));for(let k=0;k<n;k++)boundary.push([a[0]+(b[0]-a[0])*k/n,a[1]+(b[1]-a[1])*k/n]);}
-  const centre=[-9,base,12],rings=64;
   const surfaceNormal=p=>V.unit([storyGround(p[0]-.025,p[2])-storyGround(p[0]+.025,p[2]),.05,storyGround(p[0],p[2]-.025)-storyGround(p[0],p[2]+.025)]);
-  // Concentric strips meet exactly; no stair-stepped silhouette at the boundary.
-  for(let j=0;j<boundary.length;j++)for(let r=0;r<rings;r++){
-   const a=boundary[j],b=boundary[(j+1)%boundary.length],P=(p,t)=>{const x=centre[0]+(p[0]-centre[0])*t,z=centre[2]+(p[1]-centre[2])*t;return[x,storyGround(x,z),z];};
-   const aa=P(a,r/rings),bb=P(b,r/rings),cc=P(b,(r+1)/rings),dd=P(a,(r+1)/rings);
-   const surface=(aa[1]+bb[1]+cc[1]+dd[1])/4>base+2.9?hillMini:terrainMini;
-   surface.tri(aa,bb,cc,surfaceNormal(aa),surfaceNormal(bb),surfaceNormal(cc));
-   surface.tri(aa,cc,dd,surfaceNormal(aa),surfaceNormal(cc),surfaceNormal(dd));
-   if(r===rings-1){const aa=P(a,1),bb=P(b,1);edgeMini.quad(aa,bb,[bb[0],.55,bb[2]],[aa[0],.55,aa[2]]);}
+  // Uniform cells avoid the long/thin radial triangles that streaked steep
+  // slopes and crossed the narrow channel. Clip perimeter cells to the rounded
+  // convex outline, so increasing surface quality does not create a jagged edge.
+  function clippedCell(poly){for(let j=0;j<coarseBoundary.length&&poly.length;j++){
+   const a=coarseBoundary[j],b=coarseBoundary[(j+1)%coarseBoundary.length],side=p=>(b[0]-a[0])*(p[1]-a[1])-(b[1]-a[1])*(p[0]-a[0]),next=[];
+   for(let k=0;k<poly.length;k++){const p=poly[k],q=poly[(k+1)%poly.length],sp=side(p),sq=side(q);if(sp>=-1e-8)next.push(p);if((sp>=0)!==(sq>=0)){const t=sp/(sp-sq);next.push([p[0]+(q[0]-p[0])*t,p[1]+(q[1]-p[1])*t]);}}poly=next;
+  }return poly;}
+  const step=.28;
+  for(let x=bounds.x0;x<bounds.x1-.001;x+=step)for(let z=bounds.z0;z<bounds.z1-.001;z+=step){
+   const xx=Math.min(x+step,bounds.x1),zz=Math.min(z+step,bounds.z1);let poly=[[x,z],[xx,z],[xx,zz],[x,zz]];
+   if(!poly.every(p=>islandInside(...p,.01)))poly=clippedCell(poly);
+   const pts=poly.map(p=>[p[0],storyGround(...p),p[1]]);
+   for(let j=1;j<pts.length-1;j++){const a=pts[0],b=pts[j],c=pts[j+1],surface=(a[1]+b[1]+c[1])/3>base+2.9?hillMini:terrainMini;surface.tri(a,b,c,surfaceNormal(a),surfaceNormal(b),surfaceNormal(c));}
+  }
+  for(let j=0;j<boundary.length;j++){
+   const a=boundary[j],b=boundary[(j+1)%boundary.length],aa=[a[0],storyGround(...a),a[1]],bb=[b[0],storyGround(...b),b[1]];edgeMini.quad(aa,bb,[bb[0],.55,bb[2]],[aa[0],.55,aa[2]]);
   }
   // One continuous soil tint: lighting/normals and woodland communicate relief,
   // without a saw-tooth colour band along the radial triangulation.
@@ -88,7 +95,12 @@
     const t=(k+.5)/n,x=a[0]+dx*t,z=a[1]+dz*t;if(!islandInside(x,z,r.width*.55))continue;
     const P=(t,s,y)=>[a[0]+dx*t+nx*s,y,a[1]+dz*t+nz*s];
     waterMini.quad(P(k/n,-r.width/2,base-.45),P(k/n,r.width/2,base-.45),P((k+1)/n,r.width/2,base-.45),P((k+1)/n,-r.width/2,base-.45),[0,1,0]);
-    for(const s of[-1,1]){const p=s*(r.width/2+.24);bankMini.quad(P(k/n,p-.15,base-.14),P(k/n,p+.15,base-.14),P((k+1)/n,p+.15,base-.14),P((k+1)/n,p-.15,base-.14),[0,1,0]);}
+    for(const s of[-1,1]){
+     const inner=s*r.width/2,outer=s*(r.width/2+.75),mid=P(t,(inner+outer)/2,0);
+     if(waterways.some(other=>other!==r&&riverDistance(mid[0],mid[2],other)<other.width/2+.35))continue;
+     const B=t=>{const p=P(t,outer,0);p[1]=storyGround(p[0],p[2])+.018;return p;};
+     const aa=P(k/n,inner,base-.46),bb=B(k/n),cc=B((k+1)/n),dd=P((k+1)/n,inner,base-.46);let normal=V.unit(V.cross(V.sub(bb,aa),V.sub(cc,aa)));if(normal[1]<0)normal=V.mul(normal,-1);bankMini.quad(aa,bb,cc,dd,normal);
+    }
     if(k%9===0){const p=(k%3-1)*r.width*.14;rippleMini.quad(P(k/n,p-.04,base-.435),P(k/n,p+.04,base-.435),P((k+2)/n,p+.04,base-.435),P((k+2)/n,p-.04,base-.435),[0,1,0]);}
    }
   }

@@ -24,6 +24,9 @@ for(const name of ['storybook-river-water','storybook-river-banks','storybook-wa
 const distance=(x,z,a,b)=>{const dx=b[0]-a[0],dz=b[1]-a[1],t=Math.max(0,Math.min(1,((x-a[0])*dx+(z-a[1])*dz)/(dx*dx+dz*dz)));return Math.hypot(x-a[0]-dx*t,z-a[1]-dz*t);};
 for(const b of model.areaBuildings)for(const r of model.cartography.waterways.channels)assert.ok(Math.min(...r.points.slice(1).map((p,j)=>distance(b.x,b.z,r.points[j],p)))>r.width/2+.8,'house clear of river bank');
 assert.ok(model.meshes.every(m=>m.p.every(Number.isFinite)&&m.n.every(Number.isFinite)),'finite terrain and channel geometry');
+for(const m of model.meshes.filter(m=>['storybook-soft-ground','storybook-wooded-ridge'].includes(m.name)))for(let k=0;k<m.p.length;k+=9){
+ const p=m.p;for(const [a,b]of[[0,3],[3,6],[6,0]])assert.ok(Math.hypot(p[k+a]-p[k+b],p[k+a+2]-p[k+b+2])<.41,'terrain cells bounded for slope and shoreline interpolation');
+}
 assert.ok(!model.meshes.some(m=>m.instances.some(i=>['kiyomizu-landscape','gion-footprint-blocks','district-terrain'].includes(i.group))),'retire dense non-display geometry');
 const asset=JSON.parse(fs.readFileSync(path.join(root,'.build/mobile-pack.json')));
 assert.ok(asset.bytes<8*1024*1024&&asset.compressedBytes<2*1024*1024&&asset.manifestBytes<150000,'download and GPU-input budgets');
