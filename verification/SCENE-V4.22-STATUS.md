@@ -63,6 +63,29 @@ samples. Model SHA-256:
 Geometry input is 9,585,244 bytes, compressed transport 2,944,023 bytes, six parts
 no larger than 2,006,844 raw bytes. CPU geometry is still released after upload.
 
-Latest full browser/visual review is pending run `39857895513`.
-Public v4.21 remains unchanged. No claim of concept parity or physical-iPhone
-certification is made.
+Final validation: run `39857895513`, testing runtime commit
+`908e0855889de8ab55bab37fab42001fcfd007b2`, completed successfully.
+Build, WebKit and Chromium jobs all passed. The downloaded WebKit report passes
+27/27 checks, including full baked lighting, shared resolution, all four primary
+landmark buttons, landmark views, reload and context restoration. This is browser
+CI, not a physical iPhone test. The raw WebKit report is retained in
+`verification/v4.22/webkit-report.json`.
+
+Actual image review: the black roof slopes are corrected, streets are visible,
+the stage is fully framed, and continuous woodland replaces the former bare hill.
+The draft still falls short of the approved concept: woodland dominates the
+opening, street slabs have conspicuous jagged joins/grade transitions, and shop
+frontages and materials remain repetitive. Next visual work should improve the
+street/terrain joins and Ninenzaka frontage character, not just add objects.
+
+Reviewed actual screenshots are in GitHub Actions artifact `12460442690`:
+`iphone-area.png` and `iphone-street.png`. ZIP SHA-256:
+`d483bdb632bc256cc6e0c50c671f0044cd76439f85f79b5d8b25a4d98538961b`.
+Full verified site artifact: `12461500972`; model hash is given above.
+Lighting SHA-256:
+`eee92658125d2e5adfaf9f277a6fbfa1f5d90de0fdb7a7d5807d98cb8df7170b`.
+
+Public v4.21 remains unchanged, confirmed against Render's live deploy
+`dep-dbd7e93ncjis73bcu5b0` at commit
+`b2ff4f28fb9b5d65ac1966f062f696cc67da1b48`. v4.22 is an unpublished draft.
+No claim of concept parity or physical-iPhone certification is made.
