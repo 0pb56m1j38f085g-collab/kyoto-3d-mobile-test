@@ -1,0 +1,35 @@
+name: Public v4.16 WebKit frame presentation
+on:
+  push:
+    branches: [area-higashiyama-quality-v4.16]
+    paths: ['verification/webkit-v416.cjs', '.github/workflows/webkit-public-v416.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Prepare WebKit
+        timeout-minutes: 5
+        run: |
+          npm install --prefix "$RUNNER_TEMP/webkit-capture" --no-audit --no-fund playwright@1.55.0
+          "$RUNNER_TEMP/webkit-capture/node_modules/.bin/playwright" install --with-deps webkit
+      - name: Capture after actual frames and presentation ticks
+        env:
+          NODE_PATH: ${{ runner.temp }}/webkit-capture/node_modules
+        run: node verification/webkit-v416.cjs
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: public-v416-webkit-frames
+          path: webkit-public-artifacts/
+          if-no-files-found: error
+          retention-days: 14
