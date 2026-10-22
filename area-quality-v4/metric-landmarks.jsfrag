@@ -134,7 +134,7 @@
  group='metric-precinct-landscape';
  const gravel=mesh('metric-yasaka-gravel');
  for(let x=-33.5;x<-26.5;x+=.2)for(let z=44.5;z<49.4;z+=.2){
-  const P=(xx,zz)=>[xx,ground(xx,zz)+.006,zz];gravel.quad(P(x,z),P(x,z+.2),P(x+.2,z+.2),P(x+.2,z),[0,1,0]);
+  const P=(xx,zz)=>[xx,ground(xx,zz)+.009,zz];gravel.quad(P(x,z),P(x,z+.2),P(x+.2,z+.2),P(x+.2,z),[0,1,0]);
  }
  I(gravel,[0,0,0],[1,1,1],'#ddd4bf',undefined,0);
  // Small 3–6 m crowns at the precinct edge. Positions/species remain illustrative.

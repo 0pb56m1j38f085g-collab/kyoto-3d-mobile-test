@@ -28,6 +28,14 @@ assert.ok(h.center[1]>m.center[1]&&m.center[1]>g.center[1]);
 assert.ok(Math.hypot(h.center[0]-g.center[0],h.center[1]-g.center[1])*20<70,'precinct sequence no longer stretched over 170m');
 assert.ok(model.areaSites.scaleStatus.includes('remain exaggerated'),'remaining scale limitations explicit');
 assert.equal(model.stats.mainHallInstances,2158);
+// Fine vertex spacing is required for baked shadows at the new physical scale.
+for(const name of ['gion-footprints-#9cab76:0','gion-footprints-#d8cbb4:3']){
+ const mesh=model.meshes.find(m=>m.name===name);assert.ok(mesh,name+' exists');
+ for(let i=0;i<mesh.p.length;i+=9)for(let j=0;j<3;j++){
+  const a=mesh.p.slice(i+j*3,i+j*3+3),b=mesh.p.slice(i+((j+1)%3)*3,i+((j+1)%3)*3+3);
+  assert.ok(Math.hypot(...a.map((v,k)=>v-b[k]))<.18,name+' subdivided for lighting');
+ }
+}
 const out=path.resolve('district-v49-artifacts');fs.mkdirSync(out,{recursive:true});
 fs.writeFileSync(path.join(out,'metric-geometry.json'),JSON.stringify({ok:true,measured,limitations:model.areaSites.scaleStatus},null,2));
 console.log(JSON.stringify({ok:true,measured},null,2));

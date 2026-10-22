@@ -51,6 +51,8 @@ Source building positions correct the earlier representative-point placement and
 
 `tests/metric-landmarks.cjs` measures transformed mesh vertices (not just metadata) to check heights, grounding, source-centre alignment, precinct sequence and removal of obsolete geometry. Kiyomizu's existing main-hall geometry is preserved.
 
+The reference block's ground and roads use a maximum 0.12-unit grid step for vertex lighting. The inherited 0.65-unit terrain grid produced large triangular shadow gradients beside small buildings; the finer, slightly raised continuous surface replaces that visible interpolation without changing source building coordinates. This is rendering resolution, not improved geographic elevation accuracy.
+
 ### Not complete
 
 Kiyomizu and Kodaiji still use exaggerated architectural scales, as does context outside the mapped block. Global scale consistency, individual roof/wall verification, accurate topography, full precinct footprints and complete geographic coverage are **not complete**. The main goal of concept-quality, high-accuracy reproduction has not yet been achieved.

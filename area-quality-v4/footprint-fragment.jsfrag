@@ -9,6 +9,13 @@
  function blockMesh(color,material=1){const key=color+':'+material;if(!blockMaterials[key]){const m=mesh('gion-footprints-'+key);I(m,[0,0,0],[1,1,1],color,undefined,material);blockMaterials[key]=m;}return blockMaterials[key];}
  const blockWood=blockMesh('#685044'),blockGlass=blockMesh('#465b58'),blockStone=blockMesh('#bfb7a5',3),blockRoad=blockMesh('#d8cbb4',3),blockTile=blockMesh('#929487',2);
  const Q4=(m,a,b,c,d)=>m.quad(a,b,c,d);
+ // The inherited 13 m terrain grid cannot resolve shadows from 5–10 m houses.
+ // A fine continuous surface avoids large triangular vertex-light stains.
+ const blockGround=blockMesh('#9cab76',0),groundStep=.12;
+ for(let x=fb.minX;x<fb.maxX-1e-6;x+=groundStep)for(let z=fb.minZ;z<fb.maxZ-1e-6;z+=groundStep){
+  const xx=Math.min(fb.maxX,x+groundStep),zz=Math.min(fb.maxZ,z+groundStep),P=(a,b)=>[a,ground(a,b)+.004,b];
+  Q4(blockGround,P(x,z),P(x,zz),P(xx,zz),P(xx,z));
+ }
  const footprintRecords=[];
  function clipRoof(poly,axis,mid,side){const out=[];for(let i=0;i<poly.length;i++){
   const a=poly[i],b=poly[(i+1)%poly.length],da=(a[0]*axis[0]+a[1]*axis[1]-mid)*side,db=(b[0]*axis[0]+b[1]*axis[1]-mid)*side;
@@ -97,8 +104,12 @@
  for(const r of footprintData.roads)for(let j=1;j<r.points.length;j++){
   const seg=clipBlock(r.points[j-1],r.points[j]);if(!seg)continue;const[a,b]=seg,dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz);if(len<.005)continue;
   const width=['primary','secondary','tertiary'].includes(r.highway)?.45:['residential','unclassified'].includes(r.highway)?.22:.10;
-  const n=[-dz/len*width/2,dx/len*width/2],P=(p,s)=>[p[0]+n[0]*s,ground(p[0]+n[0]*s,p[1]+n[1]*s)+.012,p[1]+n[1]*s];
-  Q4(blockRoad,P(a,-1),P(a,1),P(b,1),P(b,-1));
+  const n=[-dz/len*width/2,dx/len*width/2],P=(t,s)=>{const x=a[0]+dx*t+n[0]*s,z=a[1]+dz*t+n[1]*s;return[x,ground(x,z)+.015,z]};
+  const along=Math.ceil(len/.12),across=Math.ceil(width/.12);
+  for(let k=0;k<along;k++)for(let c=0;c<across;c++){
+   const t=k/along,tt=(k+1)/along,s=-1+2*c/across,ss=-1+2*(c+1)/across;
+   Q4(blockRoad,P(t,s),P(t,ss),P(tt,ss),P(tt,s));
+  }
  }
  scene.footprintBuildings=footprintRecords;
  scene.areaSites.footprintReference={source:footprintData.source,license:footprintData.license,retrievedAt:footprintData.retrievedAt,bounds:fb,count:footprintRecords.length,rejected:footprintData.rejected,metresPerUnit:20,roofAndHeight:'inferred unless tagged; footprint coordinates retained'};
