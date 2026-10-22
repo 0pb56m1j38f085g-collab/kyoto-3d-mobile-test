@@ -1,0 +1,36 @@
+name: Higashiyama cross-engine baked lighting
+on:
+  push:
+    branches: [area-higashiyama-webkit-deterministic]
+    paths:
+      - 'area-quality-v4/tests/cross-engine-baked-light.cjs'
+      - '.github/workflows/area-cross-engine-baked-light.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  baked:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Install browser engines
+        run: |
+          npm install --prefix "$RUNNER_TEMP/cross-baked" --no-audit --no-fund playwright@1.55.0
+          "$RUNNER_TEMP/cross-baked/node_modules/.bin/playwright" install --with-deps chromium webkit
+      - name: Bake once and verify in Chromium and WebKit
+        env:
+          NODE_PATH: ${{ runner.temp }}/cross-baked/node_modules
+        run: xvfb-run -a node area-quality-v4/tests/cross-engine-baked-light.cjs
+      - if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: higashiyama-cross-engine-baked-light
+          path: cross-engine-baked-artifacts/
+          if-no-files-found: error
+          retention-days: 7
