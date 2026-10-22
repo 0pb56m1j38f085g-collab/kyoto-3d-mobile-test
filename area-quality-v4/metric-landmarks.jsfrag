@@ -2,6 +2,26 @@
  // same 20 m/unit coordinates as the source streets and building footprints.
  // These are reference-calibrated reconstructions, not measured survey models.
  const metricRecords=[];
+ const gardenTreeRecords=[];
+ const gardenInside=(x,z,p)=>{let yes=false;for(let j=0,k=p.length-1;j<p.length;k=j++){const a=p[j],b=p[k];if((a[1]>z)!==(b[1]>z)&&x<(b[0]-a[0])*(z-a[1])/(b[1]-a[1])+a[0])yes=!yes;}return yes;};
+ function metricGardenTree(x,z,height,radius,seed,ponds=[]){
+  // Keep the entire crown, not only the trunk, out of roofs, lanes and water.
+  const clear=radius+.025;
+  if(footprintData.buildings.some(b=>gardenInside(x,z,b.polygon)||b.polygon.some((p,j)=>dseg(x,z,p,b.polygon[(j+1)%b.polygon.length])<clear)))return;
+  if(footprintData.roads.some(r=>r.points.some((p,j)=>j&&dseg(x,z,r.points[j-1],p)<clear+(['primary','secondary','tertiary'].includes(r.highway)?.225:['residential','unclassified'].includes(r.highway)?.11:.05))))return;
+  if(ponds.some(p=>gardenInside(x,z,p.polygon)||p.polygon.some((q,j)=>dseg(x,z,q,p.polygon[(j+1)%p.polygon.length])<clear)))return;
+  if(gardenTreeRecords.some(t=>Math.hypot(x-t.x,z-t.z)<(radius+t.radius)*.78))return;
+  const y=ground(x,z),bark='#947b58',a=seed*2.399963,previous=scene.__anchor;scene.__anchor=[x,y,z];
+  pole([x,y,z],[x,y+height*.68,z],.010,bark);
+  for(let j=0;j<5;j++){
+   const angle=a+j*2.399963,reach=radius*(j===4?.12:.46),xx=x+Math.cos(angle)*reach,zz=z+Math.sin(angle)*reach,yy=y+height*(j===4?.85:.64+(j%3)*.055);
+   pole([x,y+height*.40,z],[xx,yy,zz],.006,bark);
+   const palette=seed%9===0?['#ecc0ca','#dfb1c1','#f1c8cf']:['#89a36b','#9dae76','#7f9d65','#a8b783'];
+   ball([xx,yy,zz],[radius*.53,height*.15,radius*.48],palette[(seed+j)%palette.length],tiny,4);
+  }
+  scene.__anchor=previous;
+  gardenTreeRecords.push({x,z,baseY:y,height,radius,group,placement:'existing illustrative garden candidate; not a tree survey'});
+ }
  function metricPlacement(id){
   const b=footprintData.buildings.find(b=>b.id===id),a=b.axes;
   const center=[a.u[0]*(a.loU+a.hiU)/2+a.v[0]*(a.loV+a.hiV)/2,a.u[1]*(a.loU+a.hiU)/2+a.v[1]*(a.loV+a.hiV)/2];
@@ -140,16 +160,16 @@
  // Small 3–6 m crowns at the precinct edge. Positions/species remain illustrative.
  for(let j=0;j<24;j++){
   const x=-33.2+(j%8)*.91,z=j<8?49.5:j<16?44.2:50.3;
-  const r=.12+(j%3)*.025,y=ground(x,z);
-  pole([x,y,z],[x,y+.22,z],.013,'#8b7454');
-  ball([x,y+.23,z],[r,r*1.1,r],j%5===0?'#b8b986':'#839a64',tiny,4);
+  const r=.12+(j%3)*.025;
+  metricGardenTree(x,z,.34+(j%4)*.045,r,j);
  }
  // __KODAIJI_MODELS__
  scene.metricLandmarks=metricRecords;
+ scene.metricGardenTrees=gardenTreeRecords;
  scene.areaSites.metricLandmarks=metricRecords;
  scene.areaSites.footprintReference.count=footprintRecords.length;
  scene.areaSites.footprintReference.customLandmarks=metricRecords.length;
- scene.areaSites.scaleStatus='Gion/Hokanji/Yasaka/Kodaiji block uses 20 m/unit; Kiyomizu now has a uniform source-edge calibration, with provisional footprint boundary and synthetic terrain. Authored context outside the block remain exaggerated. Kodaiji heights, landscape and roof details are inferred. Not a globally scale-accurate map.';
+ scene.areaSites.scaleStatus='Gion/Hokanji/Yasaka/Kodaiji block uses 20 m/unit; Kiyomizu has a uniform source-edge calibration, with provisional footprint boundary and synthetic terrain. Oversized authored context is removed; unmapped areas are unfilled. Heights, landscape, facade joinery and roof details remain inferred. Not a globally scale-accurate map.';
  scene.areaSites.kiyomizuPlacement=scene.kiyomizuPlacement;
  scene.areaSites.geographicAnchors.kiyomizu={local:[scene.kiyomizuPlacement.roofCentre[0],scene.kiyomizuPlacement.roofCentre[2]],sourceWay:102164590,positionSource:'Provisional roof centre aligned to northern OSM edge; not entrance'};
  scene.areaSites.placementAccuracy='Source polygon buildings and thirteen reference-calibrated landmark models use OSM block coordinates; roof boundaries and heights need further verification.';

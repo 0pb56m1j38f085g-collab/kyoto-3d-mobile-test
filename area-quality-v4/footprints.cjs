@@ -33,6 +33,7 @@ function compile(data){
   const levels=Number.isFinite(b.levels)&&b.levels>0?b.levels:2;
   buildings.push({...b,...t,center,axes:best,footprintArea,levels,height:levels*3/20,heightSource:b.levels?'OSM levels × assumed 3m':'assumed two storeys, 3m/storey',roofSource:'inferred, not surveyed'});
  }catch(e){rejected.push({id:b.id,reason:e.message});}}
+ require('./frontages.cjs').assignFrontages(buildings,data.roads);
  return{...data,buildings,rejected};
 }
 module.exports={compile,triangulate,area};

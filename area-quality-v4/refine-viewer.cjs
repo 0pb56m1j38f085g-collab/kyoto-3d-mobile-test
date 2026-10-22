@@ -1,6 +1,6 @@
 'use strict';
 module.exports=({renderer,app,html})=>{
- const replace=(s,a,b,label)=>{if(!s.includes(a))throw Error('Missing v4.13 input: '+label);return s.replace(a,b);};
+ const replace=(s,a,b,label)=>{if(!s.includes(a))throw Error('Missing v4.14 input: '+label);return s.replace(a,b);};
  // Bound the total iOS drawing area, while avoiding the visibly blurred 0.62x phone canvas.
  app=replace(app,"lowMemoryIOS?.62:.85","lowMemoryIOS?Math.min(.9,Math.sqrt(420000/Math.max(1,innerWidth*innerHeight))):.85",'bounded iOS resolution');
  // A real overview camera with an axis that fits the long district on a portrait display.
@@ -16,7 +16,7 @@ module.exports=({renderer,app,html})=>{
  app=app.replaceAll(',10,Math.max(150,80/',',3.6,Math.max(150,80/');
  app=app.replace("else if(e.key==='Home')view('temple')","else if(e.key==='Home')view('area')");
  app=app.replace("$('reset').onclick=()=>{closeModal();view('temple');}","$('reset').onclick=()=>{closeModal();view('area');}");
- app=app.replace("'Kiyomizu quality v5'","'東山・祇園 v4.13'");
+ app=app.replace("'Kiyomizu quality v5'","'東山・祇園 v4.14'");
  app=replace(app,"camera=authored(params.get('view')||'area');ready=true;", "selected=Object.hasOwn(presets,params.get('view'))?params.get('view'):'area';camera=authored(selected);ready=true;$('quality').value=quality;$('quality-label').textContent=names[quality];document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===selected)));if(renderer.bakedMismatch)lightingState='動的照明（照明データ差異）';",'UI initial state');
  app=app.replace('kodaiji:{target:[-17.7,4.9,28.8],span:11.8,yaw:1.15,pitch:.38}','kodaiji:{target:[-15.0,2.05,32.2],span:12.8,yaw:3.45,pitch:.70}');
  // Never allow a query parameter or settings change to silently remove the iPhone memory guard.
@@ -38,6 +38,10 @@ module.exports=({renderer,app,html})=>{
  }
 `+app.slice(b);
  // The inherited fog was centered on Kiyomizu and washed out every northern landmark.
+ // Focus must follow the current district camera, not the old Kiyomizu study.
+ // Keep broad overviews readable instead of blurring the entire northern city.
+ renderer=replace(renderer,"camera.focus||[1.5,6.1,-1.4]","camera.focus||camera.target",'camera-relative focal plane');
+ renderer=replace(renderer,"this.focusEffect??2.5","(this.focusEffect??2.5)*Math.min(1,18/Math.max(1,camera.span))",'bounded overview defocus');
  renderer=replace(renderer,'smoothstep(18.,64.,length(wPosition.xz))* .62','smoothstep(35.,90.,length(wPosition.xz-vec2(-16.,22.)))* .32','district fog origin');
  renderer=replace(renderer,'render(camera,time=0){this.resize();',`render(camera,time=0){this.resize();if(!this.bakedEnabled){const key=[...camera.target,camera.span].map(v=>Math.round(v*20)).join(',');if(key!==this.shadowCameraKey){this.shadowCameraKey=key;const span=Math.min(55,Math.max(3.5,camera.span*.72)),at=camera.target;this.lightVP=M.mul(M.ortho(-span,span,-span,span,1,180),M.look(V.add(at,V.mul(this.light,95)),at));this.shadowDirty=true;}}`,'view-centered dynamic shadows');
  // Previously mismatched baked data left a one-pixel shadow map, making fallback falsely dark.
@@ -49,7 +53,7 @@ module.exports=({renderer,app,html})=>{
  html=html.replaceAll('清水寺のミニチュア','東山・祇園のミニチュア').replaceAll('KYOTO / 3D DEVICE TEST 01','KYOTO · HIGASHIYAMA / GION').replaceAll('東山・祇園 · エリア品質 v4','町並みと、寺社をめぐる');
  html=html.replace('</nav><div class="subrow">','<button data-view="kodaiji" aria-pressed="false">高台寺</button><button data-view="yasaka" aria-pressed="false">八坂神社</button><button data-view="street" aria-pressed="false">祇園の町並み</button></nav><div class="subrow">');
  html=html.replace('スマホで、見た目と操作を確認。','東山・祇園を、自由に散策。');
- html=html.replace('設定を変えても本堂の形状は省略しません。','設定を変えても寺社や町家の形状は省略しません。iPhoneでは軽量表示を使用します。祇園から清水寺周辺まで地図輪郭を参照しています。清水寺は一様縮尺で補正しましたが、輪郭の対応・屋根・高さ・庭園・地形には推定が残ります。');
+ html=html.replace('設定を変えても本堂の形状は省略しません。','設定を変えても寺社や町家の形状は省略しません。iPhoneでは軽量表示を使用します。祇園から清水寺周辺まで地図輪郭を参照しています。旧デザインの誇張された外周建物は除去しました。町家の正面は道路との位置関係から推定しており、個別の実測ではありません。清水寺の輪郭対応・屋根・高さ・庭園・地形にも推定が残ります。');
  html=html.replace('立体の建築と、事前計算した光を読み込んでいます。','寺社と町並みの3Dを準備しています。');
  html=html.replace('</style>',`\n.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px}.tabs button{min-height:38px;padding:7px 3px;font-size:11px}.bottom{border-radius:22px}.side{bottom:calc(172px + env(safe-area-inset-bottom))}.hint{top:91px}.hint span{font-size:10px;padding:6px 10px}.map-spot{position:absolute;left:0;top:0;white-space:nowrap;min-height:32px;padding:7px 12px 7px 24px;border-radius:18px;background:#fffdf8f5;box-shadow:0 3px 14px #52483622;font-size:11px;color:#51493e;border:1px solid #fff;pointer-events:auto}.map-spot:before{content:'';position:absolute;left:9px;top:12px;width:7px;height:7px;border-radius:50%;background:#e17d95}.map-spot:after{content:'';position:absolute;left:calc(50% - 4px);bottom:-6px;border:4px solid transparent;border-top-color:#fffdf8}.capture #map-spots{display:none}#map-spots{position:absolute;inset:0;pointer-events:none;z-index:2}header,.bottom,.side{z-index:3}@media(min-width:800px){.bottom{max-width:720px}.tabs{grid-template-columns:repeat(6,minmax(0,1fr))}.side{bottom:130px}}\n</style>`);
  html=html.replace('</noscript>','</noscript><a class="map-credit" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a>').replace('</style>','.map-credit{position:fixed;bottom:1px;left:5px;z-index:4;font-size:8px;color:#626957;background:#fffdf8bb;border-radius:3px;padding:1px 3px}.capture .map-credit{display:none}</style>');

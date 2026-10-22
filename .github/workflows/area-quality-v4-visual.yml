@@ -1,7 +1,7 @@
 name: Higashiyama area v4 baked visual review
 on:
   push:
-    branches: [area-higashiyama-quality-v4, area-higashiyama-quality-v4.13]
+    branches: [area-higashiyama-quality-v4, area-higashiyama-quality-v4.14]
     paths:
       - 'area-quality-v4/**'
       - 'area-data/**'

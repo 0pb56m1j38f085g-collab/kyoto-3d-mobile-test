@@ -3,7 +3,7 @@ const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_pro
 const {chromium,webkit}=require('playwright');
 const out=path.resolve('district-v49-artifacts');fs.mkdirSync(out,{recursive:true});
 const base=process.env.CHECK_BASE_URL||'http://127.0.0.1:4189';
-const report={revision:'area-higashiyama-quality-v4.13',base,cases:[],checks:[]};
+const report={revision:'area-higashiyama-quality-v4.14',base,cases:[],checks:[]};
 const check=(name,passed,detail)=>{report.checks.push({name,passed:!!passed,detail});assert.ok(passed,name);};
 let server,browser;
 (async()=>{try{
@@ -26,6 +26,7 @@ let server,browser;
   const s=record.state;check(kind+' actual frame drawn',s.ready&&s.frames>0&&!s.glError,s);
   check(kind+' current model loaded',s.revision===report.revision,s.revision);
   check(kind+' no runtime errors',!s.errors.length&&!record.errors.length,{app:s.errors,page:record.errors});
+  check(kind+' focal plane follows overview camera',await page.evaluate(()=>{const r=phoneTest.renderer,g=r.gl,focus=g.getUniform(r.composite,g.getUniformLocation(r.composite,'focus'));return phoneTest.camera.target.every((v,i)=>Math.abs(v-focus[i])<1e-4);}));
   if(mobile){
    check(kind+' skips lighting download',!record.requests.some(u=>/lighting\.bin/.test(u)),record.requests);
    check(kind+' stays light and reports light',s.lowMemoryIOS&&s.quality==='light'&&s.qualityText==='軽量'&&s.qualitySelect==='light',s);

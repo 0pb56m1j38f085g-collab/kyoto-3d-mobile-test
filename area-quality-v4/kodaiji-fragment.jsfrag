@@ -190,10 +190,8 @@
   if(x<-15.0&&z<32.2||kodaijiPonds.some(p=>inGardenPoly(x,z,p.polygon)))continue;
   if(footprintData.buildings.some(b=>inGardenPoly(x,z,b.polygon)||b.polygon.some(q=>Math.hypot(x-q[0],z-q[1])<.19)))continue;
   if(footprintData.roads.some(r=>r.points.some((q,k)=>k&&dseg(x,z,r.points[k-1],q)<.16)))continue;
-  const y=ground(x,z),h=.24+(j%5)*.045,r=.12+(j%4)*.018;
-  pole([x,y,z],[x,y+h,z],.012,'#9a8058');
-  ball([x,y+h,z],[r,r*.80,r],['#8fa96d','#a9b77e','#7e9c66','#b0bc80'][j%4],tiny,4);
-  ball([x+r*.5,y+h*.85,z+.035],[r*.62,r*.6,r*.7],'#a5b47c',tiny,4);
+  const h=.34+(j%5)*.045,r=.12+(j%4)*.018;
+  metricGardenTree(x,z,h,r,j+40,kodaijiPonds);
  }
  // Illustrative bamboo belt south of the two mapped tea houses.
  for(let j=0;j<54;j++){

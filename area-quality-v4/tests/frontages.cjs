@@ -1,0 +1,18 @@
+'use strict';
+const assert=require('node:assert/strict');
+const {inferFrontage,blocked,assignFrontages}=require('../frontages.cjs');
+const square=(id,x,z,w,d)=>({id,polygon:[[x,z],[x+w,z],[x+w,z+d],[x,z+d]],center:[x+w/2,z+d/2]});
+const house=square(1,0,0,.3,.6);
+const road={id:20,highway:'footway',points:[[-1,-.15],[1,-.15]]};
+const front=inferFrontage(house,[road],[house]);
+assert.equal(front.edge,0);assert.ok(front.facing>.99);assert.equal(front.canopyDepth,.035);
+const neighbour=square(2,-.1,-.12,.5,.10);
+assert.equal(inferFrontage(house,[road],[house,neighbour]),null,'occluded frontage rejected');
+const narrow={...road,points:[[-1,-.06],[1,-.06]]};
+assert.equal(inferFrontage(house,[narrow],[house]).canopyDepth,0,'eave cannot occupy road width');
+const l={id:3,polygon:[[0,0],[.6,0],[.6,.2],[.2,.2],[.2,.6],[0,.6]],center:[.2,.2]};
+assert.ok(blocked([.3,.3],[.3,-.15],[l]),'ray through another wing rejected');
+assert.ok(!blocked([.3,.3],[.7,.3],[l]),'open courtyard ray allowed');
+const large=square(4,-10,-.12,20,.1);
+assignFrontages([house,large],[road]);assert.equal(house.frontage,null,'large blocker with remote vertices included');
+console.log('Frontage visibility, concave wings, adjacent blocks, road clearance and large blockers verified');

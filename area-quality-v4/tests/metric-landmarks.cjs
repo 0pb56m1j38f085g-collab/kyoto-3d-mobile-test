@@ -33,7 +33,11 @@ assert.ok(k.kasatei.center[1]>k.shiguretei.center[1],'Kasatei north of Shigurete
 assert.ok(k.chokushimon.center[1]<k.hojo.center[1],'Chokushi gate south of Hojo');
 assert.ok(Math.hypot(k.otamaya.center[0]-k.kaisando.center[0],k.otamaya.center[1]-k.kaisando.center[1])*20<50,'Kaisando to Otamaya is under 50m');
 assert.equal(model.areaSites.kodaijiReference.surveyComplete,false);
-assert.ok(model.areaSites.scaleStatus.includes('remain exaggerated'),'remaining scale limitations explicit');
+assert.ok(model.areaSites.scaleStatus.includes('remain inferred'),'remaining scale limitations explicit');
+assert.equal(model.areaSites.contextPolicy.oversizedAuthoredContextRemoved,true);
+assert.ok(model.meshes.every(m=>m.instances.every(i=>!['higashiyama-area','landscape','distant-context'].includes(i.group))),'no oversized authored context survives');
+assert.equal(model.areaBuildings.length,0);
+assert.equal(model.areaStreets.length,0);
 assert.equal(model.stats.mainHallInstances,2158);
 // Fine vertex spacing is required for baked shadows at the new physical scale.
 for(const name of ['gion-footprints-#9cab76:0','gion-footprints-#d8cbb4:3']){

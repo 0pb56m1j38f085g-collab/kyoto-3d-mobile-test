@@ -99,16 +99,10 @@
    }
   }
   // Place a facade only on the source edge facing the nearest road, not every party wall.
-  let front=null;
-  for(let i=0;i<p.length;i++){
-   const a=p[i],c=p[(i+1)%p.length],len=Math.hypot(c[0]-a[0],c[1]-a[1]);if(len<.10)continue;
-   const mx=(a[0]+c[0])/2,mz=(a[1]+c[1])/2;let dist=Infinity;
-   for(const r of footprintData.roads)for(let j=1;j<r.points.length;j++)dist=Math.min(dist,dseg(mx,mz,r.points[j-1],r.points[j]));
-   if(!front||dist<front.dist)front={a,c,len,dist};
-  }
-  if(front&&front.dist<.8&&short<1.1){
+  const front=b.frontage?{...b.frontage,a:p[b.frontage.edge],c:p[(b.frontage.edge+1)%p.length]}:null;
+  if(front&&short<1.1&&gable){
    const {a,c,len}=front,dx=(c[0]-a[0])/len,dz=(c[1]-a[1])/len,nx=dz*.002,nz=-dx*.002;
-   const P=(t,yy,lift=.008)=>[a[0]+dx*len*t+dz*lift,yy,a[1]+dz*len*t-dx*lift],G=(t,yy)=>P(t,yy,.006);
+   const P=(t,yy,lift=.004)=>[a[0]+dx*len*t+dz*lift,yy,a[1]+dz*len*t-dx*lift],G=(t,yy)=>P(t,yy,.003);
    Q4(blockGlass,G(.10,y+h*.62),G(.10,y+h*.88),G(.90,y+h*.88),G(.90,y+h*.62));
    Q4(blockGlass,G(.12,y+.035),G(.12,y+h*.36),G(.88,y+h*.36),G(.88,y+.035));
    for(let k=0;k<Math.min(35,Math.ceil(len/.02));k++){
@@ -119,9 +113,20 @@
    }
    // First floor canopy, shallow enough to preserve alley clearance.
    const E=(t,yy,o)=>{const q=P(t,yy);return[q[0]+dz*o,yy,q[2]-dx*o]};
-   Q4(roof,E(.02,y+h*.49,0),E(.98,y+h*.49,0),E(.98,y+h*.45,.035),E(.02,y+h*.45,.035));
+   const depth=front.canopyDepth;
+   if(depth>.008){
+    Q4(roof,E(.02,y+h*.49,0),E(.98,y+h*.49,0),E(.98,y+h*.45,depth),E(.02,y+h*.45,depth));
+    Q4(blockWood,E(.02,y+h*.45-.004,depth),E(.98,y+h*.45-.004,depth),E(.98,y+h*.45,depth),E(.02,y+h*.45,depth));
+   }
+   // Metre-scale joinery: a recessed entrance, sill, transom and two dark
+   // upper window frames. Style is illustrative; individual joinery is unverified.
+   const door=Math.min(.20,.045/len),left=.68-door/2,right=.68+door/2;
+   Q4(blockWood,P(left,y+.015),P(left,y+h*.37),P(right,y+h*.37),P(right,y+.015));
+   for(const t of[left+.006,right-.006])Q4(plaster,P(t,y+.025,.0045),P(t,y+h*.34,.0045),P(t+.005,y+h*.34,.0045),P(t+.005,y+.025,.0045));
+   Q4(blockWood,P(.10,y+h*.61),P(.10,y+h*.63),P(.90,y+h*.63),P(.90,y+h*.61));
+   Q4(blockWood,P(.10,y+h*.87),P(.10,y+h*.89),P(.90,y+h*.89),P(.90,y+h*.87));
   }
-  footprintRecords.push({id:b.id,name:b.name,points:b.points,area:b.footprintArea,heightMetres:h*20,heightSource:b.heightSource,roofSource:b.roofSource});
+  footprintRecords.push({id:b.id,name:b.name,points:b.points,area:b.footprintArea,heightMetres:h*20,heightSource:b.heightSource,roofSource:b.roofSource,frontage:gable&&short<1.1?b.frontage:null});
  }
  // Clip source roads to the mapped block and keep their physical width separate from authored roads.
  function clipBlock(a,b){let t0=0,t1=1;const dx=b[0]-a[0],dz=b[1]-a[1];for(const[p,q]of[[-dx,a[0]-fb.minX],[dx,fb.maxX-a[0]],[-dz,a[1]-fb.minZ],[dz,fb.maxZ-a[1]]]){
