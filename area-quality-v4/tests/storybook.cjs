@@ -13,6 +13,10 @@ assert.ok(model.areaBuildings.length>100&&model.areaBuildings.length<=360);
 assert.ok(model.cartography.trees>=900&&model.cartography.trees<=1650,'continuous woodland budget');
 assert.ok(model.meshes.some(m=>m.name==='storybook-sculpted-canopy'));
 assert.ok(model.meshes.some(m=>m.name==='storybook-machiya-gables'),'closed gables avoid hollow toy roofs');
+for(const name of ['storybook-machiya-roof','storybook-shop-eave']){
+ const roof=model.meshes.find(m=>m.name===name);assert.ok(roof&&roof.instances.length);
+ for(let i=1;i<roof.n.length;i+=3)assert.ok(roof.n[i]>0,'roof bake normals must face the sky: '+name);
+}
 assert.ok(model.areaBuildings.length>=100,'continuous town density');
 assert.ok(model.areaBuildings.every(b=>b.illustrative&&Number.isFinite(b.x)&&Number.isFinite(b.z)));
 assert.ok(model.areaBuildings.every(b=>b.height<=1.76&&b.width<=1.77),'ordinary houses are subordinate to landmarks');
@@ -24,6 +28,17 @@ assert.ok(!model.meshes.some(m=>m.name==='metric-yasaka-gravel'&&m.instances.len
 for(const name of ['storybook-river-water','storybook-river-banks','storybook-water-glints','storybook-wooded-ridge'])assert.ok(model.meshes.some(m=>m.name===name&&m.instances.length&&m.p.length>0),name+' rendered as geometry');
 const distance=(x,z,a,b)=>{const dx=b[0]-a[0],dz=b[1]-a[1],t=Math.max(0,Math.min(1,((x-a[0])*dx+(z-a[1])*dz)/(dx*dx+dz*dz)));return Math.hypot(x-a[0]-dx*t,z-a[1]-dz*t);};
 for(const b of model.areaBuildings)for(const r of model.cartography.waterways.channels)assert.ok(Math.min(...r.points.slice(1).map((p,j)=>distance(b.x,b.z,r.points[j],p)))>r.width/2+.8,'house clear of river bank');
+// Sample real street centres in each actual house's local frame. The separate
+// corridor clipper must not allow an illustrated roof across a historic lane.
+for(const b of model.areaBuildings)for(const r of model.areaStreets.filter(r=>r.hero))for(let j=1;j<r.points.length;j++){
+ const a=r.points[j-1],p=r.points[j],len=Math.hypot(p[0]-a[0],p[1]-a[1]);
+ if(distance(b.x,b.z,a,p)>3)continue;
+ for(let k=0,n=Math.ceil(len/.08);k<=n;k++){
+  const dx=a[0]+(p[0]-a[0])*k/n-b.x,dz=a[1]+(p[1]-a[1])*k/n-b.z;
+  const x=dx*Math.cos(b.yaw)-dz*Math.sin(b.yaw),z=dx*Math.sin(b.yaw)+dz*Math.cos(b.yaw);
+  assert.ok(Math.abs(x)>b.width*.60+.58||Math.abs(z)>b.depth*.61+.58,'historic lane remains clear of house roofs');
+ }
+}
 const cart=model.cartography;
 assert.equal(cart.coordinateFrame.render,'east +X / up +Y / south +Z');
 assert.equal(cart.coordinateFrame.reflectionApplied,true);

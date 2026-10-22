@@ -57,11 +57,12 @@ module.exports=({renderer,app,html})=>{
    s.line.hidden=!show||!displaced;s.line.style.left=rawX+'px';s.line.style.top=rawY+'px';
    s.line.style.width=Math.hypot(x-rawX,y-rawY)+'px';s.line.style.transform='rotate('+Math.atan2(y-rawY,x-rawX)+'rad)';
    s.el.dataset.anchorX=String(rawX);s.el.dataset.anchorY=String(rawY);s.el.dataset.labelX=String(x);s.el.dataset.labelY=String(y);`);
- app=exact(app,'function pan(dx,dy){const s=camera.span/canvas.clientHeight;', 'function pan(dx,dy){const s=camera.span/canvas.clientHeight;');
+ // Keep the orbit centre on the ground when positioning the composition.
+ app=exact(app,'p.target[1]-=dy/Math.max(.3,Math.cos(p.pitch));','p.target[0]+=dy*Math.sin(p.yaw)/Math.max(.3,Math.sin(p.pitch));p.target[2]+=dy*Math.cos(p.yaw)/Math.max(.3,Math.sin(p.pitch));');
  app=exact(app,'camera.target[1]+=dy*s;','camera.target[0]+=dy*s*Math.sin(camera.yaw)/Math.max(.35,Math.sin(camera.pitch));camera.target[2]+=dy*s*Math.cos(camera.yaw)/Math.max(.35,Math.sin(camera.pitch));');
  // Quiet framing; the historic lanes and theatre of the stage get the screen.
  html=html.replace('</style>',`\n/* Approved east-area composition: scene first, no lower navigation panel. */
- header .brand{padding:9px 12px}header .brand h1{font-size:13px}header .brand .eyebrow{display:none}#orientation{top:91px;font-size:10px}#compass{top:84px}
+ header .title{padding:9px 12px}header .title h1{font-size:13px}header .title .eyebrow{display:none}#orientation{top:66px;font-size:9px;padding:4px 7px}#compass{top:65px;transform:scale(.85);transform-origin:top right}
  .map-spot{font-size:10px;min-height:28px;padding:6px 9px 6px 25px}.map-spot[data-view=temple]{font-size:12px}
  .map-spot[data-view=street],.map-spot[data-view=sannenzaka]{font-size:10px;background:#fff6ecf2}
  .pin-leader{position:absolute;height:1px;background:#af7f80;transform-origin:left center;pointer-events:none;box-shadow:0 0 1px #fff}.pin-leader::before{content:'';position:absolute;left:-2px;top:-2px;width:5px;height:5px;background:#fff6ee;border:1px solid #b88f88;border-radius:50%}
@@ -69,6 +70,7 @@ module.exports=({renderer,app,html})=>{
  </style>`);
  // Atmospheric haze uses the reflected north coordinate and leaves the foreground crisp.
  renderer=exact(renderer,'smoothstep(35.,90.,length(wPosition.xz-vec2(-16.,22.)))* .32','smoothstep(48.,110.,length(wPosition.xz-vec2(-10.,-18.)))* .12');
+ renderer=exact(renderer,'if(material>3.5&&material<4.5){float wrap=', 'if(material>3.5&&material<4.5){float leafDetail=grainNoise(wPosition.xz*17.+wPosition.y*4.);lit*=.86+.25*leafDetail;float wrap=');
  renderer=exact(renderer,'indirectLight*1.20+sky*.125','indirectLight*1.06+sky*.09');
  renderer=exact(renderer,'vec3(1.0,.94,.88)*1.96','vec3(1.0,.91,.79)*2.08');
  return {renderer,app,html};

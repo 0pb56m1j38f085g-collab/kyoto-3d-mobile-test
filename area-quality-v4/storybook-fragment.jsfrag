@@ -12,8 +12,8 @@
   const layouts={
    temple:{source:kCentre,at:display(kCentre),scale:5.8,lift:2.8},
    hokanji:{source:tower.center,at:display(tower.center),scale:2.8},
-   yasaka:{source:honden.center,at:display(honden.center),scale:2.5,heightEmphasis:1.35},
-   kodaiji:{source:kodaijiHojo.center,at:display(kodaijiHojo.center),scale:2.2,heightEmphasis:1.65,lift:.65}
+   yasaka:{source:honden.center,at:display(honden.center),scale:2.5,heightEmphasis:1.8},
+   kodaiji:{source:kodaijiHojo.center,at:display(kodaijiHojo.center),scale:2.2,heightEmphasis:2.6,lift:.65}
   };
   function layoutFor(g){if(g==='main-hall')return layouts.temple;if(g==='metric-hokanji')return layouts.hokanji;if(g.startsWith('metric-yasaka')||g==='metric-precinct-landscape')return layouts.yasaka;if(g.startsWith('metric-kodaiji'))return layouts.kodaiji;return null;}
   // Preserve the recognisable main-hall/stage and all thirteen architectural
@@ -147,14 +147,14 @@
    segments.push({a,b,id:road.id,hero:road.hero,name:road.name});const steps=Math.ceil(len/(road.highway==='steps'?.10:.28)),nx=-dz/len,nz=dx/len;
    for(let k=0;k<steps;k++){
     const t=(k+.5)/steps,x=a[0]+dx*t,z=a[1]+dz*t;if(!islandInside(x,z,.45)||waterKeepout(x,z,.5)||inClearing(x,z,.12)||gardenKeepout(x,z,.2)||(!road.hero&&!inTown([x,z])))continue;
-    for(const [m,width,lift]of[[streetBorder,road.hero?.90:.58,.020],[streetSurface,road.hero?.76:.46,.025]]){
+    for(const [m,width,lift]of[[streetBorder,road.hero?1.32:.64,.020],[streetSurface,road.hero?1.16:.52,.025]]){
      const P=(t,s)=>{const x=a[0]+dx*t+nx*s*width/2,z=a[1]+dz*t+nz*s*width/2;return[x,storyGround(x,z)+lift,z];};
      m.quad(P(k/steps,-1),P(k/steps,1),P((k+1)/steps,1),P((k+1)/steps,-1));
     }
     if(road.hero){
      const P=(t,s,up=.032)=>{const xx=a[0]+dx*t+nx*s,zz=a[1]+dz*t+nz*s;return[xx,storyGround(xx,zz)+up,zz];};
      const joint=Math.min(.018/len,.08/steps),t0=k/steps;
-     pavingJoints.quad(P(t0,-.36),P(t0,.36),P(t0+joint,.36),P(t0+joint,-.36),[0,1,0]);
+     pavingJoints.quad(P(t0,-.55),P(t0,.55),P(t0+joint,.55),P(t0+joint,-.55),[0,1,0]);
      const shift=k%2?.12:-.12;
      pavingJoints.quad(P(t0,shift-.006),P(t0,shift+.006),P((k+1)/steps,shift+.006),P((k+1)/steps,shift-.006),[0,1,0]);
      if(road.highway==='steps')stairRisers.quad(P(t0,-.38,.032),P(t0,.38,.032),P(t0,.38,.10),P(t0,-.38,.10));
@@ -187,7 +187,7 @@
   scene.stats={...scene.stats,trees:trees.length,illustrativeHouses:houses.length,mainHallInstances:2158};
   scene.cartography={mode:'illustrated-miniature',metric:false,displayScale,displayScaleEast,landmarks:layouts,clearings,trees:trees.length,houses:houses.length,routeGeometry:false,notice:'名所・街路・川の位置は同じ地理座標変換。建物の大きさ・山の高さ・川幅は誇張。経路・所要時間はこの表示形状から算出しません。',geographicSource:{roads:'area-data/historic-streets.json',buildings:'area-data/gion-footprints.json',west:'area-data/west-gion-reference.json',metresPerUnit:20,anchors:referenceAnchors},routeStatus:'Not implemented: no verified route or walking-time claim.'};
   scene.cartography.waterways={channels:waterways,crossings,omittedCulverts:westReference.water.filter(r=>r.tunnel).map(r=>r.id),policy:'OSM centre lines projected with the same transform as landmark anchors. Open water excludes culverts. Width and bank profiles illustrative, not surveyed shorelines or routes.',source:westReference.url,inputSha256:westReference.inputSha256,sources:['https://www.city.kyoto.lg.jp/kensetu/page/0000070773.html','https://shugakuryoko.kyoto.travel/article/wp-content/uploads/2018/08/kiyomizudera2.pdf']};
-  scene.cartography.relief={surveyed:false,plainHeight:base,eastRidgeHeight:storyGround(11,8),templeLift:K.lift,houseHeightRange:[1.12,1.75]};
+  scene.cartography.relief={surveyed:false,plainHeight:base,eastRidgeHeight:storyGround(11,8),templeLift:K.lift,houseHeightRange:[.88,1.61]};
   scene.areaSites.placementAccuracy='Illustrated display, deliberately not to scale. Original geographic source retained separately; no route-time calculation from display coordinates.';
   scene.areaSites.contextPolicy={authoredMiniature:true,vegetation:'Decorative, including pink blossom accents; not live seasonal conditions.',houses:'Source-side parcels with six illustrative machiya types; historic street frontages shift at most 0.65 display units. Not individual shop identification.'};
   scene.areaSites.scaleStatus='Display has no uniform geographic scale.';
