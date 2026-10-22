@@ -8,20 +8,21 @@ const report={environment:'GitHub Linux WebKit, iPhone UA; not physical iPhone',
  browser=await webkit.launch({headless:true});
  const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1,isMobile:true,hasTouch:true,reducedMotion:'reduce',userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1'});
  const page=await context.newPage();page.on('request',r=>report.requests.push(r.url()));page.on('pageerror',e=>report.errors.push(String(e)));
- await page.goto(base+'/?v=4.16',{waitUntil:'load',timeout:120000});await page.waitForFunction(()=>window.__ready||window.__error,null,{timeout:180000});
+ await page.goto(base+'/?v=4.16.1',{waitUntil:'load',timeout:120000});await page.waitForFunction(()=>window.__ready||window.__error,null,{timeout:180000});
  report.start=await page.evaluate(()=>({ready:phoneTest.ready,revision:phoneTest.model.revision,quality:phoneTest.quality,memory:phoneTest.model.mobileMemory,frames:phoneTest.renderer.frames,gl:phoneTest.renderer.gl.getError(),reducedMotion:matchMedia('(prefers-reduced-motion:reduce)').matches}));
- assert.ok(report.start.ready&&report.start.quality==='light'&&!report.start.gl);assert.equal(report.start.revision,'area-higashiyama-quality-v4.16');
+ assert.ok(report.start.ready&&report.start.quality==='light'&&!report.start.gl);assert.equal(report.start.frames,2);assert.equal(report.start.revision,'area-higashiyama-quality-v4.16.1');
  const state=()=>page.evaluate(()=>({frames:phoneTest.renderer.frames,camera:JSON.parse(JSON.stringify(phoneTest.camera)),gl:phoneTest.renderer.gl.getError()}));
  const presented=()=>page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
  for(const view of ['hokanji','kodaiji','yasaka','street','temple','area']){
   const before=await state();await page.locator('[data-view="'+view+'"]').click();
-  await page.waitForFunction(f=>phoneTest.renderer.frames>f,before.frames,{timeout:30000});await presented();
+  await page.waitForFunction(f=>phoneTest.renderer.frames>=f+2,before.frames,{timeout:30000});await presented();
   const record={view,before,afterFrame:await state()};report.views.push(record);
-  await page.screenshot({path:path.join(out,view+'-presented.png'),timeout:60000});
+  const presentedImage=await page.screenshot({path:path.join(out,view+'-presented.png'),timeout:60000});
   if(view==='yasaka'){
    await page.waitForTimeout(1000);record.afterDelay=await state();await page.screenshot({path:path.join(out,view+'-delayed.png')});
-   const frames=record.afterDelay.frames;await page.evaluate(()=>phoneTest.request());await page.waitForFunction(f=>phoneTest.renderer.frames>f,frames);await presented();
-   record.afterExtraFrame=await state();await page.screenshot({path:path.join(out,view+'-redrawn.png')});
+   const frames=record.afterDelay.frames;await page.evaluate(()=>phoneTest.request());await page.waitForFunction(f=>phoneTest.renderer.frames>=f+2,frames);await presented();
+   record.afterExtraFrame=await state();const redrawnImage=await page.screenshot({path:path.join(out,view+'-redrawn.png')});
+   record.extraFrameChangesImage=!presentedImage.equals(redrawnImage);
   }
   assert.equal(record.afterFrame.gl,0);
  }
