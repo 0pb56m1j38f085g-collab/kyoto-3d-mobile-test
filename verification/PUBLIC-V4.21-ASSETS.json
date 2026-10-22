@@ -1,0 +1,114 @@
+{
+  "ok": true,
+  "environment": "Host HTTP and SHA-256 verification only; no public browser or physical device test",
+  "verifiedAt": "2026-10-22T20:54:01.467Z",
+  "revision": "area-higashiyama-quality-v4.21",
+  "assetToken": "a9ffcda0754d-53b385e2aa4d-2f3795470590",
+  "modelHash": "a9ffcda0754d5a2f64d85f495fbf0c2fd7c0ab137c9837bcbebc74ab305cba8b",
+  "lightingHash": "53b385e2aa4d8989b285522dfae47435bc040c7ba0a0752abc3689c37fdb65ea",
+  "mobile": {
+    "url": "./mobile/addeaa128a16cf076021065e.json",
+    "manifestBytes": 115915,
+    "sha256": "addeaa128a16cf076021065ef0a3ba9d4f1554dadbb7f4904bcaba8e4b63eabc",
+    "revision": "area-higashiyama-quality-v4.21",
+    "sourceModelHash": "a9ffcda0754d5a2f64d85f495fbf0c2fd7c0ab137c9837bcbebc74ab305cba8b",
+    "bytes": 8691044,
+    "compressedBytes": 2730407,
+    "maxChunkBytes": 2021632,
+    "maxCompressedChunkBytes": 810411,
+    "chunkCount": 6,
+    "triangles": 1158824,
+    "instances": 16539,
+    "meshes": 157,
+    "batches": 157,
+    "lightSampleCount": 821919,
+    "packedLighting": true,
+    "geometry": "identical Float32 positions, normals, triangle order/winding and instance transforms; compiled baker light indices; no LOD; unused UV omitted"
+  },
+  "checks": [
+    {
+      "path": "/build-info.json?verify=1792702408532",
+      "status": 200,
+      "bytes": 34937,
+      "sha256": "5365d7ccd3d16f7c0b650d6ff7ad460525d1e4ee13f223f3faf9743cb3aba668"
+    },
+    {
+      "path": "/src/renderer.js?v=a9ffcda0754d-53b385e2aa4d-2f3795470590",
+      "status": 200,
+      "bytes": 67515,
+      "sha256": "84664b8c7106f394936e87c39b85a11085b1654f9e16e7663914edbddf09a518"
+    },
+    {
+      "path": "/src/scene.js?v=a9ffcda0754d-53b385e2aa4d-2f3795470590",
+      "status": 200,
+      "bytes": 3518084,
+      "sha256": "b308946ad692b3628492a7ae112783ce8a63833ba881a8fc991900e9ec9ee3de"
+    },
+    {
+      "path": "/src/app.js?v=a9ffcda0754d-53b385e2aa4d-2f3795470590",
+      "status": 200,
+      "bytes": 20631,
+      "sha256": "a879ff3365388d9827d83c0c0b7866e1c482dd1dd2303e471e3a85639416f8bc"
+    },
+    {
+      "path": "/index.html?v=a9ffcda0754d-53b385e2aa4d-2f3795470590",
+      "status": 200,
+      "bytes": 20050,
+      "sha256": "0aaae4b11fff47b4ba6ac48a8859540a2c2bdf0cd8634b4735b327077886fe32"
+    },
+    {
+      "path": "/?v=4.21",
+      "status": 200,
+      "bytes": 20050,
+      "sha256": "0aaae4b11fff47b4ba6ac48a8859540a2c2bdf0cd8634b4735b327077886fe32"
+    },
+    {
+      "path": "./mobile/addeaa128a16cf076021065e.json",
+      "status": 200,
+      "bytes": 115915,
+      "sha256": "addeaa128a16cf076021065ef0a3ba9d4f1554dadbb7f4904bcaba8e4b63eabc"
+    },
+    {
+      "path": "./mobile/0e7308c48ad7c36cb99435d2.bin.gz",
+      "status": 200,
+      "bytes": 583237,
+      "sha256": "080b9e4550e98f3042494e5d1535e3f9447fe4fd752da13deb832b406637bcab"
+    },
+    {
+      "path": "./mobile/fef5fce8a563ab3ba7190cc6.bin.gz",
+      "status": 200,
+      "bytes": 524910,
+      "sha256": "eada6ebd3c9405cffeddde41d69182d3b477bfe1d2060f57de1676443c4c2fba"
+    },
+    {
+      "path": "./mobile/c1d8ea2f2bfaafec79f6ba3e.bin.gz",
+      "status": 200,
+      "bytes": 121262,
+      "sha256": "1c03e0f2672257dbed6a6eed107cd5280271592a2807f35259cf73e3bf63f4c6"
+    },
+    {
+      "path": "./mobile/4d3f7d44fdf65d3b48f5e998.bin.gz",
+      "status": 200,
+      "bytes": 601734,
+      "sha256": "a5a8ae873e0b1637811d7a29232651efaf19309cddc9549da91674d893be8689"
+    },
+    {
+      "path": "./mobile/7f79b0f7498fa0da7f949861.bin.gz",
+      "status": 200,
+      "bytes": 810411,
+      "sha256": "8448cb4e81b8d17416328e9dd35d779fbfea3ebca4677b3f2805f9c7b0a7c56e"
+    },
+    {
+      "path": "./mobile/ea35f2f7e1b8a8ec60896608.bin.gz",
+      "status": 200,
+      "bytes": 88853,
+      "sha256": "f1989825b36443b1d1d7fdebc196aec4e3e13b76d1ff9e8b148dc23787e92dda"
+    },
+    {
+      "path": "/lighting.bin?v=a9ffcda0754d-53b385e2aa4d-2f3795470590",
+      "status": 200,
+      "bytes": 3287684,
+      "sha256": "53b385e2aa4d8989b285522dfae47435bc040c7ba0a0752abc3689c37fdb65ea"
+    }
+  ]
+}

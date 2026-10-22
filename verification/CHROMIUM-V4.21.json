@@ -1,0 +1,316 @@
+{
+  "engine": "chromium",
+  "checks": [
+    {
+      "name": "iphone real 3D ready",
+      "passed": true,
+      "detail": {
+        "ready": true,
+        "quality": "standard",
+        "baked": true,
+        "dpr": 1.5,
+        "msaa": 4,
+        "gl": 0,
+        "memory": {
+          "geometryBytes": 8691044,
+          "downloadBytes": 2730407,
+          "chunkCount": 6,
+          "maxChunkBytes": 2021632,
+          "maxCompressedChunkBytes": 810411,
+          "retainedGeometryBytes": 0,
+          "stagingBytes": 0,
+          "uploadedChunks": 6,
+          "proceduralBuild": false,
+          "runtimeVertexIndexing": false
+        },
+        "diagnostics": "東山・祇園 v4.21\n表示: 390 × 700 CSS px\n描画: 585 × 1050 px\n画質: 標準\n間接照明: 事前計算した多重反射光\n分割読込: 6 / 6、作業バッファ最大 1.93 MiB、形状のCPU保持なし\n初期表示: 1076 ms\n操作時の描画間隔: 約17 ms\n三角形: 1,158,824\n本堂: 2158 個の形状インスタンスを保持\n描画フレーム数: 2\n実行エラー: 0\nGPS / アクセス解析: 不使用\n自動送信: なし",
+        "camera": {
+          "target": [
+            -0.22433357066783044,
+            3.0986945857157613,
+            -21.59470450853494
+          ],
+          "span": 77.99623629836358,
+          "yaw": -0.3,
+          "pitch": 0.72
+        }
+      }
+    },
+    {
+      "name": "iphone full baked lighting",
+      "passed": true
+    },
+    {
+      "name": "iphone shared full resolution",
+      "passed": true,
+      "detail": {
+        "ready": true,
+        "quality": "standard",
+        "baked": true,
+        "dpr": 1.5,
+        "msaa": 4,
+        "gl": 0,
+        "memory": {
+          "geometryBytes": 8691044,
+          "downloadBytes": 2730407,
+          "chunkCount": 6,
+          "maxChunkBytes": 2021632,
+          "maxCompressedChunkBytes": 810411,
+          "retainedGeometryBytes": 0,
+          "stagingBytes": 0,
+          "uploadedChunks": 6,
+          "proceduralBuild": false,
+          "runtimeVertexIndexing": false
+        },
+        "diagnostics": "東山・祇園 v4.21\n表示: 390 × 700 CSS px\n描画: 585 × 1050 px\n画質: 標準\n間接照明: 事前計算した多重反射光\n分割読込: 6 / 6、作業バッファ最大 1.93 MiB、形状のCPU保持なし\n初期表示: 1076 ms\n操作時の描画間隔: 約17 ms\n三角形: 1,158,824\n本堂: 2158 個の形状インスタンスを保持\n描画フレーム数: 2\n実行エラー: 0\nGPS / アクセス解析: 不使用\n自動送信: なし",
+        "camera": {
+          "target": [
+            -0.22433357066783044,
+            3.0986945857157613,
+            -21.59470450853494
+          ],
+          "span": 77.99623629836358,
+          "yaw": -0.3,
+          "pitch": 0.72
+        }
+      }
+    },
+    {
+      "name": "iphone bounded packed upload",
+      "passed": true
+    },
+    {
+      "name": "iphone no bottom menu or light option",
+      "passed": true
+    },
+    {
+      "name": "iphone south-southwest camera",
+      "passed": true
+    },
+    {
+      "name": "iphone all main landmark buttons visible",
+      "passed": true
+    },
+    {
+      "name": "iphone displaced labels retain geographic leaders",
+      "passed": true
+    },
+    {
+      "name": "view temple draws",
+      "passed": true
+    },
+    {
+      "name": "view street draws",
+      "passed": true
+    },
+    {
+      "name": "view sannenzaka draws",
+      "passed": true
+    },
+    {
+      "name": "view hokanji draws",
+      "passed": true
+    },
+    {
+      "name": "view kodaiji draws",
+      "passed": true
+    },
+    {
+      "name": "view yasaka draws",
+      "passed": true
+    },
+    {
+      "name": "iPhone high quality available",
+      "passed": true
+    },
+    {
+      "name": "reload keeps baked quality",
+      "passed": true
+    },
+    {
+      "name": "context restoration keeps baked quality",
+      "passed": true
+    },
+    {
+      "name": "iphone no runtime errors",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "desktop real 3D ready",
+      "passed": true,
+      "detail": {
+        "ready": true,
+        "quality": "standard",
+        "baked": true,
+        "dpr": 1.5,
+        "msaa": 2,
+        "gl": 0,
+        "memory": {
+          "geometryBytes": 8691044,
+          "downloadBytes": 2730407,
+          "chunkCount": 6,
+          "maxChunkBytes": 2021632,
+          "maxCompressedChunkBytes": 810411,
+          "retainedGeometryBytes": 0,
+          "stagingBytes": 0,
+          "uploadedChunks": 6,
+          "proceduralBuild": false,
+          "runtimeVertexIndexing": false
+        },
+        "diagnostics": "東山・祇園 v4.21\n表示: 1280 × 900 CSS px\n描画: 1920 × 1350 px\n画質: 標準\n間接照明: 事前計算した多重反射光\n分割読込: 6 / 6、作業バッファ最大 1.93 MiB、形状のCPU保持なし\n初期表示: 551 ms\n描画間隔: まだ操作データがありません\n三角形: 1,158,824\n本堂: 2158 個の形状インスタンスを保持\n描画フレーム数: 1\n実行エラー: 0\nGPS / アクセス解析: 不使用\n自動送信: なし",
+        "camera": {
+          "target": [
+            -0.13884949142544342,
+            0.18159570842244374,
+            -21.568261184060763
+          ],
+          "span": 44.323747367123815,
+          "yaw": -0.3,
+          "pitch": 0.72
+        }
+      }
+    },
+    {
+      "name": "desktop full baked lighting",
+      "passed": true
+    },
+    {
+      "name": "desktop shared full resolution",
+      "passed": true,
+      "detail": {
+        "ready": true,
+        "quality": "standard",
+        "baked": true,
+        "dpr": 1.5,
+        "msaa": 2,
+        "gl": 0,
+        "memory": {
+          "geometryBytes": 8691044,
+          "downloadBytes": 2730407,
+          "chunkCount": 6,
+          "maxChunkBytes": 2021632,
+          "maxCompressedChunkBytes": 810411,
+          "retainedGeometryBytes": 0,
+          "stagingBytes": 0,
+          "uploadedChunks": 6,
+          "proceduralBuild": false,
+          "runtimeVertexIndexing": false
+        },
+        "diagnostics": "東山・祇園 v4.21\n表示: 1280 × 900 CSS px\n描画: 1920 × 1350 px\n画質: 標準\n間接照明: 事前計算した多重反射光\n分割読込: 6 / 6、作業バッファ最大 1.93 MiB、形状のCPU保持なし\n初期表示: 551 ms\n描画間隔: まだ操作データがありません\n三角形: 1,158,824\n本堂: 2158 個の形状インスタンスを保持\n描画フレーム数: 1\n実行エラー: 0\nGPS / アクセス解析: 不使用\n自動送信: なし",
+        "camera": {
+          "target": [
+            -0.13884949142544342,
+            0.18159570842244374,
+            -21.568261184060763
+          ],
+          "span": 44.323747367123815,
+          "yaw": -0.3,
+          "pitch": 0.72
+        }
+      }
+    },
+    {
+      "name": "desktop bounded packed upload",
+      "passed": true
+    },
+    {
+      "name": "desktop no bottom menu or light option",
+      "passed": true
+    },
+    {
+      "name": "desktop south-southwest camera",
+      "passed": true
+    },
+    {
+      "name": "desktop all main landmark buttons visible",
+      "passed": true
+    },
+    {
+      "name": "desktop displaced labels retain geographic leaders",
+      "passed": true
+    },
+    {
+      "name": "desktop no runtime errors",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "screenshots": [
+    "iphone-area.png",
+    "iphone-temple.png",
+    "iphone-street.png",
+    "iphone-sannenzaka.png",
+    "iphone-hokanji.png",
+    "iphone-kodaiji.png",
+    "iphone-yasaka.png",
+    "iphone-short.png",
+    "desktop-area.png"
+  ],
+  "physicalDevice": false,
+  "iphone": {
+    "ready": true,
+    "quality": "standard",
+    "baked": true,
+    "dpr": 1.5,
+    "msaa": 4,
+    "gl": 0,
+    "memory": {
+      "geometryBytes": 8691044,
+      "downloadBytes": 2730407,
+      "chunkCount": 6,
+      "maxChunkBytes": 2021632,
+      "maxCompressedChunkBytes": 810411,
+      "retainedGeometryBytes": 0,
+      "stagingBytes": 0,
+      "uploadedChunks": 6,
+      "proceduralBuild": false,
+      "runtimeVertexIndexing": false
+    },
+    "diagnostics": "東山・祇園 v4.21\n表示: 390 × 700 CSS px\n描画: 585 × 1050 px\n画質: 標準\n間接照明: 事前計算した多重反射光\n分割読込: 6 / 6、作業バッファ最大 1.93 MiB、形状のCPU保持なし\n初期表示: 1076 ms\n操作時の描画間隔: 約17 ms\n三角形: 1,158,824\n本堂: 2158 個の形状インスタンスを保持\n描画フレーム数: 2\n実行エラー: 0\nGPS / アクセス解析: 不使用\n自動送信: なし",
+    "camera": {
+      "target": [
+        -0.22433357066783044,
+        3.0986945857157613,
+        -21.59470450853494
+      ],
+      "span": 77.99623629836358,
+      "yaw": -0.3,
+      "pitch": 0.72
+    }
+  },
+  "desktop": {
+    "ready": true,
+    "quality": "standard",
+    "baked": true,
+    "dpr": 1.5,
+    "msaa": 2,
+    "gl": 0,
+    "memory": {
+      "geometryBytes": 8691044,
+      "downloadBytes": 2730407,
+      "chunkCount": 6,
+      "maxChunkBytes": 2021632,
+      "maxCompressedChunkBytes": 810411,
+      "retainedGeometryBytes": 0,
+      "stagingBytes": 0,
+      "uploadedChunks": 6,
+      "proceduralBuild": false,
+      "runtimeVertexIndexing": false
+    },
+    "diagnostics": "東山・祇園 v4.21\n表示: 1280 × 900 CSS px\n描画: 1920 × 1350 px\n画質: 標準\n間接照明: 事前計算した多重反射光\n分割読込: 6 / 6、作業バッファ最大 1.93 MiB、形状のCPU保持なし\n初期表示: 551 ms\n描画間隔: まだ操作データがありません\n三角形: 1,158,824\n本堂: 2158 個の形状インスタンスを保持\n描画フレーム数: 1\n実行エラー: 0\nGPS / アクセス解析: 不使用\n自動送信: なし",
+    "camera": {
+      "target": [
+        -0.13884949142544342,
+        0.18159570842244374,
+        -21.568261184060763
+      ],
+      "span": 44.323747367123815,
+      "yaw": -0.3,
+      "pitch": 0.72
+    }
+  },
+  "ok": true,
+  "sourceCommit": "cc5d17e15c9eb6a96643f44c3edb87c1e18aaca7",
+  "workflowRun": 39850917021
+}

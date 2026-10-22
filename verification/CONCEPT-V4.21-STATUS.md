@@ -44,6 +44,10 @@ WebKitは27項目成功。390×700と短いビューポート、PC表示の実�
 
 旧軽量モード専用のCIは4.16/4.20の履歴ブランチ用に維持し、現開発ブランチは新しい全端末共通画質のCIを使う。
 既存の街路/輪郭/寺社構造の検証は新CIへ引き継ぐ。
-公開反映・実機iPhoneでの確認は未完了。
+公開反映は完了。Render deploy `dep-dbd7e93ncjis73bcu5b0` はlive、公開コードのコミットは `b2ff4f28fb9b5d65ac1966f062f696cc67da1b48`。
+https://higashiyama-quality-v4.onrender.com/?v=4.21
+公開先14ファイル（画面コード、モデル6分割、照明など）のHTTP 200とSHA-256照合に成功。CIで検査した配信物と一致。
+検査記録は `PUBLIC-V4.21-ASSETS.json`、`WEBKIT-V4.21.json`、`CHROMIUM-V4.21.json`。
+実機iPhoneでの確認は未完了。WebKitエミュレーションを実機テストとして扱わない。
 
 この版は構図の3D化の着手版。承認静止画と同等の完成品質、個別町家の実測再現、実機安定性は未達・未保証。
