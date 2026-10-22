@@ -3,7 +3,7 @@
 module.exports=({renderer,app,html})=>{
  const exact=(s,a,b)=>{if(!s.includes(a))throw Error('Concept viewer input missing: '+a.slice(0,110));return s.replace(a,b);};
  const cameras={
-  area:{target:[-10,5,-13],span:50,yaw:-Math.PI/4,pitch:.56},
+  area:{target:[-8,5,-24],span:50,yaw:-.30,pitch:.72},
   temple:{target:[0,8,0],span:24,yaw:-.62,pitch:.40},
   hokanji:{target:[-15,5,-11],span:10,yaw:-.7,pitch:.48},
   kodaiji:{target:[-10,4,-18],span:16,yaw:-.65,pitch:.55},
@@ -38,13 +38,25 @@ module.exports=({renderer,app,html})=>{
  html=html.replaceAll('iPhoneでは軽量表示を使用します。','iPhoneも他の端末と同じ照明・素材で表示します。');
  html=html.replaceAll('京さんぽ · 東山と祇園','京さんぽ · 東山・祇園・山科');
  html=html.replaceAll('KYOTO · A LITTLE JOURNEY','KYOTO · HIGASHIYAMA');
- html=html.replace('初期表示は北側から南を見る向きです（画面上が南、右が西）。','初期表示は南西側から北東を見る向きです（北は左上、東は右上）。清水寺の舞台と二寧坂の町並みを中心にしています。');
- html=html.replace('画面上：南 · 右：西','画面上：北東 · 右：南東');
+ html=html.replace('初期表示は北側から南を見る向きです（画面上が南、右が西）。','初期表示は南南西側から北北東を見る向きです（北は少し左上、東は右上）。清水寺の舞台と二寧坂の町並みを中心にしています。');
+ html=html.replace('画面上：南 · 右：西','画面上：北 · 右：東');
  html=html.replace('名所をタップで拡大 · 1本指で回転','名所をタップで拡大 · 2本指で移動');
  app=app.replace(/const mapSpots=\[.*?\];/,"const mapSpots=[{id:'temple',name:'清水寺'},{id:'hokanji',name:'八坂の塔'},{id:'kodaiji',name:'高台寺'},{id:'yasaka',name:'八坂神社'},{id:'street',name:'二寧坂'},{id:'sannenzaka',name:'産寧坂'}];");
  // Do not move named features to make a composition. Camera framing omits the
  // distant Kamo boundary; the river remains at its real west-side position.
  app=exact(app,'const top=h<500?90:128,bottom=h-42,left=18,right=w-18;','const top=h<500?76:108,bottom=h-35,left=14,right=w-14;');
+ // A displaced badge must keep an explicit leader to the real scene anchor.
+ // Prefer suppressing a secondary lane badge to moving it into unrelated sky.
+ app=exact(app,'if(show){for(let n=0;n<4&&occupied.some(o=>Math.abs(o.x-x)<half+o.half+7&&Math.abs(o.y-y)<43);n++)y-=44;show=y>92;}',`if(show){
+    const clashes=yy=>occupied.some(o=>Math.abs(o.x-x)<half+o.half+5&&Math.abs(o.y-yy)<42);
+    const choices=[rawY,rawY-44,rawY+44,rawY-88].filter(yy=>yy>115&&yy<h-55&&!clashes(yy));
+    if(choices.length)y=choices[0];else if(s.id==='street'||s.id==='sannenzaka')show=false;
+   }
+   if(!s.line){s.line=document.createElement('span');s.line.className='pin-leader';s.line.dataset.view=s.id;spotLayer.prepend(s.line);}
+   const displaced=Math.hypot(x-rawX,y-rawY)>12;
+   s.line.hidden=!show||!displaced;s.line.style.left=rawX+'px';s.line.style.top=rawY+'px';
+   s.line.style.width=Math.hypot(x-rawX,y-rawY)+'px';s.line.style.transform='rotate('+Math.atan2(y-rawY,x-rawX)+'rad)';
+   s.el.dataset.anchorX=String(rawX);s.el.dataset.anchorY=String(rawY);s.el.dataset.labelX=String(x);s.el.dataset.labelY=String(y);`);
  app=exact(app,'function pan(dx,dy){const s=camera.span/canvas.clientHeight;', 'function pan(dx,dy){const s=camera.span/canvas.clientHeight;');
  app=exact(app,'camera.target[1]+=dy*s;','camera.target[0]+=dy*s*Math.sin(camera.yaw)/Math.max(.35,Math.sin(camera.pitch));camera.target[2]+=dy*s*Math.cos(camera.yaw)/Math.max(.35,Math.sin(camera.pitch));');
  // Quiet framing; the historic lanes and theatre of the stage get the screen.
@@ -52,6 +64,7 @@ module.exports=({renderer,app,html})=>{
  header .brand{padding:10px 14px}header .brand h1{font-size:16px}#orientation{top:91px;font-size:10px}#compass{top:84px}
  .map-spot{font-size:11px;min-height:38px}.map-spot[data-view=temple]{font-size:13px}
  .map-spot[data-view=street],.map-spot[data-view=sannenzaka]{font-size:10px;background:#fff6ecf2}
+ .pin-leader{position:absolute;height:1px;background:#af7f80;transform-origin:left center;pointer-events:none;box-shadow:0 0 1px #fff}.pin-leader::before{content:'';position:absolute;left:-2px;top:-2px;width:5px;height:5px;background:#fff6ee;border:1px solid #b88f88;border-radius:50%}
  .side{right:11px;bottom:calc(48px + env(safe-area-inset-bottom))}.hint{bottom:48px}.map-note{font-size:9px}
  </style>`);
  return {renderer,app,html};

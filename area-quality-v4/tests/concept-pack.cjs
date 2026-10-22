@@ -31,4 +31,18 @@ const infoPath=path.join(site,'build-info.json');if(fs.existsSync(infoPath)){
 const html=fs.readFileSync(path.join(site,'index.html'),'utf8'),app=fs.readFileSync(path.join(site,'src/app.js'),'utf8');
 assert.ok(!html.includes('<option value="light">')&&!html.includes('<section class="bottom"'));
 assert.ok(!/\blowMemoryIOS\b/.test(app)&&!app.includes('makeStudy()'));
-console.log(JSON.stringify({ok:true,revision:model.revision,checkedPackedLightVertices:checked,lightSamples:offset,triangles,houses:model.areaBuildings.length,trees:model.cartography.trees,bytes:asset.bytes,downloadBytes:asset.compressedBytes}));
+ctx.model=model;
+vm.runInContext('const presets='+app.match(/const presets=(\{.*?\});/)[1]+';const canvas={clientWidth:390,clientHeight:700};const copy=p=>JSON.parse(JSON.stringify(p));'+app.match(/function authored\(name\)\{[\s\S]*?\n \}/)[0],ctx);
+const framing=vm.runInContext(`(()=>{
+ const c=authored('area'),w=canvas.clientWidth,h=canvas.clientHeight,eye=V.add(c.target,[Math.sin(c.yaw)*Math.cos(c.pitch)*100,Math.sin(c.pitch)*100,Math.cos(c.yaw)*Math.cos(c.pitch)*100]);
+ const vp=M.mul(M.perspective(2*Math.atan(c.span/200),w/h,.25,250),M.look(eye,c.target));
+ const project=v=>{const q=M.point(vp,v);return[(q[0]*.5+.5)*w,(.5-q[1]*.5)*h];};
+ const pins=Object.fromEntries(['temple','hokanji','kodaiji','yasaka'].map(k=>[k,project(model.cartography.landmarkPins[k])]));
+ const b=model.cartography.framing.bounds.temple,pts=[b.x0,b.x1].flatMap(x=>[b.y0,b.y1].flatMap(y=>[b.z0,b.z1].map(z=>project([x,y,z]))));
+ return {camera:c,pins,templeWidth:Math.max(...pts.map(p=>p[0]))-Math.min(...pts.map(p=>p[0]))};
+})()`,ctx);
+const pinY=Object.values(framing.pins).map(p=>p[1]);
+assert.ok(Math.min(...pinY)<700*.45,'opening landmarks must not sit entirely below a large empty sky');
+assert.ok(Math.max(...pinY)-Math.min(...pinY)>700*.18,'landmarks must occupy a legible vertical composition');
+assert.ok(framing.templeWidth>390*.27,'Kiyomizu must have a prominent opening silhouette');
+console.log(JSON.stringify({ok:true,revision:model.revision,checkedPackedLightVertices:checked,lightSamples:offset,triangles,houses:model.areaBuildings.length,trees:model.cartography.trees,bytes:asset.bytes,downloadBytes:asset.compressedBytes,framing}));

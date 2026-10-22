@@ -21,8 +21,9 @@ function check(name,ok,detail){report.checks.push({name,passed:!!ok,detail});ass
   check(device+' shared full resolution',state.quality==='standard'&&state.dpr===1.5&&state.msaa>1,state);
   check(device+' bounded packed upload',!requests.some(u=>u.includes('/scene.js'))&&state.memory.retainedGeometryBytes===0&&state.memory.uploadedChunks===state.memory.chunkCount);
   check(device+' no bottom menu or light option',await page.locator('.bottom,option[value=light]').count()===0);
-  check(device+' southwest camera',Math.abs(state.camera.yaw+Math.PI/4)<.001);
+  check(device+' south-southwest camera',Math.abs(state.camera.yaw+.30)<.001);
   check(device+' all main landmark buttons visible',await page.evaluate(()=>['temple','hokanji','kodaiji','yasaka'].every(id=>{const e=document.querySelector('.map-spot[data-view='+id+']');return e&&!e.hidden;})));
+  check(device+' displaced labels retain geographic leaders',await page.evaluate(()=>[...document.querySelectorAll('.map-spot')].filter(e=>!e.hidden).every(e=>Math.hypot(Number(e.dataset.labelX)-Number(e.dataset.anchorX),Number(e.dataset.labelY)-Number(e.dataset.anchorY))<=12||!document.querySelector('.pin-leader[data-view='+e.dataset.view+']').hidden)));
   const snap=async name=>{await page.waitForTimeout(400);await page.evaluate(()=>{phoneTest.renderer.gl.finish();phoneTest.request();});await page.waitForTimeout(100);const f=device+'-'+name+'.png';await page.screenshot({path:path.join(out,f),timeout:120000});report.screenshots.push(f);};
   await snap('area');
   if(device==='iphone'){
