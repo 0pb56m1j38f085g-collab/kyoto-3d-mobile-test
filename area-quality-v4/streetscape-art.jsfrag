@@ -35,20 +35,25 @@
    if(seenSources.has(b.id)||footprintData.customLandmarkIds.includes(b.id)||b.name||b.footprintArea>2.2)continue;seenSources.add(b.id);
    const sourceAt=display(b.center),historic=nearestLane(...sourceAt,true),near=historic?.d<1.65?historic:nearestLane(...sourceAt);if(!near||near.d>4.2||near.d<.18)continue;
    const hero=near.segment.hero&&near.d<2.7,ninen=hero&&near.segment.name==='二寧坂',kind=b.id%6;
-   const w=ninen?.68+(b.id%4)*.07:hero?1.02+(b.id%4)*.13:.94+(b.id%4)*.11;
+   let w=ninen?.68+(b.id%4)*.07:hero?1.02+(b.id%4)*.13:.94+(b.id%4)*.11;
    let d=ninen?.68+(b.id%3)*.08:hero?.92+(b.id%3)*.11:.82+(b.id%3)*.09,shift,x,z,yaw;
    // A facade may move a small distance within its source-side parcel to form a
    // readable continuous street edge. Keep the source anchor and shift explicit.
    // Fit depth to the source-side parcel near actual displayed intersections.
    // A narrow side street remains clear without rotating a shop away from its
    // Ninenzaka frontage or moving its geographic anchor to another block.
-   for(let attempt=0;attempt<6;attempt++){
+   const initialWidth=w,initialDepth=d;
+   // Search modest frontage widths before reducing depth. The old repeated
+   // depth-only shrink produced implausible two-storey cardboard-thin shops.
+   const fits=ninen?[1,.88,.76].flatMap(depth=>[1,.88,.76].map(width=>({w:initialWidth*width,d:Math.max(.55,initialDepth*depth)}))):[{w,d}];
+   for(const fit of fits){
+    w=fit.w;d=fit.d;
     const setback=(hero?near.segment.width/2+.08:.42)+d*.68;shift=hero?clamp(setback-near.d,-.65,.65):0;
     x=sourceAt[0]+(sourceAt[0]-near.p[0])/near.d*shift;z=sourceAt[1]+(sourceAt[1]-near.p[1])/near.d*shift;yaw=Math.atan2(near.p[0]-x,near.p[1]-z);
-    if(!crossesStreet(x,z,yaw,w,d)||!ninen||d<.28)break;d*=.78;
+    if(!crossesStreet(x,z,yaw,w,d))break;
    }
    if(!islandInside(x,z,1.35)||waterKeepout(x,z,1.12)||inClearing(x,z,.85)||gardenKeepout(x,z,.2))continue;
-   const h=kind===4?.88:(ninen?1.12:hero?1.25:1.08)+(kind%3)*.18;
+   const h=ninen?Math.min(kind===4?.88:1.12+(kind%3)*.18,d*1.85):kind===4?.88:(hero?1.25:1.08)+(kind%3)*.18;
    if(crossesStreet(x,z,yaw,w,d))continue;
    // Oriented roof boxes permit close parallel frontages while preventing roofs
    // from colliding at bends. A centre-distance circle left arbitrary lawn gaps.

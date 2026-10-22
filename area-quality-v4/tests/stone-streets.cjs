@@ -30,7 +30,7 @@ const row=model.areaBuildings.filter(b=>b.streetName==='二寧坂');
 // This pass finishes a short section, not every parcel of Ninenzaka. Require
 // a consecutive pair on each side rather than an arbitrary total house count.
 assert.ok(row.filter(b=>b.x<-11).length>=2&&row.filter(b=>b.x>-10.3).length>=2,'Ninenzaka needs a run of shopfronts on both sides');
-for(const h of row){assert.ok(h.entranceRise>=0&&h.entranceRise<.25,'doorstep connects to the paving');assert.ok(h.foundationHeight<.55,'no tall shop pedestal in Ninenzaka');}
+for(const h of row){assert.ok(h.depth>=.55&&h.height/h.depth<=1.851,'shop parcels must retain credible depth, not cardboard-thin walls');assert.ok(h.entranceRise>=0&&h.entranceRise<.25,'doorstep connects to the paving');assert.ok(h.foundationHeight<.55,'no tall shop pedestal in Ninenzaka');}
 for(const name of['storybook-paving-mortar','storybook-stair-faces','storybook-shop-thresholds','storybook-fitted-stone-foundations'])assert.ok(model.meshes.some(m=>m.name===name&&m.p.length&&m.instances.length));
 const triangles=model.meshes.reduce((n,m)=>n+m.p.length/9*m.instances.length,0),instances=model.meshes.reduce((n,m)=>n+m.instances.length,0);
 assert.ok(triangles<3000000&&instances<42000,'retain the shared full-quality scene budget');
