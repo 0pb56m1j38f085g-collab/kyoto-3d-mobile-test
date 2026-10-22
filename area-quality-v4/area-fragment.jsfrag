@@ -441,4 +441,4 @@
   ball([px,py+.34,pz],[.23,.24,.23],pick(C.greens),tiny,4);
  }
 
- scene.areaQuality='v4.7-street-detail-and-soft-presentation';
+ scene.areaQuality='v4.8-cross-engine-deterministic-light-index';
