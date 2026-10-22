@@ -1,4 +1,5 @@
 'use strict';
+// accuracy-v1.2 OSM street-shape preview trigger after extended model timeout.
 // v4.7 street-detail and soft-presentation review trigger.
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),cp=require('node:child_process');
 const {chromium}=require('playwright');const OUT=path.resolve('v44-fast-artifacts'),BASE='http://127.0.0.1:4176';
