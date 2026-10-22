@@ -1,5 +1,8 @@
 # iPhone startup incidents — v4.15 and v4.16
 
+Deployment results and the follow-up WebKit presentation issue are recorded in
+[the v4.16 / v4.16.1 verification status](../verification/IOS-V4.16-STATUS.md).
+
 ## v4.16: actual v4.15 device failure at 98% (2026-10-22)
 
 The user reported that physical iPhone Safari reached 98% and then displayed

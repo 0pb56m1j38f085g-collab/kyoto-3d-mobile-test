@@ -3,13 +3,13 @@ const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_pro
 const {chromium,webkit}=require('playwright');
 const out=path.resolve('district-v49-artifacts');fs.mkdirSync(out,{recursive:true});
 const base=process.env.CHECK_BASE_URL||'http://127.0.0.1:4189';
-const report={revision:'area-higashiyama-quality-v4.16',base,cases:[],checks:[]};
+const report={revision:'area-higashiyama-quality-v4.16.1',base,cases:[],checks:[]};
 const check=(name,passed,detail)=>{report.checks.push({name,passed:!!passed,detail});assert.ok(passed,name);};
 let server,browser;
 (async()=>{try{
  if(!process.env.CHECK_BASE_URL){
   if(!process.env.SKIP_BUILD){const r=cp.spawnSync(process.execPath,['area-quality-v4/build.cjs','--validate-only'],{stdio:'inherit',timeout:8*60*1000});check('geometry validates',r.status===0,{status:r.status});}
-  server=cp.spawn('python3',['-m','http.server','4189','--directory','area-quality-v4/site'],{stdio:'ignore'});
+  server=cp.spawn(process.execPath,[path.join(__dirname,'serve.cjs'),'4189','area-quality-v4/site'],{stdio:'ignore'});
   for(let n=0;n<50;n++){try{if((await fetch(base)).ok)break;}catch(_){}await new Promise(r=>setTimeout(r,100));}
  }
  const engine=process.env.TEST_ENGINE==='chromium'?chromium:webkit;
@@ -57,9 +57,13 @@ let server,browser;
    check('all four landmarks visible in portrait overview',s.labels.length===4,s.labels);
    await page.screenshot({path:path.join(out,'iphone-overview.png'),timeout:120000});
    for(const view of ['hokanji','kodaiji','yasaka','street','temple']){
+    const frames=await page.evaluate(()=>phoneTest.renderer.frames);
     await page.locator('[data-view="'+view+'"]').click();
     await page.waitForFunction(v=>document.querySelector('[data-view="'+v+'"]').getAttribute('aria-pressed')==='true',view);
-    await page.waitForTimeout(300);await page.evaluate(()=>phoneTest.renderer.gl.finish());
+    await page.waitForFunction(f=>phoneTest.renderer.frames>=f+2,frames,{timeout:30000});
+    await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+    await page.waitForTimeout(150);await page.evaluate(()=>phoneTest.renderer.gl.finish());
+    check(view+' completes two bounded mobile draws',await page.evaluate(f=>phoneTest.renderer.frames===f+2,frames));
     await page.screenshot({path:path.join(out,'iphone-'+view+'.png'),timeout:120000});
    }
    await page.locator('#reset').click();check('reset returns to district',await page.locator('[data-view="area"]').getAttribute('aria-pressed')==='true');

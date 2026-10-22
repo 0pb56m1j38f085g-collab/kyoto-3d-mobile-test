@@ -1,4 +1,4 @@
-name: Higashiyama v4.16 district and iOS regression
+name: Higashiyama v4.16.1 district and iOS regression
 on:
   push:
     branches: [area-higashiyama-quality-v4, area-higashiyama-quality-v4.16]
@@ -16,6 +16,9 @@ jobs:
   webkit:
     runs-on: ubuntu-22.04
     timeout-minutes: 20
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.0-jammy@sha256:55db7b712a981e9cc1ec757a4511cd01c5ed4e20bd7c84b2dee4e1d320102b9d
+      options: --shm-size=512m
     steps:
       - uses: actions/checkout@v6
         with:
@@ -27,7 +30,6 @@ jobs:
         timeout-minutes: 5
         run: |
           npm install --prefix "$RUNNER_TEMP/district-check" --no-audit --no-fund playwright@1.55.0
-          "$RUNNER_TEMP/district-check/node_modules/.bin/playwright" install --with-deps webkit
       - name: Check iPhone, iPad, district views and lighting fallback
         env:
           NODE_PATH: ${{ runner.temp }}/district-check/node_modules

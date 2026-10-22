@@ -1,6 +1,6 @@
 'use strict';
 module.exports=({renderer,app,html})=>{
- const replace=(s,a,b,label)=>{if(!s.includes(a))throw Error('Missing v4.16 input: '+label);return s.replace(a,b);};
+ const replace=(s,a,b,label)=>{if(!s.includes(a))throw Error('Missing v4.16.1 input: '+label);return s.replace(a,b);};
  // Bound the total iOS drawing area, while avoiding the visibly blurred 0.62x phone canvas.
  app=replace(app,"lowMemoryIOS?.62:.85","lowMemoryIOS?Math.min(.9,Math.sqrt(420000/Math.max(1,innerWidth*innerHeight))):.85",'bounded iOS resolution');
  // A real overview camera with an axis that fits the long district on a portrait display.
@@ -16,11 +16,17 @@ module.exports=({renderer,app,html})=>{
  app=app.replaceAll(',10,Math.max(150,80/',',3.6,Math.max(150,80/');
  app=app.replace("else if(e.key==='Home')view('temple')","else if(e.key==='Home')view('area')");
  app=app.replace("$('reset').onclick=()=>{closeModal();view('temple');}","$('reset').onclick=()=>{closeModal();view('area');}");
- app=app.replace("'Kiyomizu quality v5'","'東山・祇園 v4.16'");
+ app=app.replace("'Kiyomizu quality v5'","'東山・祇園 v4.16.1'");
  app=replace(app,"camera=authored(params.get('view')||'area');ready=true;", "selected=Object.hasOwn(presets,params.get('view'))?params.get('view'):'area';camera=authored(selected);ready=true;$('quality').value=quality;$('quality-label').textContent=names[quality];document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===selected)));if(renderer.bakedMismatch)lightingState='動的照明（照明データ差異）';",'UI initial state');
  app=app.replace('kodaiji:{target:[-17.7,4.9,28.8],span:11.8,yaw:1.15,pitch:.38}','kodaiji:{target:[-15.0,2.05,32.2],span:12.8,yaw:3.45,pitch:.70}');
  // Never allow a query parameter or settings change to silently remove the iPhone memory guard.
  app=replace(app,"function setQuality(value){if(!modes[value]||!ready)return;", "function setQuality(value){if(!modes[value]||!ready)return;if(lowMemoryIOS&&value!=='light'){value='light';toast('この端末では軽量表示を使用します。');}", 'iOS guard');
+ // WebKit can keep the previous canvas image after one on-demand draw, even
+ // after two compositor ticks and a one-second wait. One final draw resolves it.
+ app=replace(app,'const runtimeErrors=[];', 'const runtimeErrors=[];let settlePending=false;', 'bounded WebKit settling state');
+ app=replace(app,'function request(){if(!raf', 'function request(){if(lowMemoryIOS)settlePending=true;if(!raf', 'mark final WebKit draw');
+ app=replace(app,'if(keep)request();}', 'if(keep)request();else if(settlePending){settlePending=false;if(!raf)raf=requestAnimationFrame(renderFrame);}}', 'one final draw without an idle loop');
+ app=replace(app,'if(!window.__ready){', 'if(!window.__ready&&(!lowMemoryIOS||!settlePending)){', 'ready only after final mobile draw');
  // iOS must never construct the full procedural scene or per-vertex string Maps.
  app=replace(app,'model=makeStudy();',"model=lowMemoryIOS?await loadMobileStudy(__MOBILE_ASSET__):makeStudy();",'precompiled mobile manifest');
  app=app.replaceAll('shadowSize:lowMemoryIOS?1024:3072,','lowMemory:lowMemoryIOS,shadowSize:lowMemoryIOS?1024:3072,');
@@ -43,9 +49,9 @@ module.exports=({renderer,app,html})=>{
  }
  upload(){const g=this.gl;`,'bounded typed array upload');
  // A dynamic boot avoids even fetching/parsing the 3.4 MB procedural scene on iOS.
- html=replace(html,'<script src="src/scene.js?v=area-higashiyama-quality-v4.16"></script><script src="src/app.js?v=area-higashiyama-quality-v4.16"></script>',`<script>
+ html=replace(html,'<script src="src/scene.js?v=area-higashiyama-quality-v4.16.1"></script><script src="src/app.js?v=area-higashiyama-quality-v4.16.1"></script>',`<script>
  (async()=>{const script=src=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=()=>reject(Error('3Dコードを取得できませんでした。'));document.body.appendChild(s);});
- try{if(!isLowMemoryIOS())await script('src/scene.js?v=area-higashiyama-quality-v4.16');await script('src/app.js?v=area-higashiyama-quality-v4.16');}
+ try{if(!isLowMemoryIOS())await script('src/scene.js?v=area-higashiyama-quality-v4.16.1');await script('src/app.js?v=area-higashiyama-quality-v4.16.1');}
  catch(e){window.__error=e.message;document.getElementById('loading').hidden=true;document.getElementById('error').hidden=false;document.getElementById('error-message').textContent=e.message;document.getElementById('reload').onclick=()=>location.reload();}})();
  </script>`,'mobile conditional boot');
  // Labels attach to the actual 3D world. Selection is available for every district landmark.

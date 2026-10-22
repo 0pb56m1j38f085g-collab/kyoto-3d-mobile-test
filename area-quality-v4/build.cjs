@@ -60,7 +60,7 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  scene.areaSites.contextPolicy={retiredInstances,oversizedAuthoredContextRemoved:true,unmappedLand:'unfilled; no invented houses, roads or woodland'};
  scene.areaSites.frontageReference={method:'outward-facing road visibility with adjacent-building exclusion',count:scene.footprintBuildings.filter(b=>b.frontage).length,joinery:'illustrative; not an individual facade survey'};
  scene.stats={`,'retire oversized context');
- scene=exact(scene,"scene.revision='quality-v5.4';","scene.revision='area-higashiyama-quality-v4.16';",'area revision');
+ scene=exact(scene,"scene.revision='quality-v5.4';","scene.revision='area-higashiyama-quality-v4.16.1';",'area revision');
  scene=scene.replace("scene.areaQuality='v3-detailed-landmarks-and-streetscape';","scene.areaQuality='v4-cleared-urban-corridor-and-baked-lighting';");
  scene=exact(scene,
   "scene.named={temple:{target:[-1,7.2,-.4],span:29,yaw:.64,pitch:.43},corner:{target:[1.9,8.5,1.4],span:15.7,yaw:.65,pitch:.31},reverse:{target:[-1,7.4,-.4],span:29,yaw:-.54,pitch:.43}};",
@@ -105,11 +105,11 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  const portraitOld="if(aspect<1.05){p.span*=.78/aspect;p.target[1]+=.2;}";
  if(!app.includes(portraitOld))throw Error('Unexpected portrait camera scaling input');
  app=app.replace(portraitOld,"if(aspect<1.05){const areaLandmark=['hokanji','kodaiji','yasaka','street'].includes(name);const portraitScale=name==='area'?.42:(areaLandmark?.58:.78);p.span*=portraitScale/aspect;p.target[1]+=name==='area'?-.12:.2;}");
- app=app.replaceAll("lighting.bin?v=quality-v5.4","lighting.bin?v=area-higashiyama-quality-v4.16");
- app=app.replaceAll("quality-v5.4","area-higashiyama-quality-v4.16");
+ app=app.replaceAll("lighting.bin?v=quality-v5.4","lighting.bin?v=area-higashiyama-quality-v4.16.1");
+ app=app.replaceAll("quality-v5.4","area-higashiyama-quality-v4.16.1");
  app=exact(app,
-  "fetch('./lighting.bin?v=area-higashiyama-quality-v4.16',{signal:controller.signal})",
-  "fetch('./lighting.bin?v=area-higashiyama-quality-v4.16',{signal:controller.signal,cache:'no-store'})",
+  "fetch('./lighting.bin?v=area-higashiyama-quality-v4.16.1',{signal:controller.signal})",
+  "fetch('./lighting.bin?v=area-higashiyama-quality-v4.16.1',{signal:controller.signal,cache:'no-store'})",
   'cache-safe lighting fetch');
  app=app.replace("camera.target[0]=clamp(camera.target[0],-7,10);camera.target[1]=clamp(camera.target[1],3.5,11);camera.target[2]=clamp(camera.target[2],-7,7);",
                  "camera.target[0]=clamp(camera.target[0],-46,18);camera.target[1]=clamp(camera.target[1],2,17);camera.target[2]=clamp(camera.target[2],-14,54);");
@@ -118,7 +118,7 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  html=html.replaceAll("建築・景観 v5 · 春の造形見本","東山・祇園 · エリア品質 v4");
  html=html.replace('data-view="temple" aria-pressed="true">本堂全景</button><button data-view="corner" aria-pressed="false">近くで見る</button><button data-view="reverse" aria-pressed="false">別の角度</button>',
                    'data-view="area" aria-pressed="true">エリア全体</button><button data-view="temple" aria-pressed="false">清水寺</button><button data-view="hokanji" aria-pressed="false">八坂の塔</button>');
- html=html.replaceAll("quality-v5.4","area-higashiyama-quality-v4.16");
+ html=html.replaceAll("quality-v5.4","area-higashiyama-quality-v4.16.1");
  // Area presentation finish: preserve baked contact lighting while moving the district
  // slightly closer to the approved soft pastel concept. Exact replacements refuse
  // to run if the reviewed Kiyomizu renderer changes.
@@ -144,7 +144,7 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  for(const file of ['renderer.js','scene.js','app.js'])cp.execFileSync(process.execPath,['--check',path.join(site,'src',file)],{stdio:'inherit'});
  const context=vm.createContext({console,performance});for(const file of ['renderer.js','scene.js'])vm.runInContext(fs.readFileSync(path.join(site,'src',file),'utf8'),context,{filename:file});
  const model=vm.runInContext('makeStudy()',context,{timeout:240000});
- if(model.revision!=='area-higashiyama-quality-v4.16'||model.areaQuality!=='v4.16-streetscape-coherence-and-focus')throw Error('Wrong area revision');
+ if(model.revision!=='area-higashiyama-quality-v4.16.1'||model.areaQuality!=='v4.16.1-streetscape-coherence-and-focus')throw Error('Wrong area revision');
  if(!model.areaSites||!model.areaSites.geographicAnchors)throw Error('Area anchors missing');
  const architectureAudit=require('./architecture-audit.cjs').audit(model,require('../quality-v5/references/architecture-evidence.json'));
  fs.writeFileSync(path.join(out,'architecture-audit.json'),JSON.stringify(architectureAudit,null,2));
@@ -197,12 +197,12 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  // Cache-safe finalization: JS and lighting URLs share the exact geometry/light token.
  const appPath=path.join(site,'src/app.js'),htmlPath=path.join(site,'index.html');
  let cacheSafeApp=fs.readFileSync(appPath,'utf8'),cacheSafeHtml=fs.readFileSync(htmlPath,'utf8');
- cacheSafeApp=cacheSafeApp.replaceAll('lighting.bin?v=area-higashiyama-quality-v4.16','lighting.bin?v='+assetToken);
- cacheSafeHtml=cacheSafeHtml.replaceAll('area-higashiyama-quality-v4.16',assetToken);
+ cacheSafeApp=cacheSafeApp.replaceAll('lighting.bin?v=area-higashiyama-quality-v4.16.1','lighting.bin?v='+assetToken);
+ cacheSafeHtml=cacheSafeHtml.replaceAll('area-higashiyama-quality-v4.16.1',assetToken);
  fs.writeFileSync(appPath,cacheSafeApp);fs.writeFileSync(htmlPath,cacheSafeHtml);
  const viewerHashes={};for(const file of['src/renderer.js','src/scene.js','src/app.js','index.html'])viewerHashes[file]=sha(fs.readFileSync(path.join(site,file)));
  const triangles=model.meshes.reduce((n,m)=>n+m.p.length/9*m.instances.length,0);
- const info={revision:model.revision,viewerRevision:'area-higashiyama-quality-v4.16-deterministic',viewerHashes,modelHash,bakerHash,meshes:model.meshes.length,instances,triangles,lightSamples,rays:Number(rays),lightingBytes:light.length,lightingHash,architecture:model.stats,areaSites:model.areaSites,surveyed:false,assetToken,description:'Higashiyama miniature with geometry-matched baked light. Expanded source block: 2843 polygon buildings, thirteen metric landmark models, and separately reconstructed Kiyomizu hall/approach/stage. Kiyomizu uses provisional north-edge uniform calibration. Heights, roof details, gardens and terrain remain inferred; not a surveyed map.'};
+ const info={revision:model.revision,viewerRevision:'area-higashiyama-quality-v4.16.1-deterministic',viewerHashes,modelHash,bakerHash,meshes:model.meshes.length,instances,triangles,lightSamples,rays:Number(rays),lightingBytes:light.length,lightingHash,architecture:model.stats,areaSites:model.areaSites,surveyed:false,assetToken,description:'Higashiyama miniature with geometry-matched baked light. Expanded source block: 2843 polygon buildings, thirteen metric landmark models, and separately reconstructed Kiyomizu hall/approach/stage. Kiyomizu uses provisional north-edge uniform calibration. Heights, roof details, gardens and terrain remain inferred; not a surveyed map.'};
  info.mobileAsset=mobileAsset;
  fs.writeFileSync(path.join(site,'build-info.json'),JSON.stringify(info,null,2));
  console.log('AREA_BUILD_VALIDATED',JSON.stringify({modelHash,meshes:model.meshes.length,instances,triangles,lightSamples,lightingBytes:light.length}));
