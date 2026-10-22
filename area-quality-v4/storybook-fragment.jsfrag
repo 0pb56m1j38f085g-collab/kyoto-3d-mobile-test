@@ -181,7 +181,7 @@
   group='storybook-courtyards';
   for(const c of clearings){if(c.group==='main-hall'||c.group.includes('kodaiji'))continue;smallBox([(c.x0+c.x1)/2,base+.012,(c.z0+c.z1)/2],[c.x1-c.x0+.55,.035,c.z1-c.z0+.65],'#d8c8a9',0,3);}
   __STREETSCAPE_ART__
-  scene.areaQuality='v4.22-streetfronts-and-woodland';
+  scene.areaQuality='v4.23-uphill-arrival';
   scene.areaBuildings=houses;scene.areaStreets=lanes;
   scene.footprintBuildings=[];
   scene.stats={...scene.stats,trees:trees.length,illustrativeHouses:houses.length,mainHallInstances:2158};
@@ -207,7 +207,7 @@
   for(const c of clearings){const z=c.z0;c.z0=-c.z1;c.z1=-z;}
   for(const h of houses){h.z=-h.z;h.yaw=-h.yaw;}
   for(const r of[...lanes,...waterways,...crossings])for(const p of r.points)p[1]=-p[1];
-  scene.cartography.coordinateFrame={source:'east +X / north +Z',render:'east +X / up +Y / south +Z',north:[0,0,-1],east:[1,0,0],reflectionApplied:true,initialView:'from south-southwest looking north-northeast; north slightly upper-left and east upper-right'};
+  scene.cartography.coordinateFrame={source:'east +X / north +Z',render:'east +X / up +Y / south +Z',north:[0,0,-1],east:[1,0,0],reflectionApplied:true,initialView:'from west-southwest town looking east-northeast uphill; north to upper-left, stage projects toward screen-right'};
   const viewBounds={},pins={};
   for(const [key,l]of Object.entries(layouts)){
    const cs=clearings.filter(c=>layoutFor(c.group)===l),bound={x0:Math.min(...cs.map(c=>c.x0)),x1:Math.max(...cs.map(c=>c.x1)),y0:Math.min(...cs.map(c=>c.y0)),y1:Math.max(...cs.map(c=>c.y1)),z0:Math.min(...cs.map(c=>c.z0)),z1:Math.max(...cs.map(c=>c.z1))};viewBounds[key]=bound;
@@ -220,6 +220,9 @@
    const points=lanes.filter(r=>r.name===name).flatMap(r=>r.points),x=points.reduce((s,p)=>s+p[0],0)/points.length,z=points.reduce((s,p)=>s+p[1],0)/points.length,y=storyGround(x,-z);
    pins[key]=[x,y+.65,z];viewBounds[key]={x0:x-2,x1:x+2,y0:y,y1:y+2,z0:z-2,z1:z+2};
   }
-  scene.cartography.composition={version:'east-entry-1',hero:'清水寺',foreground:'二寧坂・産寧坂',camera:'south-southwest-to-north-northeast',reference:'approved east-area concept 2026-10-22',coverage:'Current constructed core is Kiyomizu / Ninenzaka / Gion. Okazaki, Ginkakuji and Yamashina are future directional extensions, not completed 3D districts.'};
+  scene.cartography.composition={version:'uphill-entry-2',hero:'清水寺',foreground:'二寧坂・産寧坂',camera:'west-southwest-to-east-northeast',reference:'approved east-area concept 2026-10-22',coverage:'Current constructed core is Kiyomizu / Ninenzaka / Gion. Okazaki, Ginkakuji and Yamashina are future directional extensions, not completed 3D districts.'};
+  const approach=lanes.find(r=>r.id===28514434),entryPoint=p=>[p[0],storyGround(p[0],-p[1])+.1,p[1]];
+  scene.cartography.composition.approach={sourceWay:approach.id,name:approach.name,from:entryPoint(approach.points[0]),to:entryPoint(approach.points.at(-1)),purpose:'Composition reference only; not a verified station route.'};
+  scene.cartography.composition.buildingRotation=0;
   scene.cartography.landmarkPins=pins;scene.cartography.framing={bounds:viewBounds,overview};
  }

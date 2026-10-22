@@ -43,6 +43,7 @@ const framing=vm.runInContext(`(()=>{
 })()`,ctx);
 const pinY=Object.values(framing.pins).map(p=>p[1]);
 assert.ok(Math.min(...pinY)<700*.45,'opening landmarks must not sit entirely below a large empty sky');
-assert.ok(Math.max(...pinY)-Math.min(...pinY)>700*.18,'landmarks must occupy a legible vertical composition');
+// Uphill composition is assessed against the actual approach in uphill-framing.cjs.
+// Northern landmarks can be outside the opening and remain reachable by directions.
 assert.ok(framing.templeWidth>390*.27,'Kiyomizu must have a prominent opening silhouette');
 console.log(JSON.stringify({ok:true,revision:model.revision,checkedPackedLightVertices:checked,lightSamples:offset,triangles,houses:model.areaBuildings.length,trees:model.cartography.trees,bytes:asset.bytes,downloadBytes:asset.compressedBytes,framing}));

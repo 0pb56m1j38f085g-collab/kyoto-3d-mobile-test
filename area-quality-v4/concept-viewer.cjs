@@ -1,15 +1,15 @@
 'use strict';
-// v4.22: one visual quality path on every device, with bounded model transport.
+// v4.23: one visual quality path on every device, with bounded model transport.
 module.exports=({renderer,app,html})=>{
  const exact=(s,a,b)=>{if(!s.includes(a))throw Error('Concept viewer input missing: '+a.slice(0,110));return s.replace(a,b);};
  const cameras={
-  area:{target:[-8,5,-24],span:50,yaw:-.15,pitch:.62},
-  temple:{target:[0,8,0],span:24,yaw:-.62,pitch:.40},
+  area:{target:[-4.2,5,-7.8],span:70,yaw:-1.15,pitch:.49},
+  temple:{target:[0,8,0],span:24,yaw:-1.05,pitch:.40},
   hokanji:{target:[-15,5,-11],span:10,yaw:-.7,pitch:.48},
   kodaiji:{target:[-10,4,-18],span:16,yaw:-.65,pitch:.55},
   yasaka:{target:[-17,4,-26],span:13,yaw:-.65,pitch:.52},
-  street:{target:[-11.4,3.5,-10.1],span:7,yaw:-.45,pitch:.45},
-  sannenzaka:{target:[-11,4,-5.6],span:7,yaw:-.45,pitch:.45},
+  street:{target:[-11.4,3.5,-10.1],span:7,yaw:-1.15,pitch:.45},
+  sannenzaka:{target:[-11,4,-5.6],span:7,yaw:-1.15,pitch:.45},
   corner:{target:[0,8,0],span:17,yaw:-.55,pitch:.35},
   reverse:{target:[0,8,0],span:24,yaw:2.7,pitch:.6}
  };
@@ -33,15 +33,16 @@ module.exports=({renderer,app,html})=>{
  renderer=exact(renderer,'  g.disableVertexAttribArray(8);g.vertexAttrib1f(8,0);','');
  renderer=exact(renderer,'name:m.name,lightOffset:0,lightStride:0,vertices:m.vertices','name:m.name,lightOffset:m.lightOffset,lightStride:m.lightStride,vertices:m.vertices');
  // Packed models carry the same baker indices and lighting on iPhone and desktop.
- html=exact(html,"if(!isLowMemoryIOS())await script('src/scene.js?v=area-higashiyama-quality-v4.22');",'');
+ html=exact(html,"if(!isLowMemoryIOS())await script('src/scene.js?v=area-higashiyama-quality-v4.23');",'');
  html=html.replace('<option value="light">軽量</option>','');
  html=html.replaceAll('iPhoneでは軽量表示を使用します。','iPhoneも他の端末と同じ照明・素材で表示します。');
  html=html.replaceAll('京さんぽ · 東山と祇園','京さんぽ · 東山・祇園・山科');
  html=html.replaceAll('KYOTO · A LITTLE JOURNEY','KYOTO · HIGASHIYAMA');
- html=html.replace('初期表示は北側から南を見る向きです（画面上が南、右が西）。','初期表示は南南西側から北北東を見る向きです（北は少し左上、東は右上）。清水寺の舞台と二寧坂の町並みを中心にしています。');
+ html=html.replace('初期表示は北側から南を見る向きです（画面上が南、右が西）。','初期表示は西南西の街側から東北東の山側を見る向きです。坂の先に清水寺が見え、舞台は画面の右側へ張り出します。画面外の名所は矢印付きの名前から移動できます。');
  html=html.replace('画面上：南 · 右：西','画面上：北 · 右：東');
  html=html.replace('名所をタップで拡大 · 1本指で回転','名所をタップで拡大 · 2本指で移動');
  app=app.replace(/const mapSpots=\[.*?\];/,"const mapSpots=[{id:'temple',name:'清水寺'},{id:'hokanji',name:'八坂の塔'},{id:'kodaiji',name:'高台寺'},{id:'yasaka',name:'八坂神社'},{id:'street',name:'二寧坂'},{id:'sannenzaka',name:'産寧坂'}];");
+ app=exact(app,'const points=framing?.overview||[];',"const points=(framing?['temple','hokanji','street','sannenzaka'].flatMap(k=>{const b=framing.bounds[k];return[b.x0,b.x1].flatMap(x=>[b.y0,b.y1+.9].flatMap(y=>[b.z0,b.z1].map(z=>[x,y,z])));}):[]);");
  // Do not move named features to make a composition. Camera framing omits the
  // distant Kamo boundary; the river remains at its real west-side position.
  app=exact(app,'const top=h<500?90:128,bottom=h-42,left=18,right=w-18;','const top=h<500?76:108,bottom=h*.74,left=16,right=w-16;');
@@ -57,6 +58,16 @@ module.exports=({renderer,app,html})=>{
    s.line.hidden=!show||!displaced;s.line.style.left=rawX+'px';s.line.style.top=rawY+'px';
    s.line.style.width=Math.hypot(x-rawX,y-rawY)+'px';s.line.style.transform='rotate('+Math.atan2(y-rawY,x-rawX)+'rad)';
    s.el.dataset.anchorX=String(rawX);s.el.dataset.anchorY=String(rawY);s.el.dataset.labelX=String(x);s.el.dataset.labelY=String(y);`);
+ // Offscreen primary landmarks remain reachable at their projected direction.
+ // These are explicitly directional buttons, never displaced location pins.
+ app=exact(app,'const half=Math.max(44,s.el.offsetWidth/2),x=clamp(rawX,half+8,w-half-8);let y=rawY;',`const offscreen=selected==='area'&&!['street','sannenzaka'].includes(s.id)&&(rawX<12||rawX>w-12||rawY<110||rawY>h-65);
+   const arrow=['→','↘','↓','↙','←','↖','↑','↗'][((Math.round(Math.atan2(rawY-h/2,rawX-w/2)/(Math.PI/4))%8)+8)%8];
+   s.el.dataset.offscreen=String(offscreen);s.el.textContent=offscreen?arrow+' '+s.name:s.name;
+   s.el.setAttribute('aria-label',s.name+(offscreen?'は画面外。この方向へ移動':'を近くで見る'));
+   const half=Math.max(44,s.el.offsetWidth/2),x=clamp(rawX,half+8,w-half-8);let y=offscreen?clamp(rawY,150,h-100):rawY;`);
+ app=exact(app,"let show=!modal&&(selected==='area'||selected===s.id)&&rawX>-20&&rawX<w+20&&rawY>90&&rawY<h-25&&p[2]>-1&&p[2]<1;","let show=!modal&&(selected==='area'||selected===s.id)&&(offscreen||(rawX>-20&&rawX<w+20&&rawY>90&&rawY<h-25))&&p[2]>-1&&p[2]<1;");
+ app=exact(app,'const choices=[rawY,rawY-44,rawY+44,rawY-88]', 'const choices=[y,y-44,y+44,y-88,y+88,y-132,y+132]');
+ app=exact(app,'s.line.hidden=!show||!displaced;', 's.line.hidden=!show||!displaced||offscreen;');
  // Keep the orbit centre on the ground when positioning the composition.
  app=exact(app,'p.target[1]-=dy/Math.max(.3,Math.cos(p.pitch));','p.target[0]+=dy*Math.sin(p.yaw)/Math.max(.3,Math.sin(p.pitch));p.target[2]+=dy*Math.cos(p.yaw)/Math.max(.3,Math.sin(p.pitch));');
  app=exact(app,'camera.target[1]+=dy*s;','camera.target[0]+=dy*s*Math.sin(camera.yaw)/Math.max(.35,Math.sin(camera.pitch));camera.target[2]+=dy*s*Math.cos(camera.yaw)/Math.max(.35,Math.sin(camera.pitch));');
@@ -65,6 +76,7 @@ module.exports=({renderer,app,html})=>{
  header .title{padding:9px 12px}header .title h1{font-size:13px}header .title .eyebrow{display:none}#orientation{top:66px;font-size:9px;padding:4px 7px}#compass{top:65px;transform:scale(.85);transform-origin:top right}
  .map-spot{font-size:10px;min-height:28px;padding:6px 9px 6px 25px}.map-spot[data-view=temple]{font-size:12px}
  .map-spot[data-view=street],.map-spot[data-view=sannenzaka]{font-size:10px;background:#fff6ecf2}
+ .map-spot[data-offscreen=true]{padding:6px 9px;border:1px solid #d8ceba;background:#fffbf0ed;font-size:9px}.map-spot[data-offscreen=true]:before{display:none}
  .pin-leader{position:absolute;height:1px;background:#af7f80;transform-origin:left center;pointer-events:none;box-shadow:0 0 1px #fff}.pin-leader::before{content:'';position:absolute;left:-2px;top:-2px;width:5px;height:5px;background:#fff6ee;border:1px solid #b88f88;border-radius:50%}
  .side{right:11px;bottom:calc(48px + env(safe-area-inset-bottom))}.hint{bottom:48px}.map-note{font-size:9px}
  </style>`);
