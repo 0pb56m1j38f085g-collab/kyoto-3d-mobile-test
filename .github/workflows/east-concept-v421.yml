@@ -1,0 +1,67 @@
+name: East area concept v4.21 full-quality validation
+on:
+  push:
+    branches: [area-higashiyama-concept-v4.21]
+    paths: ['area-quality-v4/**', 'area-data/**', '.github/workflows/east-concept-v421.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: east-concept-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Build shared geometry and full lighting
+        run: node area-quality-v4/build.cjs
+        env:
+          LIGHT_SAMPLES: '24'
+      - name: Verify every packed light index and geographic ordering
+        run: node area-quality-v4/tests/concept-pack.cjs
+      - uses: actions/upload-artifact@v5
+        with:
+          name: east-concept-v421-site
+          path: area-quality-v4/site/
+          retention-days: 14
+  browser:
+    needs: build
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [webkit, chromium]
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.0-jammy@sha256:55db7b712a981e9cc1ec757a4511cd01c5ed4e20bd7c84b2dee4e1d320102b9d
+      options: --shm-size=512m
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - uses: actions/download-artifact@v5
+        with:
+          name: east-concept-v421-site
+          path: area-quality-v4/site/
+      - run: npm install --prefix "$RUNNER_TEMP/concept-browser" --no-audit --no-fund playwright@1.55.0
+      - name: Render actual full-quality 3D and test interactions
+        run: node area-quality-v4/tests/concept-browser.cjs
+        env:
+          NODE_PATH: ${{ runner.temp }}/concept-browser/node_modules
+          TEST_BROWSER: ${{ matrix.engine }}
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: east-concept-v421-${{ matrix.engine }}
+          path: concept-v421-artifacts/
+          retention-days: 14

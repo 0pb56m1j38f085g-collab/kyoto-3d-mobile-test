@@ -6,7 +6,7 @@ async function loadMobileStudy(asset){
   const response=await fetch(asset.url,{signal:controller.signal});
   if(!response.ok)throw Error('3Dデータの取得に失敗しました（HTTP '+response.status+'）。');
   const model=await response.json();
-  if(model.sourceModelHash!==asset.sourceModelHash||model.revision!==asset.revision||!model.mobilePacked||model.mobileChunks.length!==asset.chunkCount)throw Error('3Dデータの版が一致しません。');
+  if(model.sourceModelHash!==asset.sourceModelHash||model.revision!==asset.revision||!model.mobilePacked||!model.packedLighting||model.lightSampleCount!==asset.lightSampleCount||model.mobileChunks.length!==asset.chunkCount)throw Error('3Dデータの版が一致しません。');
   model.mobileMemory={geometryBytes:asset.bytes,downloadBytes:asset.compressedBytes,chunkCount:asset.chunkCount,maxChunkBytes:asset.maxChunkBytes,maxCompressedChunkBytes:asset.maxCompressedChunkBytes,
    retainedGeometryBytes:0,stagingBytes:0,uploadedChunks:0,proceduralBuild:false,runtimeVertexIndexing:false};
   return model;
@@ -53,11 +53,13 @@ async function uploadMobileStudy(renderer,model,progress){
     const meta=JSON.parse(new TextDecoder().decode(bytes.subarray(16,16+length)));
     if(meta.sourceModelHash!==model.sourceModelHash)throw Error('3Dデータの版が一致しません。');
     for(const m of meta.meshes){
-     const sizes=[m.vertices*3,m.vertices*3,m.count,m.instanceCount*15],names=['p','n','index','instanceData'];
-     for(let k=0;k<4;k++){
+     const sizes=[m.vertices*3,m.vertices*3,m.count,m.instanceCount*15,m.vertices],names=['p','n','index','instanceData','lightIds'];
+     if(!Number.isSafeInteger(m.lightOffset)||!Number.isSafeInteger(m.lightStride)||m.lightOffset<0||m.lightStride<1||m.lightOffset+m.lightStride*m.instanceCount>model.lightSampleCount)throw Error('照明インデックスの範囲が不正です。');
+     for(let k=0;k<5;k++){
       const offset=start+m.offsets[k];if(!Number.isSafeInteger(offset)||!Number.isSafeInteger(sizes[k])||sizes[k]<0||offset<start||offset%4||offset+sizes[k]*4>at)throw Error('3Dデータの範囲が不正です。');
       m[names[k]]=new (k===2?Uint32Array:Float32Array)(bytes.buffer,offset,sizes[k]);
      }
+     for(const id of m.lightIds)if(!Number.isSafeInteger(id)||id<0||id>=m.lightStride)throw Error('照明インデックスが不正です。');
      renderer.uploadPacked(m);
     }
     g.bindVertexArray(null);
