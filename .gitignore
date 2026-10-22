@@ -1,0 +1,5 @@
+area-quality-v4/site/
+area-quality-v4/.build/
+*-artifacts/
+node_modules/
+*.log
