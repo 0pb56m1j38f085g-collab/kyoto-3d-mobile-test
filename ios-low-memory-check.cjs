@@ -1,4 +1,5 @@
 'use strict';
+// Re-run after deterministic v4.8 + iPhone baked-light skip integration.
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),cp=require('node:child_process');
 const {webkit}=require('playwright');
 const OUT=path.resolve('ios-low-memory-artifacts'),BASE='http://127.0.0.1:4180';
