@@ -10,6 +10,10 @@ jobs:
   capture:
     runs-on: ubuntu-22.04
     timeout-minutes: 12
+    # Official 1.55.0 jammy image: browser and OS dependencies already installed.
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.0-jammy@sha256:55db7b712a981e9cc1ec757a4511cd01c5ed4e20bd7c84b2dee4e1d320102b9d
+      options: --shm-size=512m
     steps:
       - uses: actions/checkout@v6
         with:
@@ -20,13 +24,7 @@ jobs:
       - name: Prepare WebKit
         timeout-minutes: 5
         run: |
-          # Azure's Ubuntu mirror stalled twice while downloading these packages.
-          # Keep Ubuntu's signed package metadata; use its official HTTPS archive.
-          if [ -f /etc/apt/apt-mirrors.txt ]; then
-            sudo sed -i 's|http://azure.archive.ubuntu.com/ubuntu|https://archive.ubuntu.com/ubuntu|g' /etc/apt/apt-mirrors.txt
-          fi
           npm install --prefix "$RUNNER_TEMP/webkit-capture" --no-audit --no-fund playwright@1.55.0
-          "$RUNNER_TEMP/webkit-capture/node_modules/.bin/playwright" install --with-deps webkit
       - name: Capture after actual frames and presentation ticks
         env:
           NODE_PATH: ${{ runner.temp }}/webkit-capture/node_modules
