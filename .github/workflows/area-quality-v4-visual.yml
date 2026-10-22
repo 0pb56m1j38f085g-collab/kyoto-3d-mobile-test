@@ -1,7 +1,8 @@
 name: Higashiyama area v4 baked visual review
 on:
   push:
-    branches: [area-higashiyama-quality-v4, area-higashiyama-quality-v4.16, area-higashiyama-geography-v4.20]
+    # Historical light-mode releases. v4.21 is checked by east-concept-v421.yml.
+    branches: [area-higashiyama-quality-v4.16, area-higashiyama-geography-v4.20]
     paths:
       - 'area-quality-v4/**'
       - 'area-data/**'
