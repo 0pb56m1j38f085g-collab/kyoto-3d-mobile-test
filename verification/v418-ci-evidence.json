@@ -1,0 +1,563 @@
+{
+  "revision": "area-higashiyama-quality-v4.18",
+  "sourceCommit": "1016aa1cf4d694e09062bf589151d7932403d0b7",
+  "modelHash": "4ec6de1e96878167623847355e489c7597338004583a4fa2429a798e880a11bb",
+  "lightingHash": "36fe6176be0385fdb28b30a9c5acd5888727543aa0f0986d87e94402e103924a",
+  "assetToken": "4ec6de1e9687-36fe6176be03-4cf2056d23a6",
+  "mobileAsset": {
+    "url": "./mobile/0ac2b89083e12e62079ae93d.json",
+    "manifestBytes": 64089,
+    "sha256": "0ac2b89083e12e62079ae93df20f668620209e625b4f860e0b2cdcd742364927",
+    "revision": "area-higashiyama-quality-v4.18",
+    "sourceModelHash": "4ec6de1e96878167623847355e489c7597338004583a4fa2429a798e880a11bb",
+    "bytes": 5267168,
+    "compressedBytes": 1342317,
+    "maxChunkBytes": 2025864,
+    "maxCompressedChunkBytes": 533663,
+    "chunkCount": 3,
+    "triangles": 818682,
+    "instances": 11643,
+    "meshes": 152,
+    "batches": 152,
+    "geometry": "identical Float32 positions, normals, triangle order/winding and instance transforms; no LOD; unused UV omitted"
+  },
+  "webkit": {
+    "environment": "GitHub Actions / Playwright 1.55.0 WebKit Linux container / iPhone and iPad emulation; not physical iPhone",
+    "runId": 39816652042,
+    "jobId": 119956781136,
+    "artifactId": 12441474501,
+    "artifactSha256": "dbba524027f4314a4bc46249d1a1ca732c5eb0bd185159bcd668f9832ab2f3eb",
+    "conclusion": "success",
+    "ok": true,
+    "checks": [
+      {
+        "name": "geometry validates",
+        "passed": true
+      },
+      {
+        "name": "iphone actual frame drawn",
+        "passed": true
+      },
+      {
+        "name": "iphone current model loaded",
+        "passed": true
+      },
+      {
+        "name": "iphone no runtime errors",
+        "passed": true
+      },
+      {
+        "name": "iphone focal plane follows overview camera",
+        "passed": true
+      },
+      {
+        "name": "iphone never fetches procedural scene",
+        "passed": true
+      },
+      {
+        "name": "iphone sequential parts no larger than 2 MiB",
+        "passed": true
+      },
+      {
+        "name": "iphone retains no CPU geometry after upload",
+        "passed": true
+      },
+      {
+        "name": "iphone skips runtime geometry and lighting index generation",
+        "passed": true
+      },
+      {
+        "name": "iphone smaller illustrated geometry uploaded without loss",
+        "passed": true
+      },
+      {
+        "name": "iphone no multisample attachments",
+        "passed": true
+      },
+      {
+        "name": "iphone skips lighting download",
+        "passed": true
+      },
+      {
+        "name": "iphone stays light and reports light",
+        "passed": true
+      },
+      {
+        "name": "iphone dynamic lighting enabled",
+        "passed": true
+      },
+      {
+        "name": "iphone settings cannot bypass memory guard",
+        "passed": true
+      },
+      {
+        "name": "iphone all four landmarks visible in overview",
+        "passed": true
+      },
+      {
+        "name": "all four landmarks visible in portrait overview",
+        "passed": true
+      },
+      {
+        "name": "hokanji completes two bounded mobile draws",
+        "passed": true
+      },
+      {
+        "name": "kodaiji completes two bounded mobile draws",
+        "passed": true
+      },
+      {
+        "name": "yasaka completes two bounded mobile draws",
+        "passed": true
+      },
+      {
+        "name": "street completes two bounded mobile draws",
+        "passed": true
+      },
+      {
+        "name": "temple completes two bounded mobile draws",
+        "passed": true
+      },
+      {
+        "name": "reset returns to district",
+        "passed": true
+      },
+      {
+        "name": "landscape resize keeps drawing",
+        "passed": true
+      },
+      {
+        "name": "main hall geometry preserved",
+        "passed": true
+      },
+      {
+        "name": "illustrated map separates display from geographic data",
+        "passed": true
+      },
+      {
+        "name": "model refetches and restores after context loss",
+        "passed": true
+      },
+      {
+        "name": "iPhone reload draws without procedural generation",
+        "passed": true
+      },
+      {
+        "name": "iphone no late errors",
+        "passed": true
+      },
+      {
+        "name": "ipad actual frame drawn",
+        "passed": true
+      },
+      {
+        "name": "ipad current model loaded",
+        "passed": true
+      },
+      {
+        "name": "ipad no runtime errors",
+        "passed": true
+      },
+      {
+        "name": "ipad focal plane follows overview camera",
+        "passed": true
+      },
+      {
+        "name": "ipad never fetches procedural scene",
+        "passed": true
+      },
+      {
+        "name": "ipad sequential parts no larger than 2 MiB",
+        "passed": true
+      },
+      {
+        "name": "ipad retains no CPU geometry after upload",
+        "passed": true
+      },
+      {
+        "name": "ipad skips runtime geometry and lighting index generation",
+        "passed": true
+      },
+      {
+        "name": "ipad smaller illustrated geometry uploaded without loss",
+        "passed": true
+      },
+      {
+        "name": "ipad no multisample attachments",
+        "passed": true
+      },
+      {
+        "name": "ipad skips lighting download",
+        "passed": true
+      },
+      {
+        "name": "ipad stays light and reports light",
+        "passed": true
+      },
+      {
+        "name": "ipad dynamic lighting enabled",
+        "passed": true
+      },
+      {
+        "name": "ipad settings cannot bypass memory guard",
+        "passed": true
+      },
+      {
+        "name": "ipad all four landmarks visible in overview",
+        "passed": true
+      },
+      {
+        "name": "ipad no late errors",
+        "passed": true
+      },
+      {
+        "name": "fallback actual frame drawn",
+        "passed": true
+      },
+      {
+        "name": "fallback current model loaded",
+        "passed": true
+      },
+      {
+        "name": "fallback no runtime errors",
+        "passed": true
+      },
+      {
+        "name": "fallback focal plane follows overview camera",
+        "passed": true
+      },
+      {
+        "name": "mismatched lighting gracefully falls back",
+        "passed": true
+      },
+      {
+        "name": "fallback allocates usable shadow map",
+        "passed": true
+      },
+      {
+        "name": "fallback no late errors",
+        "passed": true
+      },
+      {
+        "name": "mid-load 503 offers retry without heavy fallback",
+        "passed": true
+      },
+      {
+        "name": "mid-load truncated offers retry without heavy fallback",
+        "passed": true
+      },
+      {
+        "name": "mid-load corrupt offers retry without heavy fallback",
+        "passed": true
+      },
+      {
+        "name": "mid-load context-loss offers retry without heavy fallback",
+        "passed": true
+      }
+    ],
+    "cases": [
+      {
+        "kind": "iphone",
+        "errors": [],
+        "maxPartsInFlight": 1,
+        "requests": [
+          "http://127.0.0.1:4189/?quality=high&view=area",
+          "http://127.0.0.1:4189/src/renderer.js?v=area-higashiyama-quality-v4.18",
+          "http://127.0.0.1:4189/src/app.js?v=area-higashiyama-quality-v4.18",
+          "http://127.0.0.1:4189/mobile/0ac2b89083e12e62079ae93d.json",
+          "http://127.0.0.1:4189/mobile/e82ecab74f2643399d5f5b73.bin.gz",
+          "http://127.0.0.1:4189/mobile/99e7127c8f55a2e15c15272b.bin.gz",
+          "http://127.0.0.1:4189/mobile/af914d64821700fe4160827c.bin.gz",
+          "http://127.0.0.1:4189/mobile/e82ecab74f2643399d5f5b73.bin.gz",
+          "http://127.0.0.1:4189/mobile/99e7127c8f55a2e15c15272b.bin.gz",
+          "http://127.0.0.1:4189/mobile/af914d64821700fe4160827c.bin.gz",
+          "http://127.0.0.1:4189/?quality=high&view=area",
+          "http://127.0.0.1:4189/src/renderer.js?v=area-higashiyama-quality-v4.18",
+          "http://127.0.0.1:4189/src/app.js?v=area-higashiyama-quality-v4.18",
+          "http://127.0.0.1:4189/mobile/0ac2b89083e12e62079ae93d.json",
+          "http://127.0.0.1:4189/mobile/e82ecab74f2643399d5f5b73.bin.gz",
+          "http://127.0.0.1:4189/mobile/99e7127c8f55a2e15c15272b.bin.gz",
+          "http://127.0.0.1:4189/mobile/af914d64821700fe4160827c.bin.gz"
+        ],
+        "state": {
+          "ready": true,
+          "revision": "area-higashiyama-quality-v4.18",
+          "quality": "light",
+          "qualityText": "軽量",
+          "qualitySelect": "light",
+          "lowMemoryIOS": true,
+          "bakedEnabled": false,
+          "shadowSize": 1024,
+          "bakedMismatch": null,
+          "frames": 2,
+          "glError": 0,
+          "errors": [],
+          "stats": {
+            "mainHallInstances": 2158,
+            "trees": 304,
+            "stageSupportCount": 18,
+            "mainBays": [
+              9,
+              7
+            ],
+            "surveyed": false,
+            "illustrativeHouses": 144,
+            "triangles": 818682,
+            "instances": 11643,
+            "drawCalls": 152,
+            "uploadedUniqueVertices": 104436
+          },
+          "houses": 144,
+          "labels": [
+            "清水寺",
+            "八坂の塔",
+            "高台寺",
+            "八坂神社"
+          ]
+        },
+        "memory": {
+          "geometryBytes": 5267168,
+          "downloadBytes": 1342317,
+          "chunkCount": 3,
+          "maxChunkBytes": 2025864,
+          "maxCompressedChunkBytes": 533663,
+          "retainedGeometryBytes": 0,
+          "stagingBytes": 0,
+          "uploadedChunks": 3,
+          "proceduralBuild": false,
+          "runtimeVertexIndexing": false,
+          "modelBuildMs": 5.999999999999972,
+          "startupMs": 3709.0000000000005,
+          "proceduralCodeLoaded": false,
+          "cpuMeshes": 0,
+          "batchTypedArrays": 0,
+          "uploadedTriangles": 818682,
+          "lightSamples": 0,
+          "msSamples": 1
+        }
+      },
+      {
+        "kind": "ipad",
+        "errors": [],
+        "maxPartsInFlight": 1,
+        "requests": [
+          "http://127.0.0.1:4189/?quality=high&view=area",
+          "http://127.0.0.1:4189/src/renderer.js?v=area-higashiyama-quality-v4.18",
+          "http://127.0.0.1:4189/src/app.js?v=area-higashiyama-quality-v4.18",
+          "http://127.0.0.1:4189/mobile/0ac2b89083e12e62079ae93d.json",
+          "http://127.0.0.1:4189/mobile/e82ecab74f2643399d5f5b73.bin.gz",
+          "http://127.0.0.1:4189/mobile/99e7127c8f55a2e15c15272b.bin.gz",
+          "http://127.0.0.1:4189/mobile/af914d64821700fe4160827c.bin.gz"
+        ],
+        "state": {
+          "ready": true,
+          "revision": "area-higashiyama-quality-v4.18",
+          "quality": "light",
+          "qualityText": "軽量",
+          "qualitySelect": "light",
+          "lowMemoryIOS": true,
+          "bakedEnabled": false,
+          "shadowSize": 1024,
+          "bakedMismatch": null,
+          "frames": 2,
+          "glError": 0,
+          "errors": [],
+          "stats": {
+            "mainHallInstances": 2158,
+            "trees": 304,
+            "stageSupportCount": 18,
+            "mainBays": [
+              9,
+              7
+            ],
+            "surveyed": false,
+            "illustrativeHouses": 144,
+            "triangles": 818682,
+            "instances": 11643,
+            "drawCalls": 152,
+            "uploadedUniqueVertices": 104436
+          },
+          "houses": 144,
+          "labels": [
+            "清水寺",
+            "八坂の塔",
+            "高台寺",
+            "八坂神社"
+          ]
+        },
+        "memory": {
+          "geometryBytes": 5267168,
+          "downloadBytes": 1342317,
+          "chunkCount": 3,
+          "maxChunkBytes": 2025864,
+          "maxCompressedChunkBytes": 533663,
+          "retainedGeometryBytes": 0,
+          "stagingBytes": 0,
+          "uploadedChunks": 3,
+          "proceduralBuild": false,
+          "runtimeVertexIndexing": false,
+          "modelBuildMs": 4,
+          "startupMs": 1524,
+          "proceduralCodeLoaded": false,
+          "cpuMeshes": 0,
+          "batchTypedArrays": 0,
+          "uploadedTriangles": 818682,
+          "lightSamples": 0,
+          "msSamples": 1
+        }
+      },
+      {
+        "kind": "fallback",
+        "errors": [],
+        "maxPartsInFlight": 0,
+        "requests": [
+          "http://127.0.0.1:4189/?quality=high&view=area",
+          "http://127.0.0.1:4189/src/renderer.js?v=area-higashiyama-quality-v4.18",
+          "http://127.0.0.1:4189/src/scene.js?v=area-higashiyama-quality-v4.18",
+          "http://127.0.0.1:4189/src/app.js?v=area-higashiyama-quality-v4.18",
+          "http://127.0.0.1:4189/lighting.bin?v=area-higashiyama-quality-v4.18"
+        ],
+        "state": {
+          "ready": true,
+          "revision": "area-higashiyama-quality-v4.18",
+          "quality": "high",
+          "qualityText": "高画質",
+          "qualitySelect": "high",
+          "lowMemoryIOS": false,
+          "bakedEnabled": false,
+          "shadowSize": 3072,
+          "bakedMismatch": {
+            "expected": 576638,
+            "received": 1,
+            "bytes": 12
+          },
+          "frames": 1,
+          "glError": 0,
+          "errors": [],
+          "stats": {
+            "mainHallInstances": 2158,
+            "trees": 304,
+            "stageSupportCount": 18,
+            "mainBays": [
+              9,
+              7
+            ],
+            "surveyed": false,
+            "illustrativeHouses": 144,
+            "triangles": 818682,
+            "instances": 11643,
+            "drawCalls": 152,
+            "uploadedUniqueVertices": 216754
+          },
+          "houses": 144,
+          "labels": [
+            "清水寺",
+            "八坂の塔",
+            "高台寺",
+            "八坂神社"
+          ]
+        }
+      }
+    ]
+  },
+  "baked": {
+    "environment": "GitHub-hosted Linux / Chromium software WebGL",
+    "runId": 39816652254,
+    "jobId": 119956781183,
+    "artifactId": 12442991760,
+    "artifactSha256": "4ede6e799fe4e448b8c9d52d8064bb3847ff1e21e9eab499c0165d78aa06de85",
+    "conclusion": "success",
+    "ok": true,
+    "checks": [
+      {
+        "name": "24-sample area build completed",
+        "passed": true,
+        "detail": {
+          "status": 0,
+          "signal": null
+        }
+      },
+      {
+        "name": "Correct area revision",
+        "passed": true,
+        "detail": "area-higashiyama-quality-v4.18"
+      },
+      {
+        "name": "Baked light data belongs to this model",
+        "passed": true,
+        "detail": {
+          "bytes": 2306560,
+          "samples": 576638,
+          "rays": 24
+        }
+      },
+      {
+        "name": "Local site started",
+        "passed": true
+      },
+      {
+        "name": "3D initializes",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "Baked lighting active",
+        "passed": true,
+        "detail": {
+          "baked": true,
+          "count": 576638
+        }
+      },
+      {
+        "name": "v4 area model loaded",
+        "passed": true,
+        "detail": "area-higashiyama-quality-v4.18"
+      },
+      {
+        "name": "No WebGL error",
+        "passed": true
+      },
+      {
+        "name": "No runtime errors",
+        "passed": true,
+        "detail": []
+      }
+    ],
+    "errors": [],
+    "lightingSamples": 24
+  },
+  "memory": {
+    "environment": "Desktop Chromium / iPhone UA / software WebGL; not physical iPhone",
+    "ok": true,
+    "cases": [
+      {
+        "errors": [],
+        "sampledPeakBackingBytes": 5698090,
+        "firstFrameHeap": {
+          "usedSize": 2920848,
+          "totalSize": 5537792,
+          "embedderHeapUsedSize": 2043936,
+          "backingStorageSize": 5698090
+        },
+        "afterGC": {
+          "usedSize": 1693920,
+          "totalSize": 2392064,
+          "embedderHeapUsedSize": 712608,
+          "backingStorageSize": 378690
+        },
+        "afterInteractionGC": {
+          "usedSize": 1961780,
+          "totalSize": 2654208,
+          "embedderHeapUsedSize": 722216,
+          "backingStorageSize": 379062
+        }
+      }
+    ],
+    "limitations": "Sampled JS/backing storage measurements are not whole-browser, GPU or OS memory, nor a guarantee of the peak between samples."
+  },
+  "limitations": [
+    "Automated rendering checks are not design completion.",
+    "Physical iPhone v4.18 launch, thermal behavior and interaction are unverified.",
+    "Illustrative street and building layout is not a verified navigation graph or travel-time source."
+  ]
+}

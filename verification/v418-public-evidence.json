@@ -1,0 +1,149 @@
+{
+  "sourceCommit": "1016aa1cf4d694e09062bf589151d7932403d0b7",
+  "deployment": {
+    "serviceId": "srv-dbcf79mktt5c73f8l7cg",
+    "deployId": "dep-dbd3univcj2c73ep4f60",
+    "status": "live",
+    "finishedAt": "2026-10-22T16:54:02.133396Z",
+    "url": "https://higashiyama-quality-v4.onrender.com/?v=4.18"
+  },
+  "modelHash": "4ec6de1e96878167623847355e489c7597338004583a4fa2429a798e880a11bb",
+  "lightingHash": "36fe6176be0385fdb28b30a9c5acd5888727543aa0f0986d87e94402e103924a",
+  "viewerHashes": {
+    "src/renderer.js": "482dd61c732ffa0c4a4fddeb3532f8ad47101a22e4fff06dd6468c8181f7d995",
+    "src/scene.js": "16da0dd58f4a3b49941833557a2d947da389401c823180034bb5f3638737c98a",
+    "src/app.js": "2575244aad130bfc67308784268245716838d018cb0cae8dd2caec5d3b9c0f72",
+    "index.html": "26c489e64ce3df459035ce38be34332556e8f913dbec8ec35a41917f30669da4"
+  },
+  "reportSha256": "f097a2c7a6fec4d6cfe04d79197efe9aaa4089a4cc2fea8130a8b0268bf178e8",
+  "screenshots": {
+    "iphone": "af6a081d48f651b45ce07987858a274520deb45bc010cbcd752c8577d0df70ef",
+    "desktop": "c3f72540f1efdbb98f3edd16ac627e71a25fe471f8fa3db54d17f3d4cf7c6696"
+  },
+  "verification": {
+    "environment": "Public bytes / host-relayed Chromium; not physical iPhone",
+    "cases": [
+      {
+        "mobile": true,
+        "requests": [
+          "https://higashiyama-quality-v4.onrender.com/?v=4.18&quality=high",
+          "https://higashiyama-quality-v4.onrender.com/src/renderer.js?v=4ec6de1e9687-36fe6176be03-4cf2056d23a6",
+          "https://higashiyama-quality-v4.onrender.com/src/app.js?v=4ec6de1e9687-36fe6176be03-4cf2056d23a6",
+          "https://higashiyama-quality-v4.onrender.com/mobile/0ac2b89083e12e62079ae93d.json",
+          "https://higashiyama-quality-v4.onrender.com/mobile/e82ecab74f2643399d5f5b73.bin.gz",
+          "https://higashiyama-quality-v4.onrender.com/mobile/99e7127c8f55a2e15c15272b.bin.gz",
+          "https://higashiyama-quality-v4.onrender.com/mobile/af914d64821700fe4160827c.bin.gz"
+        ],
+        "errors": [],
+        "state": {
+          "ready": true,
+          "revision": "area-higashiyama-quality-v4.18",
+          "quality": "light",
+          "baked": false,
+          "frames": 2,
+          "gl": 0,
+          "errors": [],
+          "memory": {
+            "geometryBytes": 5267168,
+            "downloadBytes": 1342317,
+            "chunkCount": 3,
+            "maxChunkBytes": 2025864,
+            "maxCompressedChunkBytes": 533663,
+            "retainedGeometryBytes": 0,
+            "stagingBytes": 0,
+            "uploadedChunks": 3,
+            "proceduralBuild": false,
+            "runtimeVertexIndexing": false
+          },
+          "stats": {
+            "mainHallInstances": 2158,
+            "trees": 304,
+            "stageSupportCount": 18,
+            "mainBays": [
+              9,
+              7
+            ],
+            "surveyed": false,
+            "illustrativeHouses": 144,
+            "triangles": 818682,
+            "instances": 11643,
+            "drawCalls": 152,
+            "uploadedUniqueVertices": 104436
+          },
+          "labels": [
+            "清水寺",
+            "八坂の塔",
+            "高台寺",
+            "八坂神社"
+          ]
+        }
+      },
+      {
+        "mobile": false,
+        "requests": [
+          "https://higashiyama-quality-v4.onrender.com/?v=4.18&quality=high",
+          "https://higashiyama-quality-v4.onrender.com/src/renderer.js?v=4ec6de1e9687-36fe6176be03-4cf2056d23a6",
+          "https://higashiyama-quality-v4.onrender.com/src/scene.js?v=4ec6de1e9687-36fe6176be03-4cf2056d23a6",
+          "https://higashiyama-quality-v4.onrender.com/src/app.js?v=4ec6de1e9687-36fe6176be03-4cf2056d23a6",
+          "https://higashiyama-quality-v4.onrender.com/lighting.bin?v=4ec6de1e9687-36fe6176be03-4cf2056d23a6"
+        ],
+        "errors": [],
+        "state": {
+          "ready": true,
+          "revision": "area-higashiyama-quality-v4.18",
+          "quality": "high",
+          "baked": true,
+          "frames": 1,
+          "gl": 0,
+          "errors": [],
+          "stats": {
+            "mainHallInstances": 2158,
+            "trees": 304,
+            "stageSupportCount": 18,
+            "mainBays": [
+              9,
+              7
+            ],
+            "surveyed": false,
+            "illustrativeHouses": 144,
+            "triangles": 818682,
+            "instances": 11643,
+            "drawCalls": 152,
+            "uploadedUniqueVertices": 216754
+          },
+          "labels": [
+            "清水寺",
+            "八坂の塔",
+            "高台寺",
+            "八坂神社"
+          ]
+        }
+      }
+    ],
+    "revision": "area-higashiyama-quality-v4.18",
+    "assetToken": "4ec6de1e9687-36fe6176be03-4cf2056d23a6",
+    "allAssetHashesVerified": true,
+    "mobile": {
+      "url": "./mobile/0ac2b89083e12e62079ae93d.json",
+      "manifestBytes": 64089,
+      "sha256": "0ac2b89083e12e62079ae93df20f668620209e625b4f860e0b2cdcd742364927",
+      "revision": "area-higashiyama-quality-v4.18",
+      "sourceModelHash": "4ec6de1e96878167623847355e489c7597338004583a4fa2429a798e880a11bb",
+      "bytes": 5267168,
+      "compressedBytes": 1342317,
+      "maxChunkBytes": 2025864,
+      "maxCompressedChunkBytes": 533663,
+      "chunkCount": 3,
+      "triangles": 818682,
+      "instances": 11643,
+      "meshes": 152,
+      "batches": 152,
+      "geometry": "identical Float32 positions, normals, triangle order/winding and instance transforms; no LOD; unused UV omitted"
+    },
+    "ok": true
+  },
+  "limitations": [
+    "Public resources were host-fetched, hash-checked and relayed unchanged to Chromium, not an end-to-end physical Safari or cellular network test.",
+    "Physical iPhone v4.18 remains unverified."
+  ]
+}
