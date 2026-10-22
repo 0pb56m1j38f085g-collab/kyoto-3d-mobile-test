@@ -2,7 +2,7 @@
  // Storey heights and roof types are explicit estimates, never survey claims.
  const footprintData=__FOOTPRINT_DATA__,fb=footprintData.bounds;
  const inFootprintBlock=(x,z,pad=0)=>x>fb.minX-pad&&x<fb.maxX+pad&&z>fb.minZ-pad&&z<fb.maxZ+pad;
- for(const m of scene.meshes)m.instances=m.instances.filter(i=>!(['legacy-hokanji','legacy-yasaka'].includes(i.group)||((i.group==='higashiyama-area'||i.group==='landscape')&&inFootprintBlock(i.p[0],i.p[2]))));
+ for(const m of scene.meshes)m.instances=m.instances.filter(i=>!(['legacy-hokanji','legacy-yasaka','legacy-kodaiji'].includes(i.group)||((i.group==='higashiyama-area'||i.group==='landscape')&&inFootprintBlock(i.p[0],i.p[2]))));
  scene.areaBuildings=scene.areaBuildings.filter(b=>!inFootprintBlock(b.x,b.z,1.2));
  group='gion-footprint-blocks';
  const blockMaterials={};

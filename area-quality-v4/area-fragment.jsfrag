@@ -244,6 +244,7 @@
    ball([px,py+.18*s,pz],[.22*s,.16*s,.22*s],pick(C.greens),tiny,4);
   }
  }
+ group='legacy-kodaiji';
  templeCompound(areaAnchor.kodaiji[0],areaAnchor.kodaiji[1],1.02);
 
  // Kodaiji precinct: white gravel garden, stepping stones, covered link and pond bridge.
@@ -323,6 +324,7 @@
   for(let i=-2;i<=2;i++)plate([x+i*.28,y+.65,z+.62],[.025,.72,.035],'#6d503b',.12,1);
  }
 
+ group='higashiyama-area';
  function areaTorii(x,z,s=1,a=0){
   const y=ground(x,z),c='#b9b8aa';
   for(const side of[-1,1])pole([x+Math.cos(a)*side*1.18*s,y,z-Math.sin(a)*side*1.18*s],[x+Math.cos(a)*side*1.18*s,y+2.48*s,z-Math.sin(a)*side*1.18*s],.12*s,c);
@@ -593,4 +595,4 @@
  scene.areaSites.placementAccuracy='Geographic landmark anchors. Landmark silhouettes reference official inventories; selected historic streets follow OSM ways; gardens, remaining streets and intermediate houses remain authored, not measured footprints.';
  scene.areaSites.referenceRevision='official-inventory-review-2026-10-22';
 
- scene.areaQuality='v4.11-coherent-district-and-landmark-detail';
+ scene.areaQuality='v4.12-coherent-district-and-landmark-detail';

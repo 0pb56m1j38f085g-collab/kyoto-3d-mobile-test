@@ -1,0 +1,213 @@
+ // Kodaiji: each building starts in metres at its own source footprint centre.
+ // The official plan establishes identity/order, not metric dimensions. Heights,
+ // wall offsets, roof profiles, garden shorelines and planting remain estimates.
+ const kodaijiHeightSource='estimated from architectural references; not a measured height';
+ function metricOffset(x,z,draw){
+  const starts=new Map(scene.meshes.map(m=>[m,m.instances.length]));draw();
+  for(const m of scene.meshes)for(let j=starts.get(m)||0;j<m.instances.length;j++){m.instances[j].p[0]+=x;m.instances[j].p[2]+=z;}
+ }
+ function kodaijiBase(p,height=.45){
+  const m=mesh('metric-kodaiji-foundation-'+p.b.id),cs=Math.cos(p.yaw),sn=Math.sin(p.yaw);
+  const L=(q,y)=>{const x=(q[0]-p.center[0])*20,z=(q[1]-p.center[1])*20;return[cs*x-sn*z,y,sn*x+cs*z];};
+  for(const t of p.b.triangles)m.tri(L(t[0],height),L(t[2],height),L(t[1],height),[0,1,0]);
+  for(let j=0;j<p.b.polygon.length;j++){const a=p.b.polygon[j],b=p.b.polygon[(j+1)%p.b.polygon.length];m.quad(L(a,0),L(a,height),L(b,height),L(b,0));}
+  I(m,[0,0,0],[1,1,1],'#c2bba8',undefined,3);
+ }
+ function kodaijiHall(key,w,d,eave,height,bays=5,roof='#777972'){
+  const bw=w*.76,bd=d*.73,wood='#927353';
+  box([0,(eave+.65)/2,0],[bw,eave-.65,bd],'#e5ddc9',0,1);
+  plate([0,.67,0],[w*.90,.34,d*.88],'#b2946e',0,1);
+  for(const side of[-1,1]){
+   for(let j=0;j<=bays;j++){
+    const x=-bw/2+j*bw/bays;
+    pole([x,.80,side*bd*.5],[x,eave,side*bd*.5],.15,wood);
+    box([x,eave-.15,side*(bd*.5+.24)],[.50,.28,.75],'#aa8b63',0,1);
+   }
+   for(let j=0;j<bays;j++){
+    const x=-bw/2+(j+.5)*bw/bays,bay=bw/bays;
+    plate([x,(eave+.80)/2,side*(bd*.5+.025)],[bay*.86,eave-1.4,.10],'#605345',0,1);
+    for(let k=-2;k<=2;k++)plate([x+k*bay*.14,(eave+1.1)/2,side*(bd*.5+.09)],[.055,eave-1.7,.08],'#aa9170',0,1);
+    for(const yy of[1.3,2.1,eave-.6])plate([x,yy,side*(bd*.5+.12)],[bay*.9,.055,.08],wood,0,1);
+   }
+   for(let j=-1;j<=1;j++)pole([side*bw/2,.8,j*bd*.45],[side*bw/2,eave,j*bd*.45],.16,wood);
+   beam([-bw/2,eave-.12,side*bd*.51],[bw/2,eave-.12,side*bd*.51],.18,wood);
+  }
+  metricIrimoya(key,w,d,eave,height-eave-.25,roof);
+ }
+ const kodaijiHojo=metricModel('kodaiji-hojo',522959943,8.8,kodaijiHeightSource,p=>{
+  kodaijiBase(p);
+  // Preserve the west appendix instead of stretching the main roof across it.
+  metricOffset(2.68,0,()=>kodaijiHall('metric-kodaiji-hojo-roof',24.33,p.depth,4.5,8.8,7));
+  metricOffset(-12.16,3.08,()=>kodaijiHall('metric-kodaiji-hojo-west-roof',5.36,7.27,3.1,4.6,2));
+ });
+ metricModel('kodaiji-kuri',191037928,10.8,kodaijiHeightSource,p=>{
+  kodaijiBase(p);kodaijiHall('metric-kodaiji-kuri-roof',p.width,p.depth,4.5,10.8,5,'#666d68');
+ });
+ const kodaijiKaisan=metricModel('kodaiji-kaisando',541086536,9.4,kodaijiHeightSource,p=>{
+  kodaijiBase(p);kodaijiHall('metric-kodaiji-kaisando-roof',p.width,p.depth,4.65,9.4,3,'#6c7470');
+  // Kyoto City Tourism Association's frontal photograph shows white plaster,
+  // two cusped windows and a dark central doorway, not a lattice-only facade.
+  const bw=p.width*.76,z=-p.depth*.365-.18;
+  plate([0,2.6,z],[bw,3.7,.08],'#e9e3d5',0,1);
+  plate([0,2.3,z-.06],[bw*.31,3.1,.06],'#4b4339',0,1);
+  for(const side of[-1,1]){
+   const x=side*bw*.33,w=bw*.18,bot=1.65,h=1.65,poly=[[x-w/2,bot,z-.06],[x+w/2,bot,z-.06]];
+   for(let j=0;j<=16;j++){const a=j*Math.PI/16;poly.push([x+Math.cos(a)*w/2,bot+h*.66+Math.sin(a)*h*.34,z-.06]);}
+   const m=mesh('metric-kodaiji-kaisando-window-'+side);for(let j=1;j<poly.length-1;j++)m.tri(poly[0],poly[j],poly[j+1],[0,0,-1]);
+   I(m,[0,0,0],[1,1,1],'#4b4339',undefined,1);
+   for(let j=-2;j<=2;j++)plate([x+j*w*.16,bot+.65,z-.10],[.045,1.25,.045],'#a59477',0,1);
+  }
+  for(const x of[-bw/2,-bw*.18,bw*.18,bw/2])pole([x,.75,z-.13],[x,4.65,z-.13],.17,'#69553f');
+  beam([-bw/2,1.30,z-.13],[bw/2,1.30,z-.13],.14,'#69553f');
+ });
+ const kodaijiOtamaya=metricModel('kodaiji-otamaya',541086532,8.1,kodaijiHeightSource,p=>{
+  kodaijiBase(p);
+  const w=10.7,d=10.7,eave=4.25;
+  box([.8,2.45,-.55],[w*.77,4,d*.78],'#927352',0,1);
+  plate([.8,.75,-.55],[w*.92,.45,d*.92],'#ae8d62',0,1);
+  for(const s of[-1,1])for(let j=0;j<=4;j++){
+   const x=.8-w*.385+j*w*.77/4;
+   pole([x,.9,-.55+s*d*.39],[x,4.35,-.55+s*d*.39],.18,'#6f563c');
+   if(j<4)plate([x+w*.77/8,2.5,-.55+s*d*.4],[w*.16,2.6,.12],'#b3a183',0,1);
+  }
+  areaHip('metric-kodaiji-otamaya-roof',.8,-.55,w,d,eave,3.60,0,'#837362');
+  pole([.8,7.82,-.55],[.8,8.1,-.55],.11,'#837362');
+  // A small karahafu porch, facing west toward the rising covered walk.
+  const roof=mesh('metric-kodaiji-otamaya-karahafu');
+  const P=(t,x)=>[x,3.45+.85*Math.exp(-t*t*3.5)+.18*Math.pow(Math.abs(t),6),t*1.75-.2];
+  for(let j=0;j<24;j++){const t=-1+j/12,u=t+1/12;roof.quad(P(t,-5.5),P(u,-5.5),P(u,-3.4),P(t,-3.4));}
+  I(roof,[0,0,0],[1,1,1],'#81705e',undefined,2);
+  for(const z of[-1.65,1.25])pole([-5.1,.45,z],[-5.1,3.55,z],.14,'#765b40');
+ });
+ // OSM's Kange-tsudai way includes two offset covered walk sections. Keep the
+ // offset; interpreting the 24 m envelope as a single pavilion is incorrect.
+ const kodaijiKangetsu=metricModel('kodaiji-kangetsudai',653725971,4.85,kodaijiHeightSource,p=>{
+  kodaijiBase(p,.35);
+  function walk(x,z,w,d){metricOffset(x,z,()=>{
+   plate([0,.72,0],[w,.24,d*.76],'#ac8a63',0,1);
+   const n=Math.max(2,Math.ceil(w/2.4));
+   for(const s of[-1,1])for(let j=0;j<=n;j++)pole([-w/2+j*w/n,.75,s*d*.33],[-w/2+j*w/n,3.05,s*d*.33],.105,'#806747');
+   areaHip('metric-kodaiji-kangetsu-walk-'+x,0,0,w,d,3.0,.7,.45,'#827764');
+  });}
+  walk(-7.3,-1.87,9.68,3.55);walk(4.1,1.92,16.0,3.45);
+  metricOffset(-3.65,0,()=>{
+   plate([0,.95,0],[3.4,.3,4.0],'#9a7b54',0,1);
+   for(const x of[-1.35,1.35])for(const z of[-1.6,1.6])pole([x,1,z],[x,3.65,z],.14,'#796548');
+   const m=mesh('metric-kodaiji-kangetsu-karahafu');
+   const P=(t,z)=>[t*2.05,3.65+1.15*Math.exp(-t*t*3.5)-1.15*Math.exp(-3.5)*Math.abs(t)+.18*Math.abs(t)**6,z];
+   for(let j=0;j<32;j++){const t=-1+j/16,u=t+1/16;m.quad(P(t,-2.3),P(u,-2.3),P(u,2.3),P(t,2.3));
+    for(const s of[-1,1])beam(P(t,s*2.3),P(u,s*2.3),.09,'#9b8764');}
+   I(m,[0,0,0],[1,1,1],'#817461',undefined,2);
+   for(const x of[-1.5,1.5])for(let j=-3;j<=3;j++)pole([x,1.1,j*.48],[x,1.65,j*.48],.055,'#977b56');
+  });
+ });
+ metricModel('kodaiji-garyoro',541086534,5.0,kodaijiHeightSource,p=>{
+  // Ascending stepped roof sections; the 2 m rise is an estimate, not DEM data.
+  const count=10,w=p.width/count,depth=p.depth;
+  for(let j=0;j<count;j++){
+   const x=-p.width/2+(j+.5)*w,lift=j*.2;
+   metricOffset(x,0,()=>{
+    plate([0,.22+lift,0],[w,.44,depth*.76],'#a78861',0,1);
+    for(const s of[-1,1])for(const end of[-1,1])pole([end*w*.47,lift+.2,s*depth*.32],[end*w*.47,lift+2.4,s*depth*.32],.11,'#806349');
+    metricIrimoya('metric-kodaiji-garyoro-roof-'+j,w+.08,depth,2.3+lift,.65,'#77796d');
+   });
+  }
+ });
+ metricModel('kodaiji-kasatei',522959927,4.5,kodaijiHeightSource,p=>{
+  kodaijiBase(p,.18);
+  box([0,1.3,0],[p.width*.78,2.5,p.depth*.78],'#d6c5a3',0,1);
+  for(const x of[-1,1])for(const z of[-1,1])pole([x*p.width*.38,.2,z*p.depth*.38],[x*p.width*.38,2.55,z*p.depth*.38],.095,'#886b48');
+  areaHip('metric-kodaiji-kasatei-roof',0,0,p.width,p.depth,2.5,1.75,0,'#9b8863');
+  pole([0,4.2,0],[0,4.5,0],.075,'#756346');
+  for(let j=-4;j<=4;j++)plate([j*.22,1.6,-p.depth*.395],[.055,.8,.08],'#806949',0,1);
+ });
+ metricModel('kodaiji-shiguretei',542345560,7.4,kodaijiHeightSource,p=>{
+  kodaijiBase(p,.2);
+  for(const y of[.35,3.35]){
+   plate([0,y,0],[p.width*.85,.25,p.depth*.84],'#b3946e',0,1);
+   for(const side of[-1,1])for(let j=-2;j<=2;j++)pole([j*p.width*.18,y,side*p.depth*.35],[j*p.width*.18,y+2.7,side*p.depth*.35],.12,'#7f6446');
+  }
+  box([0,1.6,0],[p.width*.40,2.5,p.depth*.70],'#c6b28c',0,1);
+  for(const side of[-1,1]){
+   plate([side*p.width*.37,3.1,0],[.12,5.45,p.depth*.70],'#d3caa6',0,1);
+   beam([side*p.width*.38,3.25,-p.depth*.35],[side*p.width*.38,3.25,p.depth*.35],.13,'#7f6446');
+   const m=mesh('metric-kodaiji-shiguretei-round-window-'+side),x=side*(p.width*.37+.075);
+   for(let j=0;j<32;j++){const a=j*Math.PI/16,b=(j+1)*Math.PI/16;m.tri([x,4.75,0],[x,4.75+Math.cos(a)*.48,Math.sin(a)*.48],[x,4.75+Math.cos(b)*.48,Math.sin(b)*.48],[side,0,0]);}
+   I(m,[0,0,0],[1,1,1],'#5b5844',undefined,1);
+  }
+  for(const s of[-1,1]){
+   for(let j=-5;j<=5;j++)pole([j*p.width*.073,3.55,s*p.depth*.39],[j*p.width*.073,4.35,s*p.depth*.39],.055,'#9f8059');
+   beam([-p.width*.4,4.35,s*p.depth*.39],[p.width*.4,4.35,s*p.depth*.39],.09,'#9f8059');
+  }
+  metricIrimoya('metric-kodaiji-shiguretei-roof',p.width,p.depth,5.7,1.45,'#9b8866');
+ });
+ metricModel('kodaiji-chokushimon',541086527,5.0,kodaijiHeightSource,p=>{
+  kodaijiBase(p,.18);
+  for(const side of[-1,1])for(const z of[-1,1])pole([side*1.7,.18,z*.8],[side*1.7,3.4,z*.8],.18,'#7c6447');
+  box([0,2.3,0],[3.25,2.4,.15],'#a58a60',0,1);
+  for(let j=-6;j<=6;j++)plate([j*.24,2.3,-.12],[.055,2.3,.09],'#786445',0,1);
+  metricIrimoya('metric-kodaiji-chokushimon-roof',p.width,p.depth*.78,3.35,1.4,'#777b72');
+ });
+
+ group='metric-kodaiji-garden';
+ // Approximate shorelines placed relative to the mapped halls and the temple's
+ // official north-up diagram. No reliable georeferenced water polygon was available.
+ const kodaijiPonds=[
+  {name:'Engetsu',polygon:[[-16.82,34.1],[-16.35,34.22],[-16.02,34.06],[-16.0,33.72],[-16.23,33.42],[-16.02,33.12],[-15.91,32.72],[-16.02,32.3],[-16.36,32.48],[-16.5,32.83],[-16.78,32.96],[-16.67,33.35],[-16.85,33.72]]},
+  {name:'Garyo',polygon:[[-14.61,34.2],[-14.19,34.4],[-13.97,34.17],[-14.18,33.75],[-14.09,33.25],[-13.88,32.75],[-13.96,32.13],[-14.28,31.67],[-14.58,31.64],[-14.78,32.07],[-14.70,32.7],[-14.68,33.3]]}
+ ];
+ const inGardenPoly=(x,z,p)=>{let inside=false;for(let j=0,k=p.length-1;j<p.length;k=j++){const a=p[j],b=p[k];if((a[1]>z)!==(b[1]>z)&&x<(b[0]-a[0])*(z-a[1])/(b[1]-a[1])+a[0])inside=!inside;}return inside;};
+ function gardenSurface(name,p,color,lift=.012){
+  const m=mesh(name),xs=p.map(q=>q[0]),zs=p.map(q=>q[1]),step=.06;
+  for(let x=Math.min(...xs);x<Math.max(...xs);x+=step)for(let z=Math.min(...zs);z<Math.max(...zs);z+=step){
+   if(!inGardenPoly(x+step/2,z+step/2,p))continue;
+   const P=(xx,zz)=>[xx,ground(xx,zz)+lift,zz];m.quad(P(x,z),P(x,z+step),P(x+step,z+step),P(x+step,z),[0,1,0]);
+  }I(m,[0,0,0],[1,1,1],color,undefined,0);
+ }
+ for(const pond of kodaijiPonds){
+  gardenSurface('metric-kodaiji-'+pond.name,pond.polygon,'#88b5a8',.023);
+  for(let j=0;j<pond.polygon.length;j++){
+   const a=pond.polygon[j],b=pond.polygon[(j+1)%pond.polygon.length],n=Math.ceil(Math.hypot(a[0]-b[0],a[1]-b[1])/.12);
+   for(let k=0;k<n;k++){const x=a[0]+(b[0]-a[0])*k/n,z=a[1]+(b[1]-a[1])*k/n;ball([x,ground(x,z)+.035,z],[.055,.045,.04],k%3?'#a2a58d':'#b8b49c',tiny,3);}
+  }
+ }
+ const gravelPlan=[[-17.82,31.40],[-16.35,31.23],[-16.43,30.45],[-17.92,30.61]];
+ gardenSurface('metric-kodaiji-hojo-gravel',gravelPlan,'#e4dcc7',.020);
+ for(let j=0;j<18;j++){
+  const z=30.62+j*.039,x=-17.77;
+  beam([x,ground(x,z)+.024,z],[-16.53,ground(-16.53,z)+.024,z-.142],.004,'#c6c2ad');
+ }
+ // A low perimeter wall, not a broad solid slab covering adjacent streets.
+ for(const pair of[[gravelPlan[3],gravelPlan[2]],[gravelPlan[3],gravelPlan[0]]]){
+  const[a,b]=pair,dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz),angle=Math.atan2(dx,dz),x=(a[0]+b[0])/2,z=(a[1]+b[1])/2;
+  if(Math.abs(dx)>.5){ // leave the mapped Chokushi gate opening clear
+   for(const [lo,hi]of[[0,.30],[.63,1]]){const xx=a[0]+dx*(lo+hi)/2,zz=a[1]+dz*(lo+hi)/2;box([xx,ground(xx,zz)+.045,zz],[.025,.09,len*(hi-lo)],'#d9d0b9',angle,1);}
+  }else box([x,ground(x,z)+.045,z],[.025,.09,len],'#d9d0b9',angle,1);
+ }
+ // Trees use metre-scale crowns and avoid mapped buildings, roads, and ponds.
+ for(let j=0;j<170;j++){
+  const x=-18.1+((j*.61803398875)%1)*8.8,z=30.1+((j*.41421356237)%1)*4.9;
+  if(x<-15.0&&z<32.2||kodaijiPonds.some(p=>inGardenPoly(x,z,p.polygon)))continue;
+  if(footprintData.buildings.some(b=>inGardenPoly(x,z,b.polygon)||b.polygon.some(q=>Math.hypot(x-q[0],z-q[1])<.19)))continue;
+  if(footprintData.roads.some(r=>r.points.some((q,k)=>k&&dseg(x,z,r.points[k-1],q)<.16)))continue;
+  const y=ground(x,z),h=.24+(j%5)*.045,r=.12+(j%4)*.018;
+  pole([x,y,z],[x,y+h,z],.012,'#9a8058');
+  ball([x,y+h,z],[r,r*.80,r],['#8fa96d','#a9b77e','#7e9c66','#b0bc80'][j%4],tiny,4);
+  ball([x+r*.5,y+h*.85,z+.035],[r*.62,r*.6,r*.7],'#a5b47c',tiny,4);
+ }
+ // Illustrative bamboo belt south of the two mapped tea houses.
+ for(let j=0;j<54;j++){
+  const x=-12.4+(j%9)*.17,z=29.7+Math.floor(j/9)*.17,y=ground(x,z),h=.35+(j%5)*.045;
+  if(footprintData.roads.some(r=>r.points.some((q,k)=>k&&dseg(x,z,r.points[k-1],q)<.12)))continue;
+  pole([x,y,z],[x+.015,y+h,z],.006,'#8d9d63');
+  ball([x,y+h*.85,z],[.075,.12,.065],'#88a06a',tiny,4);
+ }
+ scene.areaSites.kodaijiReference={
+  source:'https://www.kodaiji.com/haikan.html',plan:'https://www.kodaiji.com/img/keidaizu.png',
+  architecture:['https://online.bunka.go.jp/db/heritages/detail/189623','https://online.bunka.go.jp/db/heritages/detail/122594'],
+  placement:'nine individual OSM footprints; 20 metres per unit',
+  confirmed:'Kaisando east/northeast of Hojo; Otamaya east of Kaisando; two ponds on either side of Kaisando; Kasatei north of Shiguretei',
+  inferred:'all nine heights; eave/wall boundaries; roof profiles; pavilion within the Kange-tsudai corridor footprint; garden shorelines, planting, terrain and corridor rise',
+  ponds:kodaijiPonds,
+  surveyComplete:false
+ };

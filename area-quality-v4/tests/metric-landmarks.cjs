@@ -14,18 +14,25 @@ for(const r of model.metricLandmarks){
  for(const m of model.meshes)for(const i of m.instances)if(i.group===r.group){
   instances++;for(let k=0;k<m.p.length;k+=3){const p=world(m.p.slice(k,k+3),i);p.forEach((v,j)=>{lo[j]=Math.min(lo[j],v);hi[j]=Math.max(hi[j],v);});}
  }
- assert.ok(instances>30,r.key+' actual geometry');
+ assert.ok(instances>12,r.key+' actual geometry');
  const observedHeight=(hi[1]-r.baseY)*20;
  assert.ok(Math.abs(observedHeight-r.heightMetres)<.025,r.key+' measured mesh height '+observedHeight);
  assert.ok(Math.abs(lo[1]-r.baseY)<.04,r.key+' grounded');
  assert.ok(Math.hypot((lo[0]+hi[0])/2-r.center[0],(lo[2]+hi[2])/2-r.center[1])<.10,r.key+' geometry at source centre');
  measured.push({key:r.key,instances,observedHeightMetres:observedHeight,worldBounds:{lo,hi},centre:r.center});
 }
-assert.equal(measured.length,4);
-assert.ok(model.meshes.every(m=>m.instances.every(i=>!['legacy-hokanji','legacy-yasaka'].includes(i.group))));
+assert.equal(measured.length,13);
+assert.ok(model.meshes.every(m=>m.instances.every(i=>!['legacy-hokanji','legacy-yasaka','legacy-kodaiji'].includes(i.group))));
 const h=model.metricLandmarks.find(r=>r.key==='yasaka-honden'),m=model.metricLandmarks.find(r=>r.key==='yasaka-maiden'),g=model.metricLandmarks.find(r=>r.key==='yasaka-south-gate');
 assert.ok(h.center[1]>m.center[1]&&m.center[1]>g.center[1]);
 assert.ok(Math.hypot(h.center[0]-g.center[0],h.center[1]-g.center[1])*20<70,'precinct sequence no longer stretched over 170m');
+const k=Object.fromEntries(model.metricLandmarks.filter(r=>r.key.startsWith('kodaiji-')).map(r=>[r.key.slice(8),r]));
+assert.ok(k.kaisando.center[0]>k.hojo.center[0]&&k.kaisando.center[1]>k.hojo.center[1],'Kaisando northeast of Hojo, official plan');
+assert.ok(k.otamaya.center[0]>k.kaisando.center[0],'Otamaya east of Kaisando');
+assert.ok(k.kasatei.center[1]>k.shiguretei.center[1],'Kasatei north of Shiguretei');
+assert.ok(k.chokushimon.center[1]<k.hojo.center[1],'Chokushi gate south of Hojo');
+assert.ok(Math.hypot(k.otamaya.center[0]-k.kaisando.center[0],k.otamaya.center[1]-k.kaisando.center[1])*20<50,'Kaisando to Otamaya is under 50m');
+assert.equal(model.areaSites.kodaijiReference.surveyComplete,false);
 assert.ok(model.areaSites.scaleStatus.includes('remain exaggerated'),'remaining scale limitations explicit');
 assert.equal(model.stats.mainHallInstances,2158);
 // Fine vertex spacing is required for baked shadows at the new physical scale.

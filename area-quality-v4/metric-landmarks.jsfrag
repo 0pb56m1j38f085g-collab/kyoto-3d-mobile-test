@@ -144,13 +144,14 @@
   pole([x,y,z],[x,y+.22,z],.013,'#8b7454');
   ball([x,y+.23,z],[r,r*1.1,r],j%5===0?'#b8b986':'#839a64',tiny,4);
  }
+ // __KODAIJI_MODELS__
  scene.metricLandmarks=metricRecords;
  scene.areaSites.metricLandmarks=metricRecords;
  scene.areaSites.footprintReference.count=footprintRecords.length;
  scene.areaSites.footprintReference.customLandmarks=metricRecords.length;
- scene.areaSites.scaleStatus='Gion/Hokanji/Yasaka block uses 20 m/unit; Kiyomizu/Kodaiji and authored context remain exaggerated. Not a globally scale-accurate map.';
- scene.areaSites.placementAccuracy='1304 polygon buildings and four reference-calibrated landmark models use the OSM block coordinates; other districts remain authored.';
- for(const [key,r]of[['hokanji',tower],['yasaka',honden]]){
+ scene.areaSites.scaleStatus='Gion/Hokanji/Yasaka/Kodaiji block uses 20 m/unit; Kiyomizu and authored context outside the block remain exaggerated. Kodaiji heights, landscape and roof details are inferred. Not a globally scale-accurate map.';
+ scene.areaSites.placementAccuracy='Source polygon buildings and thirteen reference-calibrated landmark models use OSM block coordinates; roof boundaries and heights need further verification.';
+ for(const [key,r]of[['hokanji',tower],['yasaka',honden],['kodaiji',kodaijiHojo]]){
   const anchor=scene.areaSites.geographicAnchors[key];anchor.previousRepresentativePoint={lat:anchor.lat,lon:anchor.lon,local:anchor.local};
   delete anchor.lat;delete anchor.lon;anchor.local=r.center;anchor.sourceWay=r.sourceWay;anchor.positionSource='OSM footprint envelope centre, not entrance';
  }
