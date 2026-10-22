@@ -50,9 +50,18 @@
     }
    }
   }
+  // Sparse GIS polygons need roof subdivision for vertex-baked lighting: otherwise a
+  // shadow at one corner becomes a huge triangular stain over an entire roof.
+  function roofTriangle(a,c,d,side,depth=0){
+   const e=[[a,c,d],[c,d,a],[d,a,c]].sort((u,v)=>Math.hypot(v[0][0]-v[1][0],v[0][1]-v[1][1])-Math.hypot(u[0][0]-u[1][0],u[0][1]-u[1][1]))[0];
+   if(Math.hypot(e[0][0]-e[1][0],e[0][1]-e[1][1])>.18&&depth<12){const m=[(e[0][0]+e[1][0])/2,(e[0][1]+e[1][1])/2];roofTriangle(e[0],m,e[2],side,depth+1);roofTriangle(m,e[1],e[2],side,depth+1);return;}
+   if(Math.abs((c[0]-a[0])*(d[1]-a[1])-(c[1]-a[1])*(d[0]-a[0]))<1e-10)return;
+   const normal=V.unit([side*axis[0]*rise/(short*.5),1,side*axis[1]*rise/(short*.5)]);
+   roof.tri([a[0],roofY(a),a[1]],[d[0],roofY(d),d[1]],[c[0],roofY(c),c[1]],normal,normal,normal);
+  }
   for(const tri of b.triangles)for(const side of[-1,1]){
    const polygon=clipRoof(tri,axis,mid,side);for(let j=1;j<polygon.length-1;j++){
-    const a=polygon[0],c=polygon[j],d=polygon[j+1];roof.tri([a[0],roofY(a),a[1]],[d[0],roofY(d),d[1]],[c[0],roofY(c),c[1]]);
+    roofTriangle(polygon[0],polygon[j],polygon[j+1],side);
    }
   }
   // Place a facade only on the source edge facing the nearest road, not every party wall.
