@@ -26,7 +26,13 @@
  const blockMaterials={};
  function blockMesh(color,material=1){const key=color+':'+material;if(!blockMaterials[key]){const m=mesh('gion-footprints-'+key);I(m,[0,0,0],[1,1,1],color,undefined,material);blockMaterials[key]=m;}return blockMaterials[key];}
  const blockWood=blockMesh('#685044'),blockGlass=blockMesh('#465b58'),blockStone=blockMesh('#bfb7a5',3),blockRoad=blockMesh('#d8cbb4',3),blockTile=blockMesh('#929487',2);
- const Q4=(m,a,b,c,d)=>m.quad(a,b,c,d);
+ function surfaceTriangle(m,a,b,c,depth=0){
+  const edges=[[a,b,c],[b,c,a],[c,a,b]].sort((u,v)=>Math.hypot(...V.sub(v[0],v[1]))-Math.hypot(...V.sub(u[0],u[1])));
+  const [p,q,r]=edges[0];
+  if(Math.hypot(...V.sub(p,q))>.17&&depth<18){const mid=V.mul(V.add(p,q),.5);surfaceTriangle(m,p,mid,r,depth+1);surfaceTriangle(m,mid,q,r,depth+1);}
+  else m.tri(a,b,c);
+ }
+ const Q4=(m,a,b,c,d)=>{if(m===blockRoad||m===blockGround){surfaceTriangle(m,a,b,c);surfaceTriangle(m,a,c,d);}else m.quad(a,b,c,d);};
  // The inherited 13 m terrain grid cannot resolve shadows from 5–10 m houses.
  // A fine continuous surface avoids large triangular vertex-light stains.
  const blockGround=blockMesh('#9cab76',0),groundStep=.12;
@@ -132,5 +138,5 @@
   }
  }
  scene.footprintBuildings=footprintRecords;
- scene.areaSites.footprintReference={source:footprintData.source,license:footprintData.license,retrievedAt:footprintData.retrievedAt,bounds:fb,count:footprintRecords.length,rejected:footprintData.rejected,metresPerUnit:20,roofAndHeight:'inferred unless tagged; footprint coordinates retained',separatelyReconstructed:[102164590,102164617]};
+ scene.areaSites.footprintReference={source:footprintData.source,license:footprintData.license,retrievedAt:footprintData.retrievedAt,bounds:fb,count:footprintRecords.length,rejected:footprintData.rejected,metresPerUnit:20,roofAndHeight:'inferred unless tagged; footprint coordinates retained',separatelyReconstructed:[102164590,102164617,340294693]};
  group='higashiyama-area';

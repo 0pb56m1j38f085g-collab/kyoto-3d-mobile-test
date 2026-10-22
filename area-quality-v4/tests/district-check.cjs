@@ -50,7 +50,7 @@ let server,browser;
    check('landscape resize keeps drawing',await page.evaluate(()=>phoneTest.ready&&phoneTest.renderer.gl.getError()===0));
    await page.screenshot({path:path.join(out,'iphone-landscape.png'),timeout:120000});
    check('main hall geometry preserved',s.stats.mainHallInstances===2158,s.stats.mainHallInstances);
-   check('2844 polygon buildings, thirteen metric landmarks and normalized Kiyomizu loaded',await page.evaluate(()=>phoneTest.model.footprintBuildings.filter(b=>!b.custom).length===2844&&phoneTest.model.metricLandmarks.length===13&&phoneTest.model.kiyomizuPlacement.uniformScale<.12));
+   check('2843 polygon buildings, thirteen metric landmarks and normalized Kiyomizu loaded',await page.evaluate(()=>phoneTest.model.footprintBuildings.filter(b=>!b.custom).length===2843&&phoneTest.model.metricLandmarks.length===13&&phoneTest.model.kiyomizuPlacement.uniformScale<.12));
   }
   check(kind+' no late errors',!record.errors.length&&await page.evaluate(()=>phoneTest.errors.length===0),record.errors);
   await ctx.close();
