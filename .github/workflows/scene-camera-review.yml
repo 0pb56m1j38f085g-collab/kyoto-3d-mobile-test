@@ -1,0 +1,38 @@
+name: Actual 3D camera comparison
+on:
+  push:
+    branches: [area-higashiyama-scene-v4.22]
+    paths: ['verification/scene-camera-review.cjs', '.github/workflows/scene-camera-review.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  review:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    container:
+      image: mcr.microsoft.com/playwright:v1.55.0-jammy@sha256:55db7b712a981e9cc1ec757a4511cd01c5ed4e20bd7c84b2dee4e1d320102b9d
+      options: --shm-size=512m
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - uses: actions/download-artifact@v5
+        with:
+          name: east-concept-v421-site
+          path: area-quality-v4/site/
+          run-id: '39855733390'
+          github-token: ${{ github.token }}
+      - run: npm install --prefix "$RUNNER_TEMP/camera-browser" --no-audit --no-fund playwright@1.55.0
+      - run: node verification/scene-camera-review.cjs
+        env:
+          NODE_PATH: ${{ runner.temp }}/camera-browser/node_modules
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: actual-v422-camera-review
+          path: camera-review-artifacts/
+          retention-days: 14
