@@ -13,6 +13,8 @@ assert.equal(inferFrontage(house,[narrow],[house]).canopyDepth,0,'eave cannot oc
 const l={id:3,polygon:[[0,0],[.6,0],[.6,.2],[.2,.2],[.2,.6],[0,.6]],center:[.2,.2]};
 assert.ok(blocked([.3,.3],[.3,-.15],[l]),'ray through another wing rejected');
 assert.ok(!blocked([.3,.3],[.7,.3],[l]),'open courtyard ray allowed');
+assert.ok(blocked([-.1,-.1],[.7,.7],[square(5,0,0,.6,.6)]),'diagonal through two exact corners blocked');
+assert.ok(blocked([-.1,0],[.7,0],[square(5,0,0,.6,.6)]),'ray along neighbouring boundary blocked');
 const large=square(4,-10,-.12,20,.1);
 assignFrontages([house,large],[road]);assert.equal(house.frontage,null,'large blocker with remote vertices included');
 console.log('Frontage visibility, concave wings, adjacent blocks, road clearance and large blockers verified');

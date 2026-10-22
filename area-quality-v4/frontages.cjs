@@ -6,7 +6,11 @@ function inside(p,poly){let yes=false;for(let j=0,k=poly.length-1;j<poly.length;
  const a=poly[j],b=poly[k];if((a[1]>p[1])!==(b[1]>p[1])&&p[0]<(b[0]-a[0])*(p[1]-a[1])/(b[1]-a[1])+a[0])yes=!yes;
 }return yes;}
 function closest(p,a,b){const dx=b[0]-a[0],dz=b[1]-a[1],den=dx*dx+dz*dz,t=den?Math.max(0,Math.min(1,((p[0]-a[0])*dx+(p[1]-a[1])*dz)/den)):0;return[a[0]+dx*t,a[1]+dz*t];}
-function crosses(a,b,c,d){return cross(a,b,c)*cross(a,b,d)<-1e-12&&cross(c,d,a)*cross(c,d,b)<-1e-12;}
+function crosses(a,b,c,d){
+ const abC=cross(a,b,c),abD=cross(a,b,d),cdA=cross(c,d,a),cdB=cross(c,d,b),eps=1e-10;
+ const on=(p,q,r)=>Math.abs(cross(p,q,r))<eps&&r[0]>=Math.min(p[0],q[0])-eps&&r[0]<=Math.max(p[0],q[0])+eps&&r[1]>=Math.min(p[1],q[1])-eps&&r[1]<=Math.max(p[1],q[1])+eps;
+ return(abC*abD<0&&cdA*cdB<0)||on(a,b,c)||on(a,b,d)||on(c,d,a)||on(c,d,b);
+}
 function blocked(a,b,buildings){return buildings.some(q=>inside(a,q.polygon)||inside(b,q.polygon)||q.polygon.some((p,j)=>crosses(a,b,p,q.polygon[(j+1)%q.polygon.length])));}
 function roadWidth(r){return ['primary','secondary','tertiary'].includes(r.highway)?.45:['residential','unclassified'].includes(r.highway)?.22:.10;}
 function inferFrontage(building,roads,buildings){
