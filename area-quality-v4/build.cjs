@@ -128,6 +128,8 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  const model=vm.runInContext('makeStudy()',context,{timeout:240000});
  if(model.revision!=='area-higashiyama-quality-v4.12'||model.areaQuality!=='v4.12-coherent-district-and-landmark-detail')throw Error('Wrong area revision');
  if(!model.areaSites||!model.areaSites.geographicAnchors)throw Error('Area anchors missing');
+ const architectureAudit=require('./architecture-audit.cjs').audit(model,require('../quality-v5/references/architecture-evidence.json'));
+ fs.writeFileSync(path.join(out,'architecture-audit.json'),JSON.stringify(architectureAudit,null,2));
  let size=12,instances=0;
  for(const m of model.meshes){
   if(m.p.length%9||m.n.length!==m.p.length||m.u.length!==m.p.length/3*2)throw Error('Invalid mesh '+m.name);

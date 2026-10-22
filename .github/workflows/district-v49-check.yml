@@ -33,6 +33,7 @@ jobs:
           node area-quality-v4/tests/footprints.cjs
           node area-quality-v4/tests/district-check.cjs
           node area-quality-v4/tests/metric-landmarks.cjs
+          node area-quality-v4/tests/architecture-audit.cjs
       - if: always()
         uses: actions/upload-artifact@v5
         with:
