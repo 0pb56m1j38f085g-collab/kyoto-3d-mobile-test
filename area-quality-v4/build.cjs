@@ -35,6 +35,36 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
   'area camera presets');
  app=exact(app,"let model,renderer,camera,selected='temple'","let model,renderer,camera,selected='area'",'initial selected view');
  app=exact(app,"camera=authored('temple');ready=true;","camera=authored(params.get('view')||'area');ready=true;",'initial area camera');
+ // Real iPhone/iPad memory guard. iOS WebKit has a substantially lower tab/GPU memory ceiling
+ // than desktop WebKit, so it starts without the 35MB baked-light asset and with lighter buffers.
+ app=exact(app,
+  "const params=new URLSearchParams(location.search);if(params.has('capture'))document.body.classList.add('capture');",
+  "const params=new URLSearchParams(location.search);const lowMemoryIOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);window.__lowMemoryIOS=lowMemoryIOS;if(params.has('capture'))document.body.classList.add('capture');",
+  'iOS low-memory detection');
+ app=exact(app,
+  "const modes={standard:{dpr:Math.min(devicePixelRatio||1,1.25),ao:.50,focus:1.6},high:{dpr:Math.min(devicePixelRatio||1,1.8),ao:.57,focus:2.0},light:{dpr:Math.min(devicePixelRatio||1,.85),ao:.25,focus:0}};",
+  "const modes={standard:{dpr:Math.min(devicePixelRatio||1,1.25),ao:.50,focus:1.6},high:{dpr:Math.min(devicePixelRatio||1,1.8),ao:.57,focus:2.0},light:{dpr:Math.min(devicePixelRatio||1,lowMemoryIOS?.62:.85),ao:lowMemoryIOS?0:.25,focus:0}};",
+  'iOS light render mode');
+ app=exact(app,
+  "let model,renderer,camera,selected='area',quality='standard',ready=false,contextLost=false,anim=null,raf=0,lastDraw=0,pointers=new Map(),previousGesture=null,modal=null,returnFocus=null,tickTimes=[],renderTimes=[],toastTimer,resizeTimer,paused=false;",
+  "let model,renderer,camera,selected='area',quality=lowMemoryIOS?'light':'standard',ready=false,contextLost=false,anim=null,raf=0,lastDraw=0,pointers=new Map(),previousGesture=null,modal=null,returnFocus=null,tickTimes=[],renderTimes=[],toastTimer,resizeTimer,paused=false;",
+  'iOS default quality');
+ app=exact(app,
+  "let bakedLighting=null;try{if(window.__BAKED_LIGHT_BASE64)",
+  "let bakedLighting=null;if(lowMemoryIOS){lightingState='iPhone用軽量照明';delete window.__BAKED_LIGHT_BASE64;}else try{if(window.__BAKED_LIGHT_BASE64)",
+  'skip baked light on iOS');
+ app=exact(app,
+  "renderer=new Renderer(canvas,model,{dpr:modes.standard.dpr,shadowSize:2048});renderer.ao=modes.standard.ao;renderer.focusEffect=modes.standard.focus;",
+  "renderer=new Renderer(canvas,model,{dpr:modes[quality].dpr,shadowSize:lowMemoryIOS?1024:2048});renderer.ao=modes[quality].ao;renderer.focusEffect=modes[quality].focus;",
+  'iOS initial renderer memory');
+ app=exact(app,
+  "renderer=new Renderer(canvas,model,{dpr:modes[quality].dpr,shadowSize:2048});",
+  "renderer=new Renderer(canvas,model,{dpr:modes[quality].dpr,shadowSize:lowMemoryIOS?1024:2048});",
+  'iOS context restore memory');
+ app=exact(app,
+  "if(params.has('quality'))setQuality(params.get('quality'));",
+  "if(params.has('quality')&&!lowMemoryIOS)setQuality(params.get('quality'));",
+  'iOS prevent heavy startup override');
  const portraitOld="if(aspect<1.05){p.span*=.78/aspect;p.target[1]+=.2;}";
  if(!app.includes(portraitOld))throw Error('Unexpected portrait camera scaling input');
  app=app.replace(portraitOld,"if(aspect<1.05){const areaLandmark=['hokanji','kodaiji','yasaka','street'].includes(name);const portraitScale=name==='area'?.42:(areaLandmark?.58:.78);p.span*=portraitScale/aspect;p.target[1]+=name==='area'?-.12:.2;}");
