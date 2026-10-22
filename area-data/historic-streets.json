@@ -1,0 +1,380 @@
+{
+  "source": "OpenStreetMap contributors / Overpass API",
+  "license": "ODbL 1.0",
+  "retrievedAt": "2026-10-21T23:52:43.766Z",
+  "origin": {
+    "lat": 34.995,
+    "lon": 135.785
+  },
+  "metresPerUnit": 20,
+  "roads": [
+    {
+      "id": 24516359,
+      "name": "八坂通",
+      "highway": "residential",
+      "surface": "sett",
+      "bridge": null,
+      "tunnel": null,
+      "points": [
+        [
+          -35.611,
+          20.479
+        ],
+        [
+          -27.246,
+          19.597
+        ],
+        [
+          -27.314,
+          18.987
+        ]
+      ]
+    },
+    {
+      "id": 28514434,
+      "name": "清水坂",
+      "highway": "pedestrian",
+      "surface": "paving_stones",
+      "bridge": null,
+      "tunnel": null,
+      "points": [
+        [
+          -19.49,
+          6.639
+        ],
+        [
+          -16.859,
+          5.496
+        ],
+        [
+          -14.495,
+          4.025
+        ],
+        [
+          -13.099,
+          2.953
+        ],
+        [
+          -12.212,
+          2.772
+        ],
+        [
+          -9.498,
+          2.838
+        ]
+      ]
+    },
+    {
+      "id": 30882783,
+      "name": "二寧坂",
+      "highway": "steps",
+      "surface": "paving_stones",
+      "bridge": null,
+      "tunnel": null,
+      "points": [
+        [
+          -18.913,
+          17.475
+        ],
+        [
+          -19.088,
+          16.705
+        ]
+      ]
+    },
+    {
+      "id": 30913263,
+      "name": "二寧坂",
+      "highway": "pedestrian",
+      "surface": "paving_stones",
+      "bridge": null,
+      "tunnel": null,
+      "points": [
+        [
+          -19.078,
+          20.633
+        ],
+        [
+          -18.913,
+          17.475
+        ]
+      ]
+    },
+    {
+      "id": 157527438,
+      "name": "一念坂",
+      "highway": "pedestrian",
+      "surface": "paving_stones",
+      "bridge": null,
+      "tunnel": null,
+      "points": [
+        [
+          -19.525,
+          22.448
+        ],
+        [
+          -22.504,
+          22.167
+        ],
+        [
+          -22.934,
+          22.759
+        ],
+        [
+          -23.42,
+          22.987
+        ],
+        [
+          -23.509,
+          23.568
+        ]
+      ]
+    },
+    {
+      "id": 179116810,
+      "name": "産寧坂",
+      "highway": "steps",
+      "surface": "paving_stones",
+      "bridge": null,
+      "tunnel": null,
+      "points": [
+        [
+          -19.115,
+          6.683
+        ],
+        [
+          -18.491,
+          8.147
+        ]
+      ]
+    },
+    {
+      "id": 371739384,
+      "name": "ねねの小径",
+      "highway": "footway",
+      "surface": null,
+      "bridge": null,
+      "tunnel": null,
+      "points": [
+        [
+          -24.996,
+          31.702
+        ],
+        [
+          -26.064,
+          31.676
+        ]
+      ]
+    },
+    {
+      "id": 371739385,
+      "name": "ねねの小径",
+      "highway": "footway",
+      "surface": null,
+      "bridge": null,
+      "tunnel": null,
+      "points": [
+        [
+          -23.885,
+          31.321
+        ],
+        [
+          -24.878,
+          31.402
+        ]
+      ]
+    },
+    {
+      "id": 526198271,
+      "name": "産寧坂",
+      "highway": "pedestrian",
+      "surface": "paving_stones",
+      "bridge": null,
+      "tunnel": null,
+      "points": [
+        [
+          -18.111,
+          10.763
+        ],
+        [
+          -17.951,
+          13.788
+        ],
+        [
+          -18.029,
+          15.293
+        ],
+        [
+          -18.399,
+          16.01
+        ],
+        [
+          -19.13,
+          16.568
+        ]
+      ]
+    },
+    {
+      "id": 526198278,
+      "name": "石塀小路",
+      "highway": "footway",
+      "surface": "sett",
+      "bridge": null,
+      "tunnel": null,
+      "points": [
+        [
+          -23.347,
+          27.271
+        ],
+        [
+          -25.104,
+          27.424
+        ]
+      ]
+    },
+    {
+      "id": 550360170,
+      "name": "二寧坂",
+      "highway": "pedestrian",
+      "surface": "paving_stones",
+      "bridge": null,
+      "tunnel": null,
+      "points": [
+        [
+          -19.088,
+          16.705
+        ],
+        [
+          -19.13,
+          16.568
+        ]
+      ]
+    },
+    {
+      "id": 747033984,
+      "name": "ねねの小径",
+      "highway": "footway",
+      "surface": null,
+      "bridge": null,
+      "tunnel": "building_passage",
+      "points": [
+        [
+          -24.86,
+          31.694
+        ],
+        [
+          -24.996,
+          31.702
+        ]
+      ]
+    },
+    {
+      "id": 747033985,
+      "name": "ねねの小径",
+      "highway": "footway",
+      "surface": null,
+      "bridge": null,
+      "tunnel": "building_passage",
+      "points": [
+        [
+          -24.878,
+          31.402
+        ],
+        [
+          -24.86,
+          31.694
+        ]
+      ]
+    },
+    {
+      "id": 1251544286,
+      "name": "産寧坂",
+      "highway": "pedestrian",
+      "surface": "paving_stones",
+      "bridge": null,
+      "tunnel": null,
+      "points": [
+        [
+          -19.191,
+          6.512
+        ],
+        [
+          -19.115,
+          6.683
+        ]
+      ]
+    },
+    {
+      "id": 1491152444,
+      "name": "二寧坂",
+      "highway": "service",
+      "surface": null,
+      "bridge": null,
+      "tunnel": null,
+      "points": [
+        [
+          -19.525,
+          22.448
+        ],
+        [
+          -19.078,
+          20.633
+        ]
+      ]
+    },
+    {
+      "id": 1569088146,
+      "name": "産寧坂",
+      "highway": "pedestrian",
+      "surface": "paving_stones",
+      "bridge": null,
+      "tunnel": null,
+      "points": [
+        [
+          -18.491,
+          8.147
+        ],
+        [
+          -18.153,
+          9.157
+        ]
+      ]
+    },
+    {
+      "id": 1569088147,
+      "name": "産寧坂",
+      "highway": "residential",
+      "surface": "paving_stones",
+      "bridge": null,
+      "tunnel": null,
+      "points": [
+        [
+          -18.111,
+          10.763
+        ],
+        [
+          -18.153,
+          9.157
+        ]
+      ]
+    },
+    {
+      "id": 1569088149,
+      "name": "二寧坂",
+      "highway": "service",
+      "surface": null,
+      "bridge": null,
+      "tunnel": null,
+      "points": [
+        [
+          -19.587,
+          23.588
+        ],
+        [
+          -19.525,
+          22.448
+        ]
+      ]
+    }
+  ]
+}

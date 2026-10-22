@@ -1,9 +1,10 @@
 name: Higashiyama area v4 baked visual review
 on:
   push:
-    branches: [area-higashiyama-quality-v4]
+    branches: [area-higashiyama-quality-v4, area-higashiyama-quality-v4.9]
     paths:
       - 'area-quality-v4/**'
+      - 'area-data/**'
       - '.github/workflows/area-quality-v4-visual.yml'
   workflow_dispatch:
 permissions:
