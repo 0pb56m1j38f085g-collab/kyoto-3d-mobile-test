@@ -595,4 +595,4 @@
  scene.areaSites.placementAccuracy='Geographic landmark anchors. Landmark silhouettes reference official inventories; selected historic streets follow OSM ways; gardens, remaining streets and intermediate houses remain authored, not measured footprints.';
  scene.areaSites.referenceRevision='official-inventory-review-2026-10-22';
 
- scene.areaQuality='v4.14-streetscape-coherence-and-focus';
+ scene.areaQuality='v4.15-streetscape-coherence-and-focus';

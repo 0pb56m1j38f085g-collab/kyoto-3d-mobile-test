@@ -1,7 +1,7 @@
 name: Higashiyama area v4 baked visual review
 on:
   push:
-    branches: [area-higashiyama-quality-v4, area-higashiyama-quality-v4.14]
+    branches: [area-higashiyama-quality-v4, area-higashiyama-quality-v4.15]
     paths:
       - 'area-quality-v4/**'
       - 'area-data/**'
@@ -30,12 +30,19 @@ jobs:
       - name: Build, light, and render the whole area
         env:
           NODE_PATH: ${{ runner.temp }}/area-v4-browser/node_modules
+          LIGHT_SAMPLES: '24'
         run: xvfb-run -a node area-quality-v4/tests/visual-check.cjs
+      - name: Verify bounded mobile memory and all district views
+        env:
+          NODE_PATH: ${{ runner.temp }}/area-v4-browser/node_modules
+        run: node area-quality-v4/tests/mobile-memory.cjs
       - name: Upload actual WebGL renders
         if: always()
         uses: actions/upload-artifact@v5
         with:
           name: higashiyama-area-v4-baked-renders
-          path: area-v4-artifacts/
+          path: |
+            area-v4-artifacts/
+            mobile-memory-artifacts/
           if-no-files-found: error
           retention-days: 7

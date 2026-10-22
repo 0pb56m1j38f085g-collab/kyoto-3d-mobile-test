@@ -1,0 +1,31 @@
+
+function isLowMemoryIOS(){return /iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);}
+async function loadMobileStudy(asset,progress){
+ if(typeof DecompressionStream!=='function')throw Error('この軽量3Dの読み込みにはSafariの更新が必要です。');
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),120000);
+ try{
+  const response=await fetch(asset.url,{signal:controller.signal});
+  if(!response.ok)throw Error('3Dデータの取得に失敗しました（HTTP '+response.status+'）。');
+  // Stream into ONE bounded buffer. Response.arrayBuffer() can require a second
+  // full-size allocation; no per-vertex JS arrays or string-key maps are made here.
+  const bytes=new Uint8Array(asset.bytes),reader=response.body.pipeThrough(new DecompressionStream('gzip')).getReader();let at=0;
+  try{while(true){const {done,value}=await reader.read();if(done)break;if(at+value.length>bytes.length)throw Error('3Dデータのサイズが一致しません。');bytes.set(value,at);at+=value.length;progress(Math.min(99,Math.floor(at/bytes.length*100)));}}
+  finally{reader.releaseLock();}
+  if(at!==asset.bytes)throw Error('3Dデータの読み込みが途中で止まりました。再読み込みしてください。');
+  const view=new DataView(bytes.buffer);
+  if(view.getUint32(0,false)!==0x4b4d5031)throw Error('3Dデータの形式が不正です。');
+  const length=view.getUint32(4,true),start=16+((length+3)&~3);
+  if(start>bytes.length||start+view.getUint32(8,true)!==bytes.length)throw Error('3Dデータのサイズが不正です。');
+  const model=JSON.parse(new TextDecoder().decode(bytes.subarray(16,16+length)));
+  if(model.sourceModelHash!==asset.sourceModelHash||model.revision!==asset.revision)throw Error('3Dデータの版が一致しません。');
+  for(const m of model.meshes){
+   const sizes=[m.vertices*3,m.vertices*3,m.count,m.instanceCount*15],names=['p','n','index','instanceData'];
+   for(let k=0;k<4;k++){
+    const offset=start+m.offsets[k];if(offset<start||offset%4||offset+sizes[k]*4>bytes.length)throw Error('3Dデータの範囲が不正です。');
+    m[names[k]]=new (k===2?Uint32Array:Float32Array)(bytes.buffer,offset,sizes[k]);
+   }
+  }
+  model.mobileMemory={geometryBytes:asset.bytes,downloadBytes:asset.compressedBytes,proceduralBuild:false,runtimeVertexIndexing:false};
+  progress(100);return model;
+ }finally{clearTimeout(timer);controller.abort();}
+}
