@@ -6,10 +6,10 @@
   const srcGround=ground,base=2.15,displayScale=.55;
   const kCentre=[scene.kiyomizuPlacement.roofCentre[0],scene.kiyomizuPlacement.roofCentre[2]];
   const layouts={
-   temple:{source:kCentre,at:[0,-1],scale:2.6},
-   hokanji:{source:tower.center,at:tower.center.map(v=>v*displayScale),scale:3.0},
-   yasaka:{source:[-29.4,46.6],at:[-16.17,25.63],scale:1.65,heightEmphasis:1.15},
-   kodaiji:{source:[-15.8,32.1],at:[-7.5,17.2],scale:1.4,heightEmphasis:1.30}
+   temple:{source:kCentre,at:[0,-1],scale:3.35,lift:2.8},
+   hokanji:{source:tower.center,at:tower.center.map(v=>v*displayScale),scale:3.2},
+   yasaka:{source:[-29.4,46.6],at:[-16.17,25.63],scale:2.15,heightEmphasis:1.35},
+   kodaiji:{source:[-15.8,32.1],at:[-6.5,17.2],scale:1.7,heightEmphasis:1.65,lift:.65}
   };
   function layoutFor(g){if(g==='main-hall')return layouts.temple;if(g==='metric-hokanji')return layouts.hokanji;if(g.startsWith('metric-yasaka')||g==='metric-precinct-landscape')return layouts.yasaka;if(g.startsWith('metric-kodaiji'))return layouts.kodaiji;return null;}
   // Preserve the recognisable main-hall/stage and all thirteen architectural
@@ -17,29 +17,44 @@
   for(const m of scene.meshes)m.instances=m.instances.filter(i=>{
    const l=layoutFor(i.group||'');if(!l)return false;
    const heightScale=i.group.includes('garden')||i.group.includes('landscape')?1:(l.heightEmphasis||1);
-   i.p=QGA([(i.p[0]-l.source[0])*l.scale+l.at[0],base+(i.p[1]-base)*l.scale*heightScale,(i.p[2]-l.source[1])*l.scale+l.at[1]]);
+   i.p=QGA([(i.p[0]-l.source[0])*l.scale+l.at[0],base+(l.lift||0)+(i.p[1]-base)*l.scale*heightScale,(i.p[2]-l.source[1])*l.scale+l.at[1]]);
    i.s=QGA(i.s.map((v,k)=>v*l.scale*(k===1?heightScale:1)));
    // More legible roof/eave contrast, retaining bark brown on Kiyomizu.
    if(i.mat===2){const c=rgb(i.group==='main-hall'?'#625145':'#56656b');i.c=QGA(i.c.map((v,k)=>v*.65+c[k]*.35));}
-   if(i.anchor)i.anchor=QGA([(i.anchor[0]-l.source[0])*l.scale+l.at[0],base+(i.anchor[1]-base)*l.scale,(i.anchor[2]-l.source[1])*l.scale+l.at[1]]);
+   if(i.anchor)i.anchor=QGA([(i.anchor[0]-l.source[0])*l.scale+l.at[0],base+(l.lift||0)+(i.anchor[1]-base)*l.scale,(i.anchor[2]-l.source[1])*l.scale+l.at[1]]);
    if(i.anchor&&i.group==='metric-kodaiji-garden'){i.p=QGA(i.p.map((v,k)=>i.anchor[k]+(v-i.anchor[k])*1.45));i.s=QGA(i.s.map(v=>v*1.45));}
    return true;
   });
   group='storybook-terrain';
   const K=layouts.temple;
+  // Authored/cartographic channels: preserve west-side Kamo and north-Gion
+  // Shirakawa confluence, not a fabricated river below Kiyomizu. These are not
+  // surveyed shorelines, DEM elevations or routing geometry.
+  const waterways=[
+   {name:'鴨川',width:2.55,points:[[-24.8,-9],[-24.7,0],[-24.4,8],[-24.8,16],[-24.3,24],[-24.0,30],[-23.9,35]]},
+   {name:'白川',width:1.05,points:[[-17.5,35],[-18.0,32.3],[-19.6,31.4],[-21.1,31.6],[-22.8,30.3],[-24.0,30]]}
+  ];
+  const riverDistance=(x,z,r)=>Math.min(...r.points.slice(1).map((b,j)=>dseg(x,z,r.points[j],b)));
+  const waterKeepout=(x,z,pad=0)=>waterways.some(r=>riverDistance(x,z,r)<r.width/2+pad);
+  const mountainRelief=(x,z)=>{
+   const east=smooth((x+3)/6);
+   return east*(7.8*Math.exp(-((x-5.3)**2/32+(z-2)**2/66))+5.7*Math.exp(-((x-5.5)**2/28+(z-16)**2/90))+5.3*Math.exp(-((x-4.0)**2/35+(z-29)**2/40)));
+  };
   function storyGround(x,z){
-   const dx=x-K.at[0],dz=z-K.at[1],fade=1-smooth((Math.hypot(dx/1.2,dz)-4.2)/3.0);
-   const woodedHill=smooth((x-.8)/2)*(1.7*Math.exp(-((x-4)**2/18+(z-7)**2/30))+1.2*Math.exp(-((x-4)**2/18+(z-25)**2/30)));
-   return base+(srcGround(K.source[0]+dx/K.scale,K.source[1]+dz/K.scale)-base)*K.scale*fade+woodedHill;
+   const dx=x-K.at[0],dz=z-K.at[1],fade=1-smooth((Math.hypot(dx/1.2,dz)-5.3)/3.3);
+   const terrace=.65*(1-smooth((Math.abs(x+6.5)-7.4)/1.8))*(1-smooth((Math.abs(z-17.2)-3.3)/1.4));
+   const hill=mountainRelief(x,z)*(1-fade);
+   const channel=Math.max(...waterways.map(r=>(1-smooth((riverDistance(x,z,r)-r.width*.44)/.8))*.72));
+   return base+((srcGround(K.source[0]+dx/K.scale,K.source[1]+dz/K.scale)-base)*K.scale+K.lift)*fade+hill+terrace-channel;
   }
   // Rounded, finite diorama edge instead of an empty infinite green plane.
-  const bounds={x0:-26,x1:8,z0:-8,z1:32,r:4.5};
+  const bounds={x0:-28,x1:10,z0:-10,z1:35,r:4.5};
   const islandInside=(x,z,pad=0)=>{
    const cx=(bounds.x0+bounds.x1)/2,cz=(bounds.z0+bounds.z1)/2;
    const dx=Math.abs(x-cx)-(bounds.x1-bounds.x0)/2+bounds.r+pad,dz=Math.abs(z-cz)-(bounds.z1-bounds.z0)/2+bounds.r+pad;
    return Math.hypot(Math.max(dx,0),Math.max(dz,0))+Math.min(Math.max(dx,dz),0)<bounds.r;
   };
-  const terrainMini=mesh('storybook-soft-ground'),edgeMini=mesh('storybook-diorama-edge');
+  const terrainMini=mesh('storybook-soft-ground'),hillMini=mesh('storybook-wooded-ridge'),edgeMini=mesh('storybook-diorama-edge');
   const boundary=[];
   for(const [cx,cz,start]of[[bounds.x1-bounds.r,bounds.z1-bounds.r,0],[bounds.x0+bounds.r,bounds.z1-bounds.r,Math.PI/2],[bounds.x0+bounds.r,bounds.z0+bounds.r,Math.PI],[bounds.x1-bounds.r,bounds.z0+bounds.r,Math.PI*1.5]])for(let j=0;j<=12;j++){const a=start+j*Math.PI/24;boundary.push([cx+Math.cos(a)*bounds.r,cz+Math.sin(a)*bounds.r]);}
   // Subdivide the long straight sides too: corner-only fans produce long baked
@@ -52,12 +67,27 @@
   for(let j=0;j<boundary.length;j++)for(let r=0;r<rings;r++){
    const a=boundary[j],b=boundary[(j+1)%boundary.length],P=(p,t)=>{const x=centre[0]+(p[0]-centre[0])*t,z=centre[2]+(p[1]-centre[2])*t;return[x,storyGround(x,z),z];};
    const aa=P(a,r/rings),bb=P(b,r/rings),cc=P(b,(r+1)/rings),dd=P(a,(r+1)/rings);
-   terrainMini.tri(aa,bb,cc,surfaceNormal(aa),surfaceNormal(bb),surfaceNormal(cc));
-   terrainMini.tri(aa,cc,dd,surfaceNormal(aa),surfaceNormal(cc),surfaceNormal(dd));
+   const surface=(aa[1]+bb[1]+cc[1]+dd[1])/4>base+2.9?hillMini:terrainMini;
+   surface.tri(aa,bb,cc,surfaceNormal(aa),surfaceNormal(bb),surfaceNormal(cc));
+   surface.tri(aa,cc,dd,surfaceNormal(aa),surfaceNormal(cc),surfaceNormal(dd));
    if(r===rings-1){const aa=P(a,1),bb=P(b,1);edgeMini.quad(aa,bb,[bb[0],.55,bb[2]],[aa[0],.55,aa[2]]);}
   }
-  I(terrainMini,[0,0,0],[1,1,1],'#a4b97c',undefined,0);
+  I(terrainMini,[0,0,0],[1,1,1],'#b8bd8d',undefined,0);
+  I(hillMini,[0,0,0],[1,1,1],'#8ca572',undefined,0);
   I(edgeMini,[0,0,0],[1,1,1],'#c6b59b',undefined,3);
+  group='storybook-waterways';
+  const waterMini=mesh('storybook-river-water'),bankMini=mesh('storybook-river-banks'),rippleMini=mesh('storybook-water-glints');
+  for(const r of waterways)for(let j=1;j<r.points.length;j++){
+   const a=r.points[j-1],b=r.points[j],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz),n=Math.ceil(len/.25),nx=-dz/len,nz=dx/len;
+   for(let k=0;k<n;k++){
+    const t=(k+.5)/n,x=a[0]+dx*t,z=a[1]+dz*t;if(!islandInside(x,z,r.width*.55))continue;
+    const P=(t,s,y)=>[a[0]+dx*t+nx*s,y,a[1]+dz*t+nz*s];
+    waterMini.quad(P(k/n,-r.width/2,base-.45),P(k/n,r.width/2,base-.45),P((k+1)/n,r.width/2,base-.45),P((k+1)/n,-r.width/2,base-.45),[0,1,0]);
+    for(const s of[-1,1]){const p=s*(r.width/2+.24);bankMini.quad(P(k/n,p-.15,base-.14),P(k/n,p+.15,base-.14),P((k+1)/n,p+.15,base-.14),P((k+1)/n,p-.15,base-.14),[0,1,0]);}
+    if(k%9===0){const p=(k%3-1)*r.width*.14;rippleMini.quad(P(k/n,p-.04,base-.435),P(k/n,p+.04,base-.435),P((k+2)/n,p+.04,base-.435),P((k+2)/n,p-.04,base-.435),[0,1,0]);}
+   }
+  }
+  I(waterMini,[0,0,0],[1,1,1],'#72bdc4',undefined,0);I(bankMini,[0,0,0],[1,1,1],'#c5c5b1',undefined,3);I(rippleMini,[0,0,0],[1,1,1],'#b9e0da',undefined,0);
   // Actual displayed architecture bounds provide clearings for illustrative houses
   // and crowns. No unrelated generic building is placed through a named temple.
   function world(p,i){const[x,y,z]=p.map((v,k)=>v*i.s[k]),[a,b,c,w]=i.q,tx=2*(b*z-c*y),ty=2*(c*x-a*z),tz=2*(a*y-b*x);return[x+w*tx+b*tz-c*ty+i.p[0],y+w*ty+c*tx-a*tz+i.p[1],z+w*tz+a*ty-b*tx+i.p[2]];}
@@ -67,7 +97,7 @@
    if(!clearings.some(c=>c.group===i.group))clearings.push({group:i.group,x0:Infinity,x1:-Infinity,z0:Infinity,z1:-Infinity});
    const c=clearings.find(c=>c.group===i.group);for(let k=0;k<m.p.length;k+=3){const p=world(m.p.slice(k,k+3),i);c.x0=Math.min(c.x0,p[0]);c.x1=Math.max(c.x1,p[0]);c.z0=Math.min(c.z0,p[2]);c.z1=Math.max(c.z1,p[2]);}
   }
-  const gardenKeepout=(x,z,pad=0)=>x>-12.8-pad&&x<.7+pad&&z>15.1-pad&&z<21.2+pad;
+  const gardenKeepout=(x,z,pad=0)=>x>-13-pad&&x<3.5+pad&&z>14.6-pad&&z<22.2+pad;
   const inClearing=(x,z,pad=0)=>clearings.some(c=>x>c.x0-pad&&x<c.x1+pad&&z>c.z0-pad&&z<c.z1+pad);
   group='storybook-lanes';
   const historicIds=new Set(historicalStreets.map(r=>r.id));
@@ -83,7 +113,7 @@
    if(!road.hero&&![a,b].some(inTown))continue;
    segments.push({a,b});const steps=Math.ceil(len/.35),nx=-dz/len,nz=dx/len;
    for(let k=0;k<steps;k++){
-    const t=(k+.5)/steps,x=a[0]+dx*t,z=a[1]+dz*t;if(!islandInside(x,z,.45)||inClearing(x,z,.12)||gardenKeepout(x,z,.2)||(!road.hero&&(x>-11.8||z< -4||z>22.2)))continue;
+    const t=(k+.5)/steps,x=a[0]+dx*t,z=a[1]+dz*t;if(!islandInside(x,z,.45)||waterKeepout(x,z,.5)||inClearing(x,z,.12)||gardenKeepout(x,z,.2)||(!road.hero&&(x>-11.8||z< -4||z>22.2)))continue;
     for(const [m,width,lift]of[[streetBorder,road.hero?.80:.58,.020],[streetSurface,road.hero?.65:.46,.025]]){
      const P=(t,s)=>{const x=a[0]+dx*t+nx*s*width/2,z=a[1]+dz*t+nz*s*width/2;return[x,storyGround(x,z)+lift,z];};
      m.quad(P(k/steps,-1),P(k/steps,1),P((k+1)/steps,1),P((k+1)/steps,-1));
@@ -98,6 +128,14 @@
   const cubeFaces=[[[1,0,0],[0,1,0],[0,0,1]],[[-1,0,0],[0,1,0],[0,0,-1]],[[0,1,0],[1,0,0],[0,0,-1]],[[0,-1,0],[1,0,0],[0,0,1]],[[0,0,1],[1,0,0],[0,1,0]],[[0,0,-1],[-1,0,0],[0,1,0]]];
   for(const[n,u,v]of cubeFaces){const P=(a,b)=>V.add(V.mul(n,.5),V.add(V.mul(u,a),V.mul(v,b)));townBox.quad(P(-.5,-.5),P(.5,-.5),P(.5,.5),P(-.5,.5),n);}
   const smallBox=(p,s,c,yaw=0,mat=1)=>I(townBox,p,s,c,Q.y(yaw),mat);
+  // Simple editorial bridge silhouette at the Shijo-side crossing; not a
+  // measured bridge model or a promise of an available walking route.
+  group='storybook-river-crossing';
+  smallBox([-24.25,base+.06,26.1],[4.5,.20,1.1],'#c0b49a',0,3);
+  for(const side of[-1,1]){
+   smallBox([-24.25,base+.43,26.1+side*.5],[4.5,.085,.07],'#8e8067');
+   for(let j=0;j<10;j++)smallBox([-26.4+j*.48,base+.26,26.1+side*.5],[.07,.4,.07],'#8e8067');
+  }
   group='storybook-courtyards';
   for(const c of clearings){if(c.group==='main-hall'||c.group.includes('kodaiji'))continue;smallBox([(c.x0+c.x1)/2,base+.012,(c.z0+c.z1)/2],[c.x1-c.x0+.55,.035,c.z1-c.z0+.65],'#d8c8a9',0,3);}
   group='storybook-town';
@@ -118,9 +156,9 @@
   for(const b of footprintData.buildings){
    if(footprintData.customLandmarkIds.includes(b.id)||b.name||b.footprintArea>2.2)continue;
    const x=b.center[0]*displayScale,z=b.center[1]*displayScale,near=nearestLane(x,z),dist=near.d;
-   if(!islandInside(x,z,1.25)||dist<.76||dist>4.6||inClearing(x,z,.85)||gardenKeepout(x,z,.4)||Math.hypot(x,z+1)<4.7)continue;
+   if(!islandInside(x,z,1.25)||waterKeepout(x,z,.85)||dist<.65||dist>4.6||inClearing(x,z,.8)||gardenKeepout(x,z,.4)||Math.hypot(x,z+1)<6.0)continue;
    if(used.some(p=>Math.hypot(p[0]-x,p[1]-z)<.96))continue;
-   used.push([x,z]);const h=.73+(b.id%5)*.085,w=.69+(b.id%3)*.10,d=.74+(b.id%4)*.055,y=storyGround(x,z),yaw=dist<1.8?Math.atan2(near.p[0]-x,near.p[1]-z):-Math.atan2(b.axes.u[1],b.axes.u[0]);
+   used.push([x,z]);const h=.49+(b.id%5)*.055,w=.52+(b.id%3)*.075,d=.56+(b.id%4)*.04,y=storyGround(x,z),yaw=dist<1.8?Math.atan2(near.p[0]-x,near.p[1]-z):-Math.atan2(b.axes.u[1],b.axes.u[0]);
    const plaster=['#e8cd9f','#eddcbb','#dba58a','#e8d6be','#d6d7b7'][b.id%5],tile=['#607a80','#68766f','#797d8c','#688b8c','#536c71'][b.id%5],wood=['#805b3e','#976b46','#8b6244'][b.id%3];
    smallBox([x,y+.012,z],[w*1.22,.025,d*1.27],'#c4bda0',yaw,3);
    smallBox([x,y+h/2,z],[w,h,d],plaster,yaw,0);
@@ -145,16 +183,16 @@
    smallBox(P(0,h+.40*Math.min(w,d),0),[w*1.18,.055,.075],'#526668',yaw);
    if(b.id%3!==0){const curtain=['#bb6d7e','#789d8c','#caa269','#8b90ad'][b.id%4];smallBox(P(0,h*.48,d*.65),[w*.63,.14,.022],curtain,yaw,0);smallBox(P(0,h*.46,d*.666),[.018,.11,.012],plaster,yaw,0);}
    if(b.id%4===0){smallBox(P(w*.38,h*.66,d*.69),[.08,.15,.08],'#dc997f',yaw,0);smallBox(P(w*.38,h*.75,d*.69),[.09,.025,.09],wood,yaw);}
-   houses.push({sourceWay:b.id,x,z,yaw,illustrative:true});
-   if(houses.length>=160)break;
+   houses.push({sourceWay:b.id,x,z,yaw,height:h,width:w,depth:d,illustrative:true});
+   if(houses.length>=140)break;
   }
   group='storybook-groves';const trees=[],canopy=sph('storybook-sculpted-canopy',10,6,.075);
   // Clustered layered groves instead of evenly scattered lollipop trees.
   // Three reusable crowns plus a branch silhouette; no individual leaf geometry.
-  const groves=[[-1,7,4.8,4.6],[4,2,3,6],[3,25,4.8,6.5],[-5,28,5,3],[-22,27,3.2,4],[-22,2,4,5],[-3,-5,5,2],[-11,5,3,4],[4.5,17.5,2.4,5.8],[-2,12,3,3]];
+  const groves=[[-1,7,4.8,4.6],[5.2,2,3.5,7],[4.8,25,4.4,7.5],[-5,29,5,3],[-21,29,2.0,4],[-22,2,1.2,5],[-1,-6,6,2],[-11,5,3,4],[5.6,17.5,3.3,6.5],[-1,12,3,3]];
   for(let k=0;k<7000&&trees.length<480;k++){
    const g=groves[k%groves.length],a=range(0,Math.PI*2),rad=Math.sqrt(rnd()),x=g[0]+Math.cos(a)*rad*g[2],z=g[1]+Math.sin(a)*rad*g[3],r=range(.46,.84);
-   if(!islandInside(x,z,r+.25)||inClearing(x,z,r+.22)||gardenKeepout(x,z,r*.65)||laneDistance(x,z)<r*.65+.38||used.some(p=>Math.hypot(x-p[0],z-p[1])<r*.7+.60)||trees.some(p=>Math.hypot(x-p.x,z-p.z)<(r+p.radius)*.72))continue;
+   if(!islandInside(x,z,r+.25)||waterKeepout(x,z,r*.75+.3)||inClearing(x,z,r+.22)||gardenKeepout(x,z,r*.65)||laneDistance(x,z)<r*.65+.38||used.some(p=>Math.hypot(x-p[0],z-p[1])<r*.7+.45)||trees.some(p=>Math.hypot(x-p.x,z-p.z)<(r+p.radius)*.72))continue;
    const y=storyGround(x,z),h=range(.95,1.55),pink=(k%7<2),c=pink?['#e692ad','#efadc3','#f4bfce','#d781a0']:['#538453','#6c984f','#8ba75d','#507d60','#a8b66b'];
    pole([x,y,z],[x,y+h*.78,z],.045,'#90714d',true);
    pole([x,y+h*.40,z],[x+r*.40,y+h*.75,z+r*.16],.027,'#90714d',true);
@@ -168,6 +206,8 @@
   scene.footprintBuildings=[];
   scene.stats={...scene.stats,trees:trees.length,illustrativeHouses:houses.length,mainHallInstances:2158};
   scene.cartography={mode:'illustrated-miniature',metric:false,displayScale,landmarks:layouts,clearings,trees:trees.length,houses:houses.length,routeGeometry:false,notice:'建物の大きさ・間隔・道幅を調整したイラストマップ。経路・所要時間はこの表示形状から算出しません。',geographicSource:{roads:'area-data/historic-streets.json',buildings:'area-data/gion-footprints.json',metresPerUnit:20,anchors:referenceAnchors},routeStatus:'Not implemented: no verified route or walking-time claim.'};
+  scene.cartography.waterways={channels:waterways,policy:'Authored display paths and exaggerated widths; preserve west Kamo and north-Gion Shirakawa confluence only. Not georeferenced shorelines or routing.',sources:['https://www.city.kyoto.lg.jp/kensetu/page/0000070773.html','https://www.city.kyoto.lg.jp/tokei/page/0000281763.html']};
+  scene.cartography.relief={surveyed:false,plainHeight:base,eastRidgeHeight:storyGround(5,8),templeLift:K.lift,houseHeightRange:[.49,.71]};
   scene.areaSites.placementAccuracy='Illustrated display, deliberately not to scale. Original geographic source retained separately; no route-time calculation from display coordinates.';
   scene.areaSites.contextPolicy={authoredMiniature:true,vegetation:'Decorative, including pink blossom accents; not live seasonal conditions.',houses:'Selected source centres with illustrative repeated machiya silhouettes; not individual shop identification.'};
   scene.areaSites.scaleStatus='Display has no uniform geographic scale.';
