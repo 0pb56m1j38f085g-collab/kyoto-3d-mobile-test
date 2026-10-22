@@ -1,7 +1,7 @@
-name: East area concept v4.21 full-quality validation
+name: East area actual 3D full-quality validation
 on:
   push:
-    branches: [area-higashiyama-concept-v4.21, area-higashiyama-quality-v4]
+    branches: [area-higashiyama-scene-v4.22, area-higashiyama-concept-v4.21, area-higashiyama-quality-v4]
     paths: ['area-quality-v4/**', 'area-data/**', '.github/workflows/east-concept-v421.yml']
   workflow_dispatch:
 permissions:

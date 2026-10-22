@@ -4,7 +4,7 @@
  if(storybookMode){
   const referenceAnchors=JSON.parse(JSON.stringify(scene.areaSites.geographicAnchors));
   const westReference=__WEST_REFERENCE__;
-  const srcGround=ground,base=2.15,displayScale=1.02,displayScaleEast=.48,northStretch=displayScale/.55;
+  const srcGround=ground,base=2.15,displayScale=.76,displayScaleEast=.56,northStretch=displayScale/.55;
   // All location anchors share one monotonic projection. Only the silhouettes
   // grow around their anchors; landmarks are never independently repositioned.
   const display=p=>[p[0]*displayScaleEast,p[1]*displayScale];
@@ -12,8 +12,8 @@
   const layouts={
    temple:{source:kCentre,at:display(kCentre),scale:5.8,lift:2.8},
    hokanji:{source:tower.center,at:display(tower.center),scale:2.8},
-   yasaka:{source:honden.center,at:display(honden.center),scale:1.8,heightEmphasis:1.35},
-   kodaiji:{source:kodaijiHojo.center,at:display(kodaijiHojo.center),scale:1.5,heightEmphasis:1.65,lift:.65}
+   yasaka:{source:honden.center,at:display(honden.center),scale:2.5,heightEmphasis:1.35},
+   kodaiji:{source:kodaijiHojo.center,at:display(kodaijiHojo.center),scale:2.2,heightEmphasis:1.65,lift:.65}
   };
   function layoutFor(g){if(g==='main-hall')return layouts.temple;if(g==='metric-hokanji')return layouts.hokanji;if(g.startsWith('metric-yasaka')||g==='metric-precinct-landscape')return layouts.yasaka;if(g.startsWith('metric-kodaiji'))return layouts.kodaiji;return null;}
   // Preserve the recognisable main-hall/stage and all thirteen architectural
@@ -93,8 +93,8 @@
   }
   // One continuous soil tint: lighting/normals and woodland communicate relief,
   // without a saw-tooth colour band along the radial triangulation.
-  I(terrainMini,[0,0,0],[1,1,1],'#b2bc8e',undefined,0);
-  I(hillMini,[0,0,0],[1,1,1],'#b2bc8e',undefined,0);
+  I(terrainMini,[0,0,0],[1,1,1],'#879568',undefined,0);
+  I(hillMini,[0,0,0],[1,1,1],'#879568',undefined,0);
   I(edgeMini,[0,0,0],[1,1,1],'#c6b59b',undefined,3);
   group='storybook-waterways';
   const waterMini=mesh('storybook-river-water'),bankMini=mesh('storybook-river-banks'),rippleMini=mesh('storybook-water-glints');
@@ -128,7 +128,8 @@
    if(!clearings.some(c=>c.group===i.group))clearings.push({group:i.group,x0:Infinity,x1:-Infinity,y0:Infinity,y1:-Infinity,z0:Infinity,z1:-Infinity});
    const c=clearings.find(c=>c.group===i.group);for(let k=0;k<m.p.length;k+=3){const p=world(m.p.slice(k,k+3),i);c.x0=Math.min(c.x0,p[0]);c.x1=Math.max(c.x1,p[0]);c.y0=Math.min(c.y0,p[1]);c.y1=Math.max(c.y1,p[1]);c.z0=Math.min(c.z0,p[2]);c.z1=Math.max(c.z1,p[2]);}
   }
-  const gardenKeepout=(x,z,pad=0)=>x>-11-pad&&x<5.5+pad&&z>14.6*northStretch-pad&&z<22.2*northStretch+pad;
+  const gardenPolygons=[...kodaijiPonds.map(p=>p.polygon),gravelPlan].map(p=>p.map(q=>[(q[0]-layouts.kodaiji.source[0])*layouts.kodaiji.scale+layouts.kodaiji.at[0],(q[1]-layouts.kodaiji.source[1])*layouts.kodaiji.scale+layouts.kodaiji.at[1]]));
+  const gardenKeepout=(x,z,pad=0)=>gardenPolygons.some(p=>inGardenPoly(x,z,p)||p.some((a,j)=>dseg(x,z,a,p[(j+1)%p.length])<pad+.1));
   const inClearing=(x,z,pad=0)=>clearings.some(c=>x>c.x0-pad&&x<c.x1+pad&&z>c.z0-pad&&z<c.z1+pad);
   group='storybook-lanes';
   const historicIds=new Set(historicalStreets.map(r=>r.id));
@@ -143,7 +144,7 @@
   for(const road of lanes)for(let j=1;j<road.points.length;j++){
    const a=road.points[j-1],b=road.points[j],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz);if(len<.01)continue;
    if(!road.hero&&![a,b].some(inTown))continue;
-   segments.push({a,b,hero:road.hero,name:road.name});const steps=Math.ceil(len/(road.highway==='steps'?.10:.28)),nx=-dz/len,nz=dx/len;
+   segments.push({a,b,id:road.id,hero:road.hero,name:road.name});const steps=Math.ceil(len/(road.highway==='steps'?.10:.28)),nx=-dz/len,nz=dx/len;
    for(let k=0;k<steps;k++){
     const t=(k+.5)/steps,x=a[0]+dx*t,z=a[1]+dz*t;if(!islandInside(x,z,.45)||waterKeepout(x,z,.5)||inClearing(x,z,.12)||gardenKeepout(x,z,.2)||(!road.hero&&!inTown([x,z])))continue;
     for(const [m,width,lift]of[[streetBorder,road.hero?.90:.58,.020],[streetSurface,road.hero?.76:.46,.025]]){
@@ -179,82 +180,16 @@
   }
   group='storybook-courtyards';
   for(const c of clearings){if(c.group==='main-hall'||c.group.includes('kodaiji'))continue;smallBox([(c.x0+c.x1)/2,base+.012,(c.z0+c.z1)/2],[c.x1-c.x0+.55,.035,c.z1-c.z0+.65],'#d8c8a9',0,3);}
-  group='storybook-town';
-  const roofMini=mesh('storybook-machiya-roof'),roofEdge=mesh('storybook-machiya-eaves'),gableMini=mesh('storybook-machiya-gables');
-  const roofP=(x,t,s)=>[x,.40*(1-t)+.075*t**5,s*.59*t];
-  for(const s of[-1,1])for(let j=0;j<6;j++){
-   const t=j/6,tt=(j+1)/6;roofMini.quad(roofP(-.60,t,s),roofP(.60,t,s),roofP(.60,tt,s),roofP(-.60,tt,s));
-  }
-  for(const s of[-1,1]){
-   roofEdge.quad([-.60,.075,s*.59],[.60,.075,s*.59],[.60,.015,s*.59],[-.60,.015,s*.59]);
-   for(const front of[-1,1])for(let j=0;j<6;j++){
-    const t=j/6,u=(j+1)/6,H=t=>.40*(1-t*.5/.59)+.075*(t*.5/.59)**5;
-    gableMini.quad([s*.50,0,front*.5*t],[s*.50,0,front*.5*u],[s*.50,H(u),front*.5*u],[s*.50,H(t),front*.5*t],[s,0,0]);
-   }
-  }
-  const nearestLane=(x,z)=>{let best=null;for(const s of segments){const dx=s.b[0]-s.a[0],dz=s.b[1]-s.a[1],t=clamp(((x-s.a[0])*dx+(z-s.a[1])*dz)/(dx*dx+dz*dz),0,1),p=[s.a[0]+dx*t,s.a[1]+dz*t],d=Math.hypot(x-p[0],z-p[1]);if(!best||d<best.d)best={p,d};}return best;};
-  const houses=[],used=[];
-  const historicDistance=b=>{const p=display(b.center);return Math.min(...segments.filter(s=>s.hero).map(s=>dseg(...p,s.a,s.b)));};
-  const originalHouses=footprintData.buildings.slice().sort((a,b)=>historicDistance(a)-historicDistance(b)),houseCandidates=[];
-  for(let j=0;j<Math.max(originalHouses.length,westReference.buildings.length);j++){if(originalHouses[j])houseCandidates.push(originalHouses[j]);if(westReference.buildings[j])houseCandidates.push(westReference.buildings[j]);}
-  for(const b of houseCandidates){
-   if(footprintData.customLandmarkIds.includes(b.id)||b.name||b.footprintArea>2.2)continue;
-   const [x,z]=display(b.center),near=nearestLane(x,z),dist=near.d;
-   if(!islandInside(x,z,1.25)||waterKeepout(x,z,1)||dist<.82||dist>3.8||inClearing(x,z,1)||gardenKeepout(x,z,.4))continue;
-   if(used.some(p=>Math.hypot(p[0]-x,p[1]-z)<1.18))continue;
-   used.push([x,z]);const h=.72+(b.id%5)*.065,w=1.02+(b.id%3)*.08,d=.86+(b.id%4)*.06,y=storyGround(x,z),yaw=dist<2.2?Math.atan2(near.p[0]-x,near.p[1]-z):-Math.atan2(b.axes.u[1],b.axes.u[0]);
-   const plaster=['#e8cd9f','#eddcbb','#d3ad8e','#e8d6be','#d9ceb0'][b.id%5],tile=['#515a64','#60646b','#666779','#58626d','#4e5964'][b.id%5],wood=['#805b3e','#976b46','#8b6244'][b.id%3];
-   smallBox([x,y+.012,z],[w*1.22,.025,d*1.27],'#c4bda0',yaw,3);
-   smallBox([x,y+h/2,z],[w,h,d],plaster,yaw,0);
-   I(gableMini,[x,y+h-.03,z],[w,Math.min(w,d),d],plaster,Q.y(yaw),0);
-   I(roofMini,[x,y+h-.03,z],[w,Math.min(w,d),d],tile,Q.y(yaw),2);I(roofEdge,[x,y+h-.03,z],[w,Math.min(w,d),d],'#455d60',Q.y(yaw),1);
-   const co=Math.cos(yaw),si=Math.sin(yaw),P=(xx,yy,zz)=>[x+co*xx+si*zz,y+yy,z-si*xx+co*zz];
-   smallBox(P(0,h*.30,d*.505),[w*.86,h*.48,.025],'#534b40',yaw);
-   smallBox(P(0,h*.77,d*.51),[w*.68,h*.20,.027],'#bd9a67',yaw);
-   for(let j=-3;j<=3;j++)smallBox(P(j*w*.125,h*.29,d*.54),[.025,h*.48,.03],wood,yaw);
-   for(const side of[-1,1]){smallBox(P(side*w*.46,h*.5,d*.52),[.045,h,.05],wood,yaw);smallBox(P(side*w*.35,h*.77,d*.54),[.028,h*.23,.03],wood,yaw);}
-   smallBox(P(0,h*.66,d*.54),[w*.82,.055,.04],wood,yaw);
-   smallBox(P(0,.09,0),[w+.025,.18,d+.025],wood,yaw);
-   for(const side of[-1,1]){
-    smallBox(P(side*w*.51,h*.72,0),[.022,h*.22,d*.45],'#84918b',yaw);
-    smallBox(P(side*w*.46,h*.53,-d*.48),[.045,h*.94,.045],wood,yaw);
-   }
-   smallBox(P(0,h*.72,-d*.51),[w*.64,h*.22,.022],'#84918b',yaw);
-   smallBox(P(0,h*.30,-d*.51),[w*.56,h*.38,.022],'#665a47',yaw);
-   for(const side of[-1,1])smallBox(P(side*w*.17,h*.72,-d*.53),[.025,h*.24,.025],wood,yaw);
-   // Deep shop eave and visible ridge, not only a coloured box.
-   I(roofMini,P(0,h*.51,d*.46),[w*.92,.30,d*.28],tile,Q.y(yaw),2);
-   smallBox(P(0,h+.40*Math.min(w,d),0),[w*1.18,.055,.075],'#526668',yaw);
-   if(b.id%3!==0){const curtain=['#bb6d7e','#789d8c','#caa269','#8b90ad'][b.id%4];smallBox(P(0,h*.48,d*.65),[w*.63,.14,.022],curtain,yaw,0);smallBox(P(0,h*.46,d*.666),[.018,.11,.012],plaster,yaw,0);}
-   if(b.id%4===0){smallBox(P(w*.38,h*.66,d*.69),[.08,.15,.08],'#dc997f',yaw,0);smallBox(P(w*.38,h*.75,d*.69),[.09,.025,.09],wood,yaw);}
-   houses.push({sourceWay:b.id,x,z,yaw,height:h,width:w,depth:d,illustrative:true});
-   if(houses.length>=245)break;
-  }
-  group='storybook-groves';const trees=[],canopy=sph('storybook-sculpted-canopy',10,6,.075);
-  // Clustered layered groves instead of evenly scattered lollipop trees.
-  // Three reusable crowns plus a branch silhouette; no individual leaf geometry.
-  const groves=[[-1,7,4.8,4.6],[10,2,6,7],[10,25,5.4,7.5],[-5,29,5,3],[-19,29,2.0,4],[-20,2,1.2,5],[-1,-6,6,2],[-9,5,3,4],[10,17.5,5.5,6.5],[-1,12,3,3],[12,-4,4.4,4.4]].map(g=>[g[0],g[1]*northStretch,g[2],g[3]*northStretch]);
-  for(let k=0;k<18000&&trees.length<780;k++){
-   const g=groves[k%groves.length],a=range(0,Math.PI*2),rad=Math.sqrt(rnd()),x=g[0]+Math.cos(a)*rad*g[2],z=g[1]+Math.sin(a)*rad*g[3],r=range(.46,.84);
-   if(!islandInside(x,z,r+.25)||waterKeepout(x,z,r*.75+.3)||inClearing(x,z,r+.22)||gardenKeepout(x,z,r*.65)||laneDistance(x,z)<r*.65+.38||used.some(p=>Math.hypot(x-p[0],z-p[1])<r*.7+.45)||trees.some(p=>Math.hypot(x-p.x,z-p.z)<(r+p.radius)*.62))continue;
-   const y=storyGround(x,z),h=range(.95,1.55),pink=(k%7<2),c=pink?['#e692ad','#efadc3','#f4bfce','#d781a0']:['#538453','#6c984f','#8ba75d','#507d60','#a8b66b'];
-   pole([x,y,z],[x,y+h*.78,z],.045,'#90714d',true);
-   pole([x,y+h*.40,z],[x+r*.40,y+h*.75,z+r*.16],.027,'#90714d',true);
-   const color=c[trees.length%c.length];
-   ball([x,y+h*.83,z],[r*.70,h*.31,r*.70],color,canopy,4);
-   ball([x+r*.46,y+h*.65,z+r*.12],[r*.64,h*.27,r*.62],color,canopy,4);
-   ball([x-r*.45,y+h*.62,z-r*.13],[r*.61,h*.27,r*.63],color,canopy,4);
-   trees.push({x,z,radius:r,height:h,pink});
-  }
-  scene.areaQuality='v4.21-streetscape-coherence-and-focus';
+  __STREETSCAPE_ART__
+  scene.areaQuality='v4.22-streetfronts-and-woodland';
   scene.areaBuildings=houses;scene.areaStreets=lanes;
   scene.footprintBuildings=[];
   scene.stats={...scene.stats,trees:trees.length,illustrativeHouses:houses.length,mainHallInstances:2158};
   scene.cartography={mode:'illustrated-miniature',metric:false,displayScale,displayScaleEast,landmarks:layouts,clearings,trees:trees.length,houses:houses.length,routeGeometry:false,notice:'名所・街路・川の位置は同じ地理座標変換。建物の大きさ・山の高さ・川幅は誇張。経路・所要時間はこの表示形状から算出しません。',geographicSource:{roads:'area-data/historic-streets.json',buildings:'area-data/gion-footprints.json',west:'area-data/west-gion-reference.json',metresPerUnit:20,anchors:referenceAnchors},routeStatus:'Not implemented: no verified route or walking-time claim.'};
   scene.cartography.waterways={channels:waterways,crossings,omittedCulverts:westReference.water.filter(r=>r.tunnel).map(r=>r.id),policy:'OSM centre lines projected with the same transform as landmark anchors. Open water excludes culverts. Width and bank profiles illustrative, not surveyed shorelines or routes.',source:westReference.url,inputSha256:westReference.inputSha256,sources:['https://www.city.kyoto.lg.jp/kensetu/page/0000070773.html','https://shugakuryoko.kyoto.travel/article/wp-content/uploads/2018/08/kiyomizudera2.pdf']};
-  scene.cartography.relief={surveyed:false,plainHeight:base,eastRidgeHeight:storyGround(11,8),templeLift:K.lift,houseHeightRange:[.72,.98]};
+  scene.cartography.relief={surveyed:false,plainHeight:base,eastRidgeHeight:storyGround(11,8),templeLift:K.lift,houseHeightRange:[1.12,1.75]};
   scene.areaSites.placementAccuracy='Illustrated display, deliberately not to scale. Original geographic source retained separately; no route-time calculation from display coordinates.';
-  scene.areaSites.contextPolicy={authoredMiniature:true,vegetation:'Decorative, including pink blossom accents; not live seasonal conditions.',houses:'Selected source centres with illustrative repeated machiya silhouettes; not individual shop identification.'};
+  scene.areaSites.contextPolicy={authoredMiniature:true,vegetation:'Decorative, including pink blossom accents; not live seasonal conditions.',houses:'Source-side parcels with six illustrative machiya types; historic street frontages shift at most 0.65 display units. Not individual shop identification.'};
   scene.areaSites.scaleStatus='Display has no uniform geographic scale.';
   scene.areaSites.footprintReference={source:footprintData.source,license:footprintData.license,displayedIndividualFootprints:false};
   scene.modelNotice=scene.cartography.notice;

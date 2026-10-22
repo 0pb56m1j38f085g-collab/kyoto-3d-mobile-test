@@ -18,7 +18,7 @@ for(const chunk of manifest.mobileChunks){const bytes=zlib.gunzipSync(fs.readFil
  }
 }
 assert.equal(triangles,model.meshes.reduce((n,m)=>n+m.p.length/9*m.instances.length,0));
-assert.ok(model.areaBuildings.length>=150&&triangles<2200000,'bounded complete scene');
+assert.ok(model.areaBuildings.length>=150&&triangles<3000000,'bounded complete scene');
 assert.equal(model.cartography.coordinateFrame.render,'east +X / up +Y / south +Z');
 for(const a of Object.values(model.cartography.landmarks))for(const b of Object.values(model.cartography.landmarks)){
  assert.equal(Math.sign(a.at[0]-b.at[0]),Math.sign(a.source[0]-b.source[0]));

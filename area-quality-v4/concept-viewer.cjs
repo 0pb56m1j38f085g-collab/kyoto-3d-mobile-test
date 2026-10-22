@@ -1,9 +1,9 @@
 'use strict';
-// v4.21: one visual quality path on every device, with bounded model transport.
+// v4.22: one visual quality path on every device, with bounded model transport.
 module.exports=({renderer,app,html})=>{
  const exact=(s,a,b)=>{if(!s.includes(a))throw Error('Concept viewer input missing: '+a.slice(0,110));return s.replace(a,b);};
  const cameras={
-  area:{target:[-8,5,-24],span:50,yaw:-.30,pitch:.72},
+  area:{target:[-8,5,-24],span:50,yaw:-.62,pitch:.49},
   temple:{target:[0,8,0],span:24,yaw:-.62,pitch:.40},
   hokanji:{target:[-15,5,-11],span:10,yaw:-.7,pitch:.48},
   kodaiji:{target:[-10,4,-18],span:16,yaw:-.65,pitch:.55},
@@ -33,7 +33,7 @@ module.exports=({renderer,app,html})=>{
  renderer=exact(renderer,'  g.disableVertexAttribArray(8);g.vertexAttrib1f(8,0);','');
  renderer=exact(renderer,'name:m.name,lightOffset:0,lightStride:0,vertices:m.vertices','name:m.name,lightOffset:m.lightOffset,lightStride:m.lightStride,vertices:m.vertices');
  // Packed models carry the same baker indices and lighting on iPhone and desktop.
- html=exact(html,"if(!isLowMemoryIOS())await script('src/scene.js?v=area-higashiyama-quality-v4.21');",'');
+ html=exact(html,"if(!isLowMemoryIOS())await script('src/scene.js?v=area-higashiyama-quality-v4.22');",'');
  html=html.replace('<option value="light">軽量</option>','');
  html=html.replaceAll('iPhoneでは軽量表示を使用します。','iPhoneも他の端末と同じ照明・素材で表示します。');
  html=html.replaceAll('京さんぽ · 東山と祇園','京さんぽ · 東山・祇園・山科');
@@ -44,7 +44,7 @@ module.exports=({renderer,app,html})=>{
  app=app.replace(/const mapSpots=\[.*?\];/,"const mapSpots=[{id:'temple',name:'清水寺'},{id:'hokanji',name:'八坂の塔'},{id:'kodaiji',name:'高台寺'},{id:'yasaka',name:'八坂神社'},{id:'street',name:'二寧坂'},{id:'sannenzaka',name:'産寧坂'}];");
  // Do not move named features to make a composition. Camera framing omits the
  // distant Kamo boundary; the river remains at its real west-side position.
- app=exact(app,'const top=h<500?90:128,bottom=h-42,left=18,right=w-18;','const top=h<500?76:108,bottom=h-35,left=14,right=w-14;');
+ app=exact(app,'const top=h<500?90:128,bottom=h-42,left=18,right=w-18;','const top=h<500?76:108,bottom=h*.74,left=16,right=w-16;');
  // A displaced badge must keep an explicit leader to the real scene anchor.
  // Prefer suppressing a secondary lane badge to moving it into unrelated sky.
  app=exact(app,'if(show){for(let n=0;n<4&&occupied.some(o=>Math.abs(o.x-x)<half+o.half+7&&Math.abs(o.y-y)<43);n++)y-=44;show=y>92;}',`if(show){
@@ -61,11 +61,15 @@ module.exports=({renderer,app,html})=>{
  app=exact(app,'camera.target[1]+=dy*s;','camera.target[0]+=dy*s*Math.sin(camera.yaw)/Math.max(.35,Math.sin(camera.pitch));camera.target[2]+=dy*s*Math.cos(camera.yaw)/Math.max(.35,Math.sin(camera.pitch));');
  // Quiet framing; the historic lanes and theatre of the stage get the screen.
  html=html.replace('</style>',`\n/* Approved east-area composition: scene first, no lower navigation panel. */
- header .brand{padding:10px 14px}header .brand h1{font-size:16px}#orientation{top:91px;font-size:10px}#compass{top:84px}
- .map-spot{font-size:11px;min-height:38px}.map-spot[data-view=temple]{font-size:13px}
+ header .brand{padding:9px 12px}header .brand h1{font-size:13px}header .brand .eyebrow{display:none}#orientation{top:91px;font-size:10px}#compass{top:84px}
+ .map-spot{font-size:10px;min-height:28px;padding:6px 9px 6px 25px}.map-spot[data-view=temple]{font-size:12px}
  .map-spot[data-view=street],.map-spot[data-view=sannenzaka]{font-size:10px;background:#fff6ecf2}
  .pin-leader{position:absolute;height:1px;background:#af7f80;transform-origin:left center;pointer-events:none;box-shadow:0 0 1px #fff}.pin-leader::before{content:'';position:absolute;left:-2px;top:-2px;width:5px;height:5px;background:#fff6ee;border:1px solid #b88f88;border-radius:50%}
  .side{right:11px;bottom:calc(48px + env(safe-area-inset-bottom))}.hint{bottom:48px}.map-note{font-size:9px}
  </style>`);
+ // Atmospheric haze uses the reflected north coordinate and leaves the foreground crisp.
+ renderer=exact(renderer,'smoothstep(35.,90.,length(wPosition.xz-vec2(-16.,22.)))* .32','smoothstep(48.,110.,length(wPosition.xz-vec2(-10.,-18.)))* .12');
+ renderer=exact(renderer,'indirectLight*1.20+sky*.125','indirectLight*1.06+sky*.09');
+ renderer=exact(renderer,'vec3(1.0,.94,.88)*1.96','vec3(1.0,.91,.79)*2.08');
  return {renderer,app,html};
 };

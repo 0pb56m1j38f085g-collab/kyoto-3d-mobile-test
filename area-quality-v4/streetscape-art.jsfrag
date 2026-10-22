@@ -1,0 +1,118 @@
+  // Architectural kit for the illustrated streets, with separate shopfront,
+  // upper-floor lattice, tiled roof, lean-to eave and stone plinth silhouettes.
+  // Locations come from source building/street pairs; no invented street links.
+  group='storybook-town';
+  const roofMini=mesh('storybook-machiya-roof'),roofEdge=mesh('storybook-machiya-eaves'),gableMini=mesh('storybook-machiya-gables'),shopEave=mesh('storybook-shop-eave');
+  const roofP=(x,t,s)=>[x,.39*(1-t)+.065*t**4+.012*Math.cos((x+.6)*Math.PI*30),s*.61*t];
+  for(const s of[-1,1])for(let j=0;j<8;j++)for(let k=0;k<36;k++){
+   const x=-.6+k/30,xx=x+1/30,t=j/8,tt=(j+1)/8;
+   roofMini.quad(roofP(x,t,s),roofP(xx,t,s),roofP(xx,tt,s),roofP(x,tt,s));
+  }
+  for(const s of[-1,1]){
+   roofEdge.quad([-.60,.065,s*.61],[.60,.065,s*.61],[.60,.015,s*.61],[-.60,.015,s*.61]);
+   gableMini.tri([s*.5,0,-.5],[s*.5,0,.5],[s*.5,.39,0],[s,0,0]);
+  }
+  for(let j=0;j<6;j++)for(let k=0;k<24;k++){
+   const P=(x,t)=>[x,.12*(1-t)+.008*Math.cos((x+.6)*Math.PI*20),t*.42];
+   const x=-.6+k*.05,xx=x+.05,t=j/6,tt=(j+1)/6;
+   shopEave.quad(P(x,t),P(xx,t),P(xx,tt),P(x,tt));
+  }
+  const nearestLane=(x,z,heroOnly=false)=>{let best=null;for(const s of segments){if(heroOnly&&!s.hero)continue;const dx=s.b[0]-s.a[0],dz=s.b[1]-s.a[1],t=clamp(((x-s.a[0])*dx+(z-s.a[1])*dz)/(dx*dx+dz*dz),0,1),p=[s.a[0]+dx*t,s.a[1]+dz*t],d=Math.hypot(x-p[0],z-p[1]);if(!best||d<best.d)best={p,d,segment:s};}return best;};
+  const houses=[],used=[];
+  const historicDistance=b=>nearestLane(...display(b.center),true).d;
+  const originalHouses=footprintData.buildings.slice().sort((a,b)=>historicDistance(a)-historicDistance(b));
+  const houseCandidates=[...originalHouses,...westReference.buildings];
+  const seenSources=new Set();
+  for(const b of houseCandidates){
+   if(seenSources.has(b.id)||footprintData.customLandmarkIds.includes(b.id)||b.name||b.footprintArea>2.2)continue;seenSources.add(b.id);
+   const sourceAt=display(b.center),near=nearestLane(...sourceAt);if(!near||near.d>4.2||near.d<.18)continue;
+   const hero=near.segment.hero&&near.d<2.7,kind=b.id%6;
+   const w=hero?1.28+(b.id%4)*.16:1.12+(b.id%4)*.14,d=hero?1.18+(b.id%3)*.13:1.06+(b.id%3)*.12;
+   // A facade may move a small distance within its source-side parcel to form a
+   // readable continuous street edge. Keep the source anchor and shift explicit.
+   const setback=(hero?.58:.44)+d*.58,shift=hero?clamp(setback-near.d,-.65,.65):0;
+   const x=sourceAt[0]+(sourceAt[0]-near.p[0])/near.d*shift,z=sourceAt[1]+(sourceAt[1]-near.p[1])/near.d*shift;
+   if(!islandInside(x,z,1.35)||waterKeepout(x,z,1.12)||inClearing(x,z,.85)||gardenKeepout(x,z,.2))continue;
+   if(used.some(p=>Math.hypot(p[0]-x,p[1]-z)<(p[2]+w)*.43))continue;
+   const h=(hero?1.35:1.12)+(kind%3)*.20,y=storyGround(x,z),yaw=Math.atan2(near.p[0]-x,near.p[1]-z);
+   used.push([x,z,w]);
+   const plaster=['#d9bd8e','#e1c9a6','#bb9879','#d3bca0','#d4ccb1','#cbb89e'][kind],tile=['#454a50','#55585b','#626069','#4d5357','#464e56','#58595e'][kind],wood=['#68472e','#835b38','#765033'][kind%3];
+   const co=Math.cos(yaw),si=Math.sin(yaw),P=(xx,yy,zz)=>[x+co*xx+si*zz,y+yy,z-si*xx+co*zz];
+   // A continuous plinth closes gaps between level facades and sloped terrain.
+   const corners=[[-w/2,-d/2],[w/2,-d/2],[-w/2,d/2],[w/2,d/2]].map(p=>P(p[0],0,p[1]));
+   const foot=Math.min(...corners.map(p=>storyGround(p[0],p[2]))),plinth=Math.max(.13,y-foot+.13);
+   smallBox([x,y-plinth/2+.06,z],[w*1.04,plinth,d*1.05],'#a69e86',yaw,3);
+   smallBox(P(0,h/2,0),[w,h,d],plaster,yaw,0);
+   I(gableMini,P(0,h,0),[w,Math.min(w,d),d],plaster,Q.y(yaw),0);
+   I(roofMini,P(0,h,0),[w,Math.min(w,d),d],tile,Q.y(yaw),2);
+   I(roofEdge,P(0,h,0),[w,Math.min(w,d),d],'#3d4142',Q.y(yaw),1);
+   smallBox(P(0,h+.40*Math.min(w,d),0),[w*1.23,.065,.085],tile,yaw,2);
+   for(const side of[-1,1]){
+    // Front and rear remain articulated when the map is rotated.
+    const zz=side*d*.51;
+    smallBox(P(0,h*.29,zz),[w*.88,h*.50,.035],'#332d25',yaw);
+    smallBox(P(0,h*.77,zz),[w*.81,h*.25,.036],kind===2?'#b69b6a':'#a1865d',yaw);
+    for(let j=-4;j<=4;j++)smallBox(P(j*w*.095,h*.77,zz+side*.027),[.023,h*.28,.04],wood,yaw);
+    for(let j=-3;j<=3;j++)smallBox(P(j*w*.126,h*.29,zz+side*.027),[.026,h*.52,.04],wood,yaw);
+    for(const edge of[-1,1])smallBox(P(edge*w*.46,h*.50,zz),[.055,h,.065],wood,yaw);
+    smallBox(P(0,h*.59,zz),[w,.065,.07],wood,yaw);
+    I(shopEave,P(0,h*.55,side*d*.45),[w,1,side===1?1:-1].map(Math.abs),tile,Q.y(yaw+(side===1?0:Math.PI)),2);
+   }
+   for(const side of[-1,1]){
+    smallBox(P(side*w*.505,h*.76,0),[.022,h*.24,d*.57],'#777264',yaw);
+    smallBox(P(side*w*.51,h*.48,0),[.05,.055,d],wood,yaw);
+   }
+   if(kind!==3){
+    const curtain=['#9b4e49','#506f62','#a47c39','#70657c','#244f59','#9c665a'][kind];
+    for(let j=-1;j<=1;j++)smallBox(P(j*w*.20,h*.45,d*.68),[w*.19,.23,.018],curtain,yaw,0);
+   }
+   if(hero){
+    smallBox(P(w*.39,h*.51,d*.76),[.11,.23,.11],'#d4a56b',yaw,0);
+    smallBox(P(w*.39,h*.64,d*.76),[.13,.035,.13],wood,yaw);
+    smallBox(P(-w*.36,h*.29,d*.61),[.13,.40,.055],'#b39165',yaw);
+    smallBox(P(-w*.36,h*.29,d*.645),[.045,.27,.008],'#514131',yaw);
+    smallBox(P(w*.31,.10,d*.70),[.25,.20,.19],'#8c6949',yaw,3);
+    ball(P(w*.31,.26,d*.70),[.16,.14,.15],'#53673d',tiny,4);
+   }
+   houses.push({sourceWay:b.id,sourceAnchor:sourceAt,frontageShift:shift,streetWay:near.segment.id,x,z,yaw,height:h,width:w,depth:d,variant:kind,illustrative:true});
+   if(houses.length>=360)break;
+  }
+  // Woodland reads as overlapping crowns, upright cedar silhouettes and a dark
+  // understory. Cover the actual eastern slope, not disconnected ellipse rings.
+  group='storybook-groves';
+  const trees=[],canopy=sph('storybook-sculpted-canopy',12,8,.24),fineCrown=sph('storybook-small-leaf-clusters',8,5,.28);
+  const greens=['#425c32','#526b35','#647a3d','#405e43','#748146','#546a38'],blossoms=['#d18f9c','#e4a8b5','#ebc0bc','#d89aab'];
+  for(let k=0;k<42000&&trees.length<1650;k++){
+   const x=range(-29,17),z=range(-12,62),ridge=x>-2.5,shoulder=x>-11&&z<15;
+   const precinctEdge=clearings.some(c=>x>c.x0-3&&x<c.x1+3&&z>c.z0-3&&z<c.z1+3);
+   if(!ridge&&!shoulder&&!precinctEdge&&k%13!==0)continue;
+   const r=range(.58,1.10),y=storyGround(x,z);
+   if(!islandInside(x,z,r*.8+.2)||waterKeepout(x,z,r*.65+.4)||inClearing(x,z,r*.52+.08)||gardenKeepout(x,z,r*.3)||laneDistance(x,z)<r*.48+.50||used.some(p=>Math.hypot(x-p[0],z-p[1])<r*.5+p[2]*.53)||trees.some(p=>Math.hypot(x-p.x,z-p.z)<(r+p.radius)*.48))continue;
+   const pink=(ridge?k%9===0:k%4===0),cedar=!pink&&k%5===0,h=cedar?range(2.4,3.8):range(1.65,2.75),c=(pink?blossoms:greens)[k%(pink?blossoms.length:greens.length)];
+   pole([x,y,z],[x,y+h*.82,z],.05,'#665138',true);
+   if(cedar){
+    for(let j=0;j<3;j++)I(pineMesh,[x,y+h*(.35+j*.21),z],[r*(1-j*.20),h*.60,r*(1-j*.20)],c,Q.y(k),4);
+   }else{
+    ball([x,y+h*.69,z],[r*.85,h*.31,r*.81],c,canopy,4);
+    for(let j=0;j<5;j++){
+     const a=j*2.4+k,rr=r*.55,cy=y+h*(.50+(j%3)*.12),cc=(pink?blossoms:greens)[(k+j)%(pink?blossoms.length:greens.length)];
+     ball([x+Math.cos(a)*rr,cy,z+Math.sin(a)*rr],[r*.58,h*.24,r*.55],cc,fineCrown,4);
+    }
+   }
+   if(k%3===0)ball([x+r*.65,y+.23,z],[r*.65,.32,r*.48],'#4d6035',fineCrown,4);
+   trees.push({x,z,radius:r,height:h,pink,cedar});
+  }
+  // Small figures on surveyed historic lanes communicate scale and animation
+  // without creating a new path or masquerading as live crowd information.
+  group='storybook-street-life';let people=0;
+  for(const s of segments.filter(s=>s.hero)){
+   const dx=s.b[0]-s.a[0],dz=s.b[1]-s.a[1],len=Math.hypot(dx,dz);
+   for(let t=.25;t<len;t+=.88){const side=people%2?1:-1,x=s.a[0]+dx*t/len-dz/len*.20*side,z=s.a[1]+dz*t/len+dx/len*.20*side;
+    if(!islandInside(x,z,1)||waterKeepout(x,z,.5)||inClearing(x,z,.15)||gardenKeepout(x,z,.1))continue;
+    const y=storyGround(x,z),h=.30+(people%3)*.035;
+    smallBox([x,y+h*.48,z],[.105,h*.64,.09],['#8c4644','#334e5b','#b5a180','#536044','#8a6d83'][people%5],0,0);
+    ball([x,y+h*.92,z],[.055,.061,.055],'#bd9473',tiny,0);
+    for(const q of[-1,1])smallBox([x+q*.028,y+.05,z],[.035,.10,.04],'#473f36',0,1);
+    people++;
+   }
+  }
