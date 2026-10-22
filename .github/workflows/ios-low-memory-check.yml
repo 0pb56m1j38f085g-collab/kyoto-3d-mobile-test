@@ -1,0 +1,35 @@
+name: Higashiyama iPhone low-memory check
+on:
+  push:
+    branches: [area-higashiyama-quality-v4]
+    paths:
+      - 'ios-low-memory-check.cjs'
+      - '.github/workflows/ios-low-memory-check.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ios:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: |
+          npm install --prefix "$RUNNER_TEMP/ios-check" --no-audit --no-fund playwright@1.55.0
+          "$RUNNER_TEMP/ios-check/node_modules/.bin/playwright" install --with-deps webkit
+      - name: Test iPhone low-memory startup
+        env:
+          NODE_PATH: ${{ runner.temp }}/ios-check/node_modules
+        run: node ios-low-memory-check.cjs
+      - if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: higashiyama-ios-low-memory-check
+          path: ios-low-memory-artifacts/
+          if-no-files-found: error
+          retention-days: 7
