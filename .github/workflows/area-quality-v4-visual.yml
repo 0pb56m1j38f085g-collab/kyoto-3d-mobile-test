@@ -24,6 +24,7 @@ jobs:
         with:
           node-version: '24'
       - name: Install fixed browser dependency
+        timeout-minutes: 5
         run: |
           npm install --prefix "$RUNNER_TEMP/area-v4-browser" --no-audit --no-fund playwright@1.55.0
           "$RUNNER_TEMP/area-v4-browser/node_modules/.bin/playwright" install --with-deps chromium

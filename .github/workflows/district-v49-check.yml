@@ -23,7 +23,9 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
-      - run: |
+      - name: Install fixed WebKit dependency
+        timeout-minutes: 5
+        run: |
           npm install --prefix "$RUNNER_TEMP/district-check" --no-audit --no-fund playwright@1.55.0
           "$RUNNER_TEMP/district-check/node_modules/.bin/playwright" install --with-deps webkit
       - name: Check iPhone, iPad, district views and lighting fallback
