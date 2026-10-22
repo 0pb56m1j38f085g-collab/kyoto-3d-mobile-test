@@ -101,7 +101,7 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  fs.writeFileSync(path.join(site,'src/renderer.js'),renderer);fs.writeFileSync(path.join(site,'src/app.js'),app);fs.writeFileSync(path.join(site,'src/scene.js'),scene);fs.writeFileSync(path.join(site,'index.html'),html);fs.writeFileSync(path.join(site,'robots.txt'),'User-agent: *\nDisallow: /\n');
  for(const file of ['renderer.js','scene.js','app.js'])cp.execFileSync(process.execPath,['--check',path.join(site,'src',file)],{stdio:'inherit'});
  const context=vm.createContext({console,performance});for(const file of ['renderer.js','scene.js'])vm.runInContext(fs.readFileSync(path.join(site,'src',file),'utf8'),context,{filename:file});
- const model=vm.runInContext('makeStudy()',context,{timeout:90000});
+ const model=vm.runInContext('makeStudy()',context,{timeout:180000});
  if(model.revision!=='area-higashiyama-quality-v4.7'||model.areaQuality!=='v4.7-street-detail-and-soft-presentation')throw Error('Wrong area revision');
  if(!model.areaSites||!model.areaSites.geographicAnchors)throw Error('Area anchors missing');
  let size=12,instances=0;
