@@ -1,0 +1,58 @@
+  // Continuous, mitered stone ribbons. Stone faces are batched by colour, not
+  // thousands of individual objects; treads and risers are actual geometry.
+  const stoneTones=['#aaa398','#b3aba0','#b9b2a5','#a59f96','#c0b7a8'];
+  const stoneFaces=stoneTones.map((c,j)=>mesh('storybook-paving-stone-'+j));
+  const stoneBed=mesh('storybook-paving-mortar'),stoneEdge=mesh('storybook-paving-edge'),stoneRisers=mesh('storybook-stair-faces');
+  const streetConstruction=[];
+  const samePoint=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1])<.00001;
+  const upQuad=(m,a,b,c,d)=>{let n=V.unit(V.cross(V.sub(b,a),V.sub(c,a)));if(n[1]<0)n=V.mul(n,-1);m.quad(a,b,c,d,n);};
+  function endMiter(profile,j,dx,dz){
+   const p=profile.points[j],n=[-dz,dx],directions=[];
+   // At a way boundary use its actual touching neighbour, including the stair
+   // way. This closes the old triangular gaps without moving street anchors.
+   for(const r of streetProfiles)for(let k=0;k<r.points.length;k++){
+    if(r.name!==profile.name||!samePoint(p,r.points[k]))continue;
+    for(const kk of[k-1,k+1])if(kk>=0&&kk<r.points.length){
+     const q=r.points[kk],vx=q[0]-p[0],vz=q[1]-p[1],len=Math.hypot(vx,vz),dot=(vx*dx+vz*dz)/len;
+     if(Math.abs(dot)>.2)directions.push([vx/len*Math.sign(dot),vz/len*Math.sign(dot)]);
+    }
+   }
+   if(!directions.length)return n;const nx=directions.reduce((v,d)=>v-d[1],0),nz=directions.reduce((v,d)=>v+d[0],0),len=Math.hypot(nx,nz);if(len<.2)return n;
+   const mx=nx/len,mz=nz/len,scale=1/Math.max(.6,mx*n[0]+mz*n[1]);return[mx*scale,mz*scale];
+  }
+  for(const r of streetProfiles){
+   const record={sourceWay:r.id,name:r.name,width:r.width,steps:r.steps,stoneFaces:0,treads:[],joins:[],samples:[]};
+   for(let j=1;j<r.points.length;j++){
+    const a=r.points[j-1],b=r.points[j],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz),ya=r.heights[j-1]+.025,yb=r.heights[j]+.025;
+    const na=endMiter(r,j-1,dx/len,dz/len),nb=endMiter(r,j,dx/len,dz/len),rows=Math.max(1,Math.ceil(len/(r.steps?.115:.24))),rise=(yb-ya)/rows;
+    const P=(t,s,y)=>[a[0]+dx*t+(na[0]*(1-t)+nb[0]*t)*s,y,a[1]+dz*t+(na[1]*(1-t)+nb[1]*t)*s];
+    record.joins.push({a:[...a,ya],b:[...b,yb],leftA:P(0,-r.width/2,ya),rightA:P(0,r.width/2,ya),leftB:P(1,-r.width/2,yb),rightB:P(1,r.width/2,yb)});
+    for(let k=0;k<rows;k++){
+     const t0=k/rows,t1=(k+1)/rows,mid=P((t0+t1)/2,0,0);
+     if(!islandInside(mid[0],mid[2],.45)||waterKeepout(mid[0],mid[2],.5)||inClearing(mid[0],mid[2],.12)||gardenKeepout(mid[0],mid[2],.2))continue;
+     const low=ya+(yb-ya)*t0,high=ya+(yb-ya)*t1,level=Math.max(low,high),Y=t=>r.steps?level:ya+(yb-ya)*t;
+     upQuad(stoneBed,P(t0,-r.width/2,Y(t0)),P(t0,r.width/2,Y(t0)),P(t1,r.width/2,Y(t1)),P(t1,-r.width/2,Y(t1)));
+     const ncols=r.name==='清水坂'?4:3,cell=r.width/ncols,shift=k%2?.5:0,gap=.012;
+     for(let col=-1;col<ncols;col++){
+      const s0=Math.max(-r.width/2,-r.width/2+(col+shift)*cell)+gap/2,s1=Math.min(r.width/2,-r.width/2+(col+1+shift)*cell)-gap/2;if(s1-s0<.02)continue;
+      const u0=t0+gap/(2*len),u1=t1-gap/(2*len),stone=stoneFaces[(r.id+j*7+k*3+col+11)%stoneFaces.length];
+      upQuad(stone,P(u0,s0,Y(u0)+.007),P(u0,s1,Y(u0)+.007),P(u1,s1,Y(u1)+.007),P(u1,s0,Y(u1)+.007));record.stoneFaces++;
+     }
+     for(const side of[-1,1]){
+      const inner=side*r.width/2,outer=side*(r.width/2+.075);
+      upQuad(stoneEdge,P(t0,inner,Y(t0)+.008),P(t0,outer,Y(t0)+.008),P(t1,outer,Y(t1)+.008),P(t1,inner,Y(t1)+.008));
+      // Close the side down to the graded terrain, including each stair wedge.
+      const aa=P(t0,outer,Y(t0)+.008),bb=P(t1,outer,Y(t1)+.008),cc=[bb[0],storyGround(bb[0],bb[2])-.04,bb[2]],dd=[aa[0],storyGround(aa[0],aa[2])-.04,aa[2]];
+      stoneEdge.quad(aa,bb,cc,dd);
+     }
+     if(r.steps){
+      const t=rise>=0?t0:t1,bottom=Math.min(low,high),aa=P(t,-r.width/2,bottom),bb=P(t,r.width/2,bottom),cc=P(t,r.width/2,level+.007),dd=P(t,-r.width/2,level+.007);
+      stoneRisers.quad(aa,bb,cc,dd,[dx/len*(rise>=0?-1:1),0,dz/len*(rise>=0?-1:1)]);
+      record.treads.push({a:P(t0,-r.width/2,level),b:P(t0,r.width/2,level),c:P(t1,r.width/2,level),d:P(t1,-r.width/2,level),rise:Math.abs(rise)});
+     }
+     record.samples.push({at:P((t0+t1)/2,0,Y((t0+t1)/2)),ground:storyGround(mid[0],mid[2])});
+    }
+   }streetConstruction.push(record);
+  }
+  I(stoneBed,[0,0,0],[1,1,1],'#79746a',undefined,3);I(stoneEdge,[0,0,0],[1,1,1],'#a29c8e',undefined,3);I(stoneRisers,[0,0,0],[1,1,1],'#989084',undefined,3);
+  stoneFaces.forEach((m,j)=>I(m,[0,0,0],[1,1,1],stoneTones[j],undefined,3));

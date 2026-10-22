@@ -42,6 +42,7 @@ jobs:
           node area-quality-v4/tests/architecture-audit.cjs
           node area-quality-v4/tests/streetscape.cjs
           node area-quality-v4/tests/storybook.cjs
+          node area-quality-v4/tests/stone-streets.cjs
       - name: Verify every packed light index and geographic ordering
         run: |
           node area-quality-v4/tests/concept-pack.cjs

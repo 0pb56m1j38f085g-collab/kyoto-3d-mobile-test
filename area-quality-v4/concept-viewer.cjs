@@ -1,5 +1,5 @@
 'use strict';
-// v4.23: one visual quality path on every device, with bounded model transport.
+// v4.24: one visual quality path on every device, with bounded model transport.
 module.exports=({renderer,app,html})=>{
  const exact=(s,a,b)=>{if(!s.includes(a))throw Error('Concept viewer input missing: '+a.slice(0,110));return s.replace(a,b);};
  const cameras={
@@ -8,7 +8,7 @@ module.exports=({renderer,app,html})=>{
   hokanji:{target:[-15,5,-11],span:10,yaw:-.7,pitch:.48},
   kodaiji:{target:[-10,4,-18],span:16,yaw:-.65,pitch:.55},
   yasaka:{target:[-17,4,-26],span:13,yaw:-.65,pitch:.52},
-  street:{target:[-11.4,3.5,-10.1],span:7,yaw:-1.15,pitch:.45},
+  street:{target:[-11.4,3.5,-10.1],span:6.6,yaw:-.20,pitch:.52},
   sannenzaka:{target:[-11,4,-5.6],span:7,yaw:-1.15,pitch:.45},
   corner:{target:[0,8,0],span:17,yaw:-.55,pitch:.35},
   reverse:{target:[0,8,0],span:24,yaw:2.7,pitch:.6}
@@ -33,7 +33,7 @@ module.exports=({renderer,app,html})=>{
  renderer=exact(renderer,'  g.disableVertexAttribArray(8);g.vertexAttrib1f(8,0);','');
  renderer=exact(renderer,'name:m.name,lightOffset:0,lightStride:0,vertices:m.vertices','name:m.name,lightOffset:m.lightOffset,lightStride:m.lightStride,vertices:m.vertices');
  // Packed models carry the same baker indices and lighting on iPhone and desktop.
- html=exact(html,"if(!isLowMemoryIOS())await script('src/scene.js?v=area-higashiyama-quality-v4.23');",'');
+ html=exact(html,"if(!isLowMemoryIOS())await script('src/scene.js?v=area-higashiyama-quality-v4.24');",'');
  html=html.replace('<option value="light">軽量</option>','');
  html=html.replaceAll('iPhoneでは軽量表示を使用します。','iPhoneも他の端末と同じ照明・素材で表示します。');
  html=html.replaceAll('京さんぽ · 東山と祇園','京さんぽ · 東山・祇園・山科');

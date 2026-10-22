@@ -52,14 +52,16 @@
    z/=northStretch;const east=smooth((x+2)/9);
    return east*(11.8*Math.exp(-((x-11)**2/50+(z-2)**2/80))+9.7*Math.exp(-((x-10)**2/45+(z-16)**2/90))+8.3*Math.exp(-((x-8)**2/48+(z-29)**2/60)));
   };
-  function storyGround(x,z){
+  function naturalStoryGround(x,z){
    const dx=x-K.at[0],dz=z-K.at[1],fade=1-smooth((Math.hypot(dx/1.2,dz)-8.0)/3.5);
    const terrace=.65*(1-smooth((Math.abs(x+4.5)-7.4)/1.8))*(1-smooth((Math.abs(z/northStretch-17.2)-3.3)/1.4));
    const foothill=1.6*smooth((x+18)/12)*(1-smooth((z/northStretch-3)/18));
    const hill=(mountainRelief(x,z)+foothill)*(1-fade);
    const channel=Math.max(...waterways.map(r=>(1-smooth((riverDistance(x,z,r)-r.width*.50-.15)/.7))*.72));
-   return base+((srcGround(K.source[0]+dx/K.scale,K.source[1]+dz/K.scale)-base)*K.scale+K.lift)*fade+hill+terrace-channel;
+   const ninenRise=.44*smooth((17.8245-z)/.7854)*smooth((z-8.3)/4)*(1-smooth((Math.abs(x+10.6)-1.2)/1.8));
+   return base+((srcGround(K.source[0]+dx/K.scale,K.source[1]+dz/K.scale)-base)*K.scale+K.lift)*fade+hill+terrace-channel+ninenRise;
   }
+  __STREET_GRADING__
   // Rounded, finite diorama edge instead of an empty infinite green plane.
   const islandInside=(x,z,pad=0)=>{
    const cx=(bounds.x0+bounds.x1)/2,cz=(bounds.z0+bounds.z1)/2;
@@ -136,33 +138,30 @@
   // Keep the main town lanes, not every short service/entrance footway: those
   // create illegible fragments once building footprints are intentionally edited.
   const roadIds=new Set(footprintData.roads.map(r=>r.id));
-  const townRoads=[...footprintData.roads,...westReference.roads.filter(r=>!roadIds.has(r.id))].filter(r=>!historicIds.has(r.id)&&['residential','unclassified','living_street','pedestrian'].includes(r.highway));
+  // This illustration does not depict every back lane. At the compressed
+  // scale these three unnamed rear-access ways would occupy the same width as
+  // the Ninenzaka shop parcels. Keep them in the geographic source, and record
+  // the display omission explicitly; never turn them into navigation claims.
+  const omittedDisplayRoads=[550360175,550360176,550360177];
+  const townRoads=[...footprintData.roads,...westReference.roads.filter(r=>!roadIds.has(r.id))].filter(r=>!historicIds.has(r.id)&&!omittedDisplayRoads.includes(r.id)&&['residential','unclassified','living_street','pedestrian'].includes(r.highway));
   const inTown=p=>p[0]<-6.4&&p[1]>-12&&p[1]<59&&islandInside(...p,.6);
   const lanes=[...historicalStreets.map(r=>({...r,hero:true})),...townRoads].map(r=>({id:r.id,name:r.name,highway:r.highway,hero:!!r.hero,points:r.points.map(display)})).filter(r=>r.hero||r.points.some(inTown));
-  const streetSurface=mesh('storybook-cream-lanes'),streetBorder=mesh('storybook-lane-borders'),pavingJoints=mesh('storybook-stone-paving-joints'),stairRisers=mesh('storybook-historic-stair-risers');
+  const streetSurface=mesh('storybook-cream-lanes'),streetBorder=mesh('storybook-lane-borders');
   const segments=[];
   for(const road of lanes)for(let j=1;j<road.points.length;j++){
    const a=road.points[j-1],b=road.points[j],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz);if(len<.01)continue;
    if(!road.hero&&![a,b].some(inTown))continue;
-   segments.push({a,b,id:road.id,hero:road.hero,name:road.name});const steps=Math.ceil(len/(road.highway==='steps'?.10:.28)),nx=-dz/len,nz=dx/len;
+   segments.push({a,b,id:road.id,hero:road.hero,name:road.name,width:road.hero?streetWidth(road.name):.52});if(road.hero)continue;const steps=Math.ceil(len/.28),nx=-dz/len,nz=dx/len;
    for(let k=0;k<steps;k++){
     const t=(k+.5)/steps,x=a[0]+dx*t,z=a[1]+dz*t;if(!islandInside(x,z,.45)||waterKeepout(x,z,.5)||inClearing(x,z,.12)||gardenKeepout(x,z,.2)||(!road.hero&&!inTown([x,z])))continue;
-    for(const [m,width,lift]of[[streetBorder,road.hero?1.32:.64,.020],[streetSurface,road.hero?1.16:.52,.025]]){
+    for(const [m,width,lift]of[[streetBorder,.64,.020],[streetSurface,.52,.025]]){
      const P=(t,s)=>{const x=a[0]+dx*t+nx*s*width/2,z=a[1]+dz*t+nz*s*width/2;return[x,storyGround(x,z)+lift,z];};
      m.quad(P(k/steps,-1),P(k/steps,1),P((k+1)/steps,1),P((k+1)/steps,-1));
     }
-    if(road.hero){
-     const P=(t,s,up=.032)=>{const xx=a[0]+dx*t+nx*s,zz=a[1]+dz*t+nz*s;return[xx,storyGround(xx,zz)+up,zz];};
-     const joint=Math.min(.018/len,.08/steps),t0=k/steps;
-     pavingJoints.quad(P(t0,-.55),P(t0,.55),P(t0+joint,.55),P(t0+joint,-.55),[0,1,0]);
-     const shift=k%2?.12:-.12;
-     pavingJoints.quad(P(t0,shift-.006),P(t0,shift+.006),P((k+1)/steps,shift+.006),P((k+1)/steps,shift-.006),[0,1,0]);
-     if(road.highway==='steps')stairRisers.quad(P(t0,-.38,.032),P(t0,.38,.032),P(t0,.38,.10),P(t0,-.38,.10));
-    }
    }
   }
-  I(streetBorder,[0,0,0],[1,1,1],'#b6ac91',undefined,3);I(streetSurface,[0,0,0],[1,1,1],'#d9cdb2',undefined,3);
-  I(pavingJoints,[0,0,0],[1,1,1],'#a99d8c',undefined,3);I(stairRisers,[0,0,0],[1,1,1],'#c2b7a6',undefined,3);
+  I(streetBorder,[0,0,0],[1,1,1],'#aaa393',undefined,3);I(streetSurface,[0,0,0],[1,1,1],'#bcb6a8',undefined,3);
+  __HISTORIC_LANES__
   const laneDistance=(x,z)=>Math.min(...segments.map(s=>dseg(x,z,s.a,s.b)));
   // Lightweight shared solids let the street become richer without restoring
   // the old millions of small bevelled joinery triangles.
@@ -181,13 +180,14 @@
   group='storybook-courtyards';
   for(const c of clearings){if(c.group==='main-hall'||c.group.includes('kodaiji'))continue;smallBox([(c.x0+c.x1)/2,base+.012,(c.z0+c.z1)/2],[c.x1-c.x0+.55,.035,c.z1-c.z0+.65],'#d8c8a9',0,3);}
   __STREETSCAPE_ART__
-  scene.areaQuality='v4.23-uphill-arrival';
+  scene.areaQuality='v4.24-stone-streets';
   scene.areaBuildings=houses;scene.areaStreets=lanes;
   scene.footprintBuildings=[];
   scene.stats={...scene.stats,trees:trees.length,illustrativeHouses:houses.length,mainHallInstances:2158};
   scene.cartography={mode:'illustrated-miniature',metric:false,displayScale,displayScaleEast,landmarks:layouts,clearings,trees:trees.length,houses:houses.length,routeGeometry:false,notice:'名所・街路・川の位置は同じ地理座標変換。建物の大きさ・山の高さ・川幅は誇張。経路・所要時間はこの表示形状から算出しません。',geographicSource:{roads:'area-data/historic-streets.json',buildings:'area-data/gion-footprints.json',west:'area-data/west-gion-reference.json',metresPerUnit:20,anchors:referenceAnchors},routeStatus:'Not implemented: no verified route or walking-time claim.'};
   scene.cartography.waterways={channels:waterways,crossings,omittedCulverts:westReference.water.filter(r=>r.tunnel).map(r=>r.id),policy:'OSM centre lines projected with the same transform as landmark anchors. Open water excludes culverts. Width and bank profiles illustrative, not surveyed shorelines or routes.',source:westReference.url,inputSha256:westReference.inputSha256,sources:['https://www.city.kyoto.lg.jp/kensetu/page/0000070773.html','https://shugakuryoko.kyoto.travel/article/wp-content/uploads/2018/08/kiyomizudera2.pdf']};
   scene.cartography.relief={surveyed:false,plainHeight:base,eastRidgeHeight:storyGround(11,8),templeLift:K.lift,houseHeightRange:[.88,1.61]};
+  scene.cartography.streetCraft={version:1,reference:'https://plus.kyoto.travel/entry/higashiyamaeki',positionPolicy:'Unchanged OSM centre lines for depicted streets; illustrative widths, paving, grades and shopfronts. Not a survey of individual stones or shops.',omittedMinorWays:omittedDisplayRoads,omissionReason:'Three unnamed rear-access ways are retained in source data but omitted at the compressed illustration scale. This is not a complete navigable street map.',construction:streetConstruction};
   scene.areaSites.placementAccuracy='Illustrated display, deliberately not to scale. Original geographic source retained separately; no route-time calculation from display coordinates.';
   scene.areaSites.contextPolicy={authoredMiniature:true,vegetation:'Decorative, including pink blossom accents; not live seasonal conditions.',houses:'Source-side parcels with six illustrative machiya types; historic street frontages shift at most 0.65 display units. Not individual shop identification.'};
   scene.areaSites.scaleStatus='Display has no uniform geographic scale.';
@@ -206,6 +206,7 @@
   for(const l of Object.values(layouts))l.at[1]=-l.at[1];
   for(const c of clearings){const z=c.z0;c.z0=-c.z1;c.z1=-z;}
   for(const h of houses){h.z=-h.z;h.yaw=-h.yaw;}
+  for(const r of streetConstruction){for(const t of r.treads)for(const k of['a','b','c','d'])t[k][2]=-t[k][2];for(const s of r.samples)s.at[2]=-s.at[2];for(const j of r.joins){j.a[1]=-j.a[1];j.b[1]=-j.b[1];for(const k of['leftA','rightA','leftB','rightB'])j[k][2]=-j[k][2];}}
   for(const r of[...lanes,...waterways,...crossings])for(const p of r.points)p[1]=-p[1];
   scene.cartography.coordinateFrame={source:'east +X / north +Z',render:'east +X / up +Y / south +Z',north:[0,0,-1],east:[1,0,0],reflectionApplied:true,initialView:'from west-southwest town looking east-northeast uphill; north to upper-left, stage projects toward screen-right'};
   const viewBounds={},pins={};

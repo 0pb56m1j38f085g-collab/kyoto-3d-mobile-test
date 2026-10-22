@@ -19,38 +19,68 @@
    roofQuad(shopEave,P(x,t),P(xx,t),P(xx,tt),P(x,tt));
   }
   const nearestLane=(x,z,heroOnly=false)=>{let best=null;for(const s of segments){if(heroOnly&&!s.hero)continue;const dx=s.b[0]-s.a[0],dz=s.b[1]-s.a[1],t=clamp(((x-s.a[0])*dx+(z-s.a[1])*dz)/(dx*dx+dz*dz),0,1),p=[s.a[0]+dx*t,s.a[1]+dz*t],d=Math.hypot(x-p[0],z-p[1]);if(!best||d<best.d)best={p,d,segment:s};}return best;};
-  const houses=[],used=[];
+  const houses=[],used=[],houseBoxes=[],shopThresholds=mesh('storybook-shop-thresholds'),houseFootings=mesh('storybook-fitted-stone-foundations');
   const historicDistance=b=>nearestLane(...display(b.center),true).d;
-  const originalHouses=footprintData.buildings.map(b=>({b,d:historicDistance(b)})).sort((a,b)=>a.d-b.d).map(v=>v.b);
+  const originalHouses=footprintData.buildings.map(b=>{const near=nearestLane(...display(b.center),true);return{b,d:near.d,priority:near.segment.name==='二寧坂'&&near.d<2?0:1};}).sort((a,b)=>a.priority-b.priority||a.d-b.d).map(v=>v.b);
   const houseCandidates=[...originalHouses,...westReference.buildings];
   const seenSources=new Set();
   // Reserve the whole street corridor, including at bends and intersections.
   // Testing only the centre's distance allowed oversized roofs to cover lanes.
   const crossesStreet=(x,z,yaw,w,d)=>segments.some(s=>{
    if(Math.min(s.a[0],s.b[0])>x+3||Math.max(s.a[0],s.b[0])<x-3||Math.min(s.a[1],s.b[1])>z+3||Math.max(s.a[1],s.b[1])<z-3)return false;
-   const co=Math.cos(yaw),si=Math.sin(yaw),P=p=>[(p[0]-x)*co-(p[1]-z)*si,(p[0]-x)*si+(p[1]-z)*co],a=P(s.a),b=P(s.b),half=s.hero?.65:.34,hx=w*.62+half,hz=d*.63+half;
+   const co=Math.cos(yaw),si=Math.sin(yaw),P=p=>[(p[0]-x)*co-(p[1]-z)*si,(p[0]-x)*si+(p[1]-z)*co],a=P(s.a),b=P(s.b),half=s.width/2+.03,hx=w*.62+half,hz=d*.63+half;
    let lo=0,hi=1;for(const axis of[0,1]){const delta=b[axis]-a[axis],h=axis?hz:hx;if(Math.abs(delta)<1e-8){if(Math.abs(a[axis])>h)return false;continue;}const aa=(-h-a[axis])/delta,bb=(h-a[axis])/delta;lo=Math.max(lo,Math.min(aa,bb));hi=Math.min(hi,Math.max(aa,bb));if(lo>hi)return false;}return true;
   });
   for(const b of houseCandidates){
    if(seenSources.has(b.id)||footprintData.customLandmarkIds.includes(b.id)||b.name||b.footprintArea>2.2)continue;seenSources.add(b.id);
-   const sourceAt=display(b.center),near=nearestLane(...sourceAt);if(!near||near.d>4.2||near.d<.18)continue;
-   const hero=near.segment.hero&&near.d<2.7,kind=b.id%6;
-   const w=hero?1.12+(b.id%4)*.15:1.04+(b.id%4)*.13,d=hero?1.06+(b.id%3)*.12:.96+(b.id%3)*.11;
+   const sourceAt=display(b.center),historic=nearestLane(...sourceAt,true),near=historic?.d<1.65?historic:nearestLane(...sourceAt);if(!near||near.d>4.2||near.d<.18)continue;
+   const hero=near.segment.hero&&near.d<2.7,ninen=hero&&near.segment.name==='二寧坂',kind=b.id%6;
+   const w=ninen?.68+(b.id%4)*.07:hero?1.02+(b.id%4)*.13:.94+(b.id%4)*.11;
+   let d=ninen?.68+(b.id%3)*.08:hero?.92+(b.id%3)*.11:.82+(b.id%3)*.09,shift,x,z,yaw;
    // A facade may move a small distance within its source-side parcel to form a
    // readable continuous street edge. Keep the source anchor and shift explicit.
-   const setback=(hero?.72:.42)+d*.64,shift=hero?clamp(setback-near.d,-.65,.65):0;
-   const x=sourceAt[0]+(sourceAt[0]-near.p[0])/near.d*shift,z=sourceAt[1]+(sourceAt[1]-near.p[1])/near.d*shift;
+   // Fit depth to the source-side parcel near actual displayed intersections.
+   // A narrow side street remains clear without rotating a shop away from its
+   // Ninenzaka frontage or moving its geographic anchor to another block.
+   for(let attempt=0;attempt<6;attempt++){
+    const setback=(hero?near.segment.width/2+.08:.42)+d*.68;shift=hero?clamp(setback-near.d,-.65,.65):0;
+    x=sourceAt[0]+(sourceAt[0]-near.p[0])/near.d*shift;z=sourceAt[1]+(sourceAt[1]-near.p[1])/near.d*shift;yaw=Math.atan2(near.p[0]-x,near.p[1]-z);
+    if(!crossesStreet(x,z,yaw,w,d)||!ninen||d<.28)break;d*=.78;
+   }
    if(!islandInside(x,z,1.35)||waterKeepout(x,z,1.12)||inClearing(x,z,.85)||gardenKeepout(x,z,.2))continue;
-   if(used.some(p=>Math.hypot(p[0]-x,p[1]-z)<(p[2]+w)*.43))continue;
-   const h=kind===4?.88:(hero?1.25:1.08)+(kind%3)*.18,y=storyGround(x,z),yaw=Math.atan2(near.p[0]-x,near.p[1]-z);
+   const h=kind===4?.88:(ninen?1.12:hero?1.25:1.08)+(kind%3)*.18;
    if(crossesStreet(x,z,yaw,w,d))continue;
-   used.push([x,z,w]);
+   // Oriented roof boxes permit close parallel frontages while preventing roofs
+   // from colliding at bends. A centre-distance circle left arbitrary lawn gaps.
+   const axes=[[Math.cos(yaw),-Math.sin(yaw)],[Math.sin(yaw),Math.cos(yaw)]],box={x,z,axes,half:[w*.62+.02,d*.63+.02]};
+   if(houseBoxes.some(b=>[...axes,...b.axes].every(a=>{
+    const radius=o=>o.half.reduce((v,h,j)=>v+h*Math.abs(o.axes[j][0]*a[0]+o.axes[j][1]*a[1]),0);
+    return Math.abs((b.x-x)*a[0]+(b.z-z)*a[1])<radius(b)+radius(box);
+   })))continue;
+   const co=Math.cos(yaw),si=Math.sin(yaw),footXZ=(xx,zz)=>[x+co*xx+si*zz,z-si*xx+co*zz];
+   const groundSamples=[[-w/2,-d/2],[w/2,-d/2],[-w/2,d/2],[w/2,d/2]].map(p=>storyGround(...footXZ(...p)));
+   // Leave steep parcels for a later retaining-wall design instead of placing
+   // a generic shop on a tall pedestal or burying its ground-floor windows.
+   if(Math.max(...groundSamples)-Math.min(...groundSamples)>.72)continue;
+   const frontGround=storyGround(...footXZ(0,d*.58)),y=hero?Math.max(frontGround+.055,Math.max(...groundSamples)-.10):storyGround(x,z);
+   used.push([x,z,w]);houseBoxes.push(box);
    const plaster=['#d9bd8e','#e1c9a6','#bb9879','#d3bca0','#d4ccb1','#cbb89e'][kind],tile=['#454a50','#55585b','#626069','#4d5357','#464e56','#58595e'][kind],wood=['#68472e','#835b38','#765033'][kind%3];
-   const co=Math.cos(yaw),si=Math.sin(yaw),P=(xx,yy,zz)=>[x+co*xx+si*zz,y+yy,z-si*xx+co*zz];
+   const P=(xx,yy,zz)=>[x+co*xx+si*zz,y+yy,z-si*xx+co*zz];
    // A continuous plinth closes gaps between level facades and sloped terrain.
    const corners=[[-w/2,-d/2],[w/2,-d/2],[-w/2,d/2],[w/2,d/2]].map(p=>P(p[0],0,p[1]));
    const foot=Math.min(...corners.map(p=>storyGround(p[0],p[2]))),plinth=Math.max(.13,y-foot+.13);
-   smallBox([x,y-plinth/2+.06,z],[w*1.04,plinth,d*1.05],'#a69e86',yaw,3);
+   const rim=[[-w*.52,-d*.525],[w*.52,-d*.525],[w*.52,d*.525],[-w*.52,d*.525]];
+   for(let j=0;j<4;j++){const a=P(rim[j][0],.025,rim[j][1]),b=P(rim[(j+1)%4][0],.025,rim[(j+1)%4][1]);houseFootings.quad(a,b,[b[0],Math.min(b[1]-.025,storyGround(b[0],b[2])-.035),b[2]],[a[0],Math.min(a[1]-.025,storyGround(a[0],a[2])-.035),a[2]]);}
+   if(hero){
+    const edge=(near.segment.width/2+.015),distance=Math.hypot(x-near.p[0],z-near.p[1]),apron=Math.max(d*.54,distance-edge),rowCount=Math.max(1,Math.ceil((apron-d*.5)/.16));
+    for(let j=0;j<rowCount;j++){
+     const z0=d*.5+(apron-d*.5)*j/rowCount,z1=d*.5+(apron-d*.5)*(j+1)/rowCount;
+     const A=P(-w*.49,0,z0),B=P(w*.49,0,z0),C=P(w*.49,0,z1),D=P(-w*.49,0,z1);
+     for(const p of[A,B,C,D])p[1]=storyGround(p[0],p[2])+.034;
+     upQuad(shopThresholds,A,B,C,D);
+    }
+    smallBox(P(0,.025,d*.52),[w*.96,.05,.12],'#989080',yaw,3);
+   }
    smallBox(P(0,h/2,0),[w,h,d],plaster,yaw,0);
    I(gableMini,P(0,h,0),[w,Math.min(w,d),d],plaster,Q.y(yaw),0);
    I(roofMini,P(0,h,0),[w,Math.min(w,d),d],tile,Q.y(yaw),2);
@@ -59,13 +89,17 @@
    for(const side of[-1,1]){
     // Front and rear remain articulated when the map is rotated.
     const zz=side*d*.51;
-    smallBox(P(0,h*.29,zz),[w*.88,h*.50,.035],'#332d25',yaw);
+    smallBox(P(0,h*.29,zz),[w*.88,h*.50,.035],hero?['#96744b','#a78450','#806249'][kind%3]:'#332d25',yaw);
     smallBox(P(0,h*.77,zz),[w*.81,h*.25,.036],kind===2?'#b69b6a':'#a1865d',yaw);
     for(let j=-4;j<=4;j++)smallBox(P(j*w*.095,h*.77,zz+side*.027),[.023,h*.28,.04],wood,yaw);
     for(let j=-3;j<=3;j++)smallBox(P(j*w*.126,h*.29,zz+side*.027),[.026,h*.52,.04],wood,yaw);
     for(const edge of[-1,1])smallBox(P(edge*w*.46,h*.50,zz),[.055,h,.065],wood,yaw);
     smallBox(P(0,h*.59,zz),[w,.065,.07],wood,yaw);
-    I(shopEave,P(0,h*.55,side*d*.45),[w,1,side===1?1:-1].map(Math.abs),tile,Q.y(yaw+(side===1?0:Math.PI)),2);
+    if(hero){
+     for(const y0 of[.15,.35,.83])smallBox(P(0,h*y0,zz+side*.025),[w*.86,.025,.03],wood,yaw);
+     smallBox(P(w*.20,h*.29,zz+side*.027),[w*.18,h*.48,.035],'#42372a',yaw);
+    }
+    I(shopEave,P(0,h*.55,side*d*.45),[w,.85,d*.50],tile,Q.y(yaw+(side===1?0:Math.PI)),2);
    }
    for(const side of[-1,1]){
     smallBox(P(side*w*.505,h*.76,0),[.022,h*.24,d*.57],'#777264',yaw);
@@ -76,16 +110,21 @@
     for(let j=-1;j<=1;j++)smallBox(P(j*w*.20,h*.45,d*.68),[w*.19,.23,.018],curtain,yaw,0);
    }
    if(hero){
-    smallBox(P(w*.39,h*.51,d*.76),[.11,.23,.11],'#d4a56b',yaw,0);
+    ball(P(w*.34,h*.51,d*.73),[.075,.12,.075],'#dfbb83',tiny,0);
     smallBox(P(w*.39,h*.64,d*.76),[.13,.035,.13],wood,yaw);
     smallBox(P(-w*.36,h*.29,d*.61),[.13,.40,.055],'#b39165',yaw);
     smallBox(P(-w*.36,h*.29,d*.645),[.045,.27,.008],'#514131',yaw);
     smallBox(P(w*.31,.10,d*.70),[.25,.20,.19],'#8c6949',yaw,3);
     ball(P(w*.31,.26,d*.70),[.16,.14,.15],'#53673d',tiny,4);
+    if(ninen&&kind%2===0){
+     smallBox(P(-w*.22,.17,d*.68),[w*.43,.055,.18],'#785339',yaw);
+     for(const s of[-1,1])smallBox(P(-w*.22+s*w*.15,.08,d*.68),[.04,.16,.13],wood,yaw);
+    }
    }
-   houses.push({sourceWay:b.id,sourceAnchor:sourceAt,frontageShift:shift,streetWay:near.segment.id,x,z,yaw,height:h,width:w,depth:d,variant:kind,illustrative:true});
+   houses.push({sourceWay:b.id,sourceAnchor:sourceAt,frontageShift:shift,streetWay:near.segment.id,streetName:near.segment.name,x,z,yaw,height:h,width:w,depth:d,variant:kind,baseY:y,foundationHeight:plinth,entranceRise:y-frontGround,illustrative:true});
    if(houses.length>=360)break;
   }
+  I(shopThresholds,[0,0,0],[1,1,1],'#a59b8b',undefined,3);I(houseFootings,[0,0,0],[1,1,1],'#948b7b',undefined,3);
   // Woodland reads as overlapping crowns, upright cedar silhouettes and a dark
   // understory. Cover the actual eastern slope, not disconnected ellipse rings.
   group='storybook-groves';
@@ -118,7 +157,7 @@
    const dx=s.b[0]-s.a[0],dz=s.b[1]-s.a[1],len=Math.hypot(dx,dz);
    for(let t=.25;t<len;t+=.88){const side=people%2?1:-1,x=s.a[0]+dx*t/len-dz/len*.20*side,z=s.a[1]+dz*t/len+dx/len*.20*side;
     if(!islandInside(x,z,1)||waterKeepout(x,z,.5)||inClearing(x,z,.15)||gardenKeepout(x,z,.1))continue;
-    const y=storyGround(x,z),h=.30+(people%3)*.035;
+    const g=nearestStreetGrade(x,z),y=(g&&g.d<s.width/2?g.y+.04:storyGround(x,z)),h=.30+(people%3)*.035;
     smallBox([x,y+h*.48,z],[.105,h*.64,.09],['#8c4644','#334e5b','#b5a180','#536044','#8a6d83'][people%5],0,0);
     ball([x,y+h*.92,z],[.055,.061,.055],'#bd9473',tiny,0);
     for(const q of[-1,1])smallBox([x+q*.028,y+.05,z],[.035,.10,.04],'#473f36',0,1);

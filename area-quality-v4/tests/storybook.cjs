@@ -36,7 +36,8 @@ for(const b of model.areaBuildings)for(const r of model.areaStreets.filter(r=>r.
  for(let k=0,n=Math.ceil(len/.08);k<=n;k++){
   const dx=a[0]+(p[0]-a[0])*k/n-b.x,dz=a[1]+(p[1]-a[1])*k/n-b.z;
   const x=dx*Math.cos(b.yaw)-dz*Math.sin(b.yaw),z=dx*Math.sin(b.yaw)+dz*Math.cos(b.yaw);
-  assert.ok(Math.abs(x)>b.width*.60+.58||Math.abs(z)>b.depth*.61+.58,'historic lane remains clear of house roofs');
+  const width=model.cartography.streetCraft.construction.find(s=>s.sourceWay===r.id).width;
+  assert.ok(Math.abs(x)>b.width*.60+width/2||Math.abs(z)>b.depth*.61+width/2,'historic lane remains clear of house roofs');
  }
 }
 const cart=model.cartography;
