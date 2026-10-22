@@ -86,6 +86,7 @@
     }
     smallBox(P(0,.025,d*.52),[w*.96,.05,.12],'#989080',yaw,3);
    }
+   scene.__townArchitecture=true;
    smallBox(P(0,h/2,0),[w,h,d],plaster,yaw,0);
    I(gableMini,P(0,h,0),[w,Math.min(w,d),d],plaster,Q.y(yaw),0);
    I(roofMini,P(0,h,0),[w,Math.min(w,d),d],tile,Q.y(yaw),2);
@@ -119,13 +120,16 @@
     smallBox(P(w*.39,h*.64,d*.76),[.13,.035,.13],wood,yaw);
     smallBox(P(-w*.36,h*.29,d*.61),[.13,.40,.055],'#b39165',yaw);
     smallBox(P(-w*.36,h*.29,d*.645),[.045,.27,.008],'#514131',yaw);
+    scene.__townArchitecture=false;
     smallBox(P(w*.31,.10,d*.70),[.25,.20,.19],'#8c6949',yaw,3);
     ball(P(w*.31,.26,d*.70),[.16,.14,.15],'#53673d',tiny,4);
     if(ninen&&kind%2===0){
+     scene.__townArchitecture=true;
      smallBox(P(-w*.22,.17,d*.68),[w*.43,.055,.18],'#785339',yaw);
      for(const s of[-1,1])smallBox(P(-w*.22+s*w*.15,.08,d*.68),[.04,.16,.13],wood,yaw);
     }
    }
+   scene.__townArchitecture=false;
    houses.push({sourceWay:b.id,sourceAnchor:sourceAt,frontageShift:shift,streetWay:near.segment.id,streetName:near.segment.name,x,z,yaw,height:h,width:w,depth:d,variant:kind,baseY:y,foundationHeight:plinth,entranceRise:y-frontGround,illustrative:true});
    if(houses.length>=360)break;
   }

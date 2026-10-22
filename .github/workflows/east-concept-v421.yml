@@ -27,7 +27,7 @@ jobs:
         with:
           name: east-concept-v421-site
           path: .light-cache/
-          run-id: '39857895513'
+          run-id: '39869579512'
           github-token: ${{ github.token }}
       - name: Build shared geometry and full lighting
         run: node area-quality-v4/build.cjs
@@ -49,7 +49,7 @@ jobs:
           node area-quality-v4/tests/uphill-framing.cjs
       - uses: actions/upload-artifact@v5
         with:
-          name: east-concept-v421-site
+          name: east-concept-v425-site
           path: area-quality-v4/site/
           retention-days: 14
   browser:
@@ -72,7 +72,7 @@ jobs:
           node-version: '24'
       - uses: actions/download-artifact@v5
         with:
-          name: east-concept-v421-site
+          name: east-concept-v425-site
           path: area-quality-v4/site/
       - run: npm install --prefix "$RUNNER_TEMP/concept-browser" --no-audit --no-fund playwright@1.55.0
       - name: Render actual full-quality 3D and test interactions
@@ -83,6 +83,55 @@ jobs:
       - uses: actions/upload-artifact@v5
         if: always()
         with:
-          name: east-concept-v421-${{ matrix.engine }}
-          path: concept-v421-artifacts/
+          name: east-concept-v425-${{ matrix.engine }}
+          path: concept-v425-artifacts/
           retention-days: 14
+
+  evidence:
+    needs: [build, browser]
+    if: always()
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/download-artifact@v5
+        continue-on-error: true
+        with:
+          pattern: east-concept-v425-*
+          path: evidence/current/
+      - uses: actions/download-artifact@v5
+        continue-on-error: true
+        with:
+          pattern: east-concept-v421-*
+          path: evidence/previous/
+          run-id: '39869579512'
+          github-token: ${{ github.token }}
+      - name: Preserve review images and reports on a separate evidence branch
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs=require('fs'),path=require('path');
+            const files=[];
+            function walk(dir,prefix){
+              if(!fs.existsSync(dir))return;
+              for(const name of fs.readdirSync(dir)){
+                const full=path.join(dir,name);
+                if(fs.statSync(full).isDirectory())walk(full,prefix+'/'+name);
+                else if(/\.png$|report\.json$|build-info\.json$/.test(name))files.push({full,path:prefix+'/'+name});
+              }
+            }
+            walk('evidence/current','verification/v4.25-ci');
+            walk('evidence/previous','verification/v4.24-final-recovered');
+            const entries=[];
+            for(const f of files){
+              const blob=await github.rest.git.createBlob({...context.repo,content:fs.readFileSync(f.full).toString('base64'),encoding:'base64'});
+              entries.push({path:f.path,mode:'100644',type:'blob',sha:blob.data.sha});
+            }
+            entries.push({path:'verification/v4.25-ci/run.json',mode:'100644',type:'blob',content:JSON.stringify({source:context.sha,run:context.runId,physicalDevice:false,scope:'CI screenshots and reports; visual review and publication tracked separately'},null,2)});
+            const source=await github.rest.git.getCommit({...context.repo,commit_sha:context.sha});
+            const tree=await github.rest.git.createTree({...context.repo,base_tree:source.data.tree.sha,tree:entries});
+            const commit=await github.rest.git.createCommit({...context.repo,message:'Preserve v4.25 CI review evidence for '+context.sha,tree:tree.data.sha,parents:[context.sha]});
+            const branch='evidence/east-town-'+context.runId;
+            await github.rest.git.createRef({...context.repo,ref:'refs/heads/'+branch,sha:commit.data.sha});
+            core.notice('Review evidence: '+branch+' @ '+commit.data.sha);

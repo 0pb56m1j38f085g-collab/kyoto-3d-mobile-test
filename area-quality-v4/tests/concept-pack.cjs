@@ -8,17 +8,33 @@ let offset=0;
 const expected=new Map();
 for(const m of model.meshes){if(!m.instances.length||!m.p.length)continue;const keys=new Map();for(let v=0;v<m.p.length/3;v++){
  const key=[...m.p.slice(v*3,v*3+3),...m.n.slice(v*3,v*3+3)].map(Math.fround).join(',');if(!keys.has(key))keys.set(key,keys.size);
-}expected.set(m.name,{keys,offset,instances:m.instances.length});offset+=keys.size*m.instances.length;}
+}expected.set(m.name,{keys,offset,instances:m.instances.length,opacity:m.instances.map(i=>i.townOpacity||0)});offset+=keys.size*m.instances.length;}
 assert.equal(offset,manifest.lightSampleCount);assert.equal(offset,asset.lightSampleCount);
 let checked=0,triangles=0;
 for(const chunk of manifest.mobileChunks){const bytes=zlib.gunzipSync(fs.readFileSync(path.join(site,chunk.url))),length=bytes.readUInt32LE(4),start=16+((length+3)&~3),meta=JSON.parse(bytes.subarray(16,16+length));
+ assert.equal(bytes.toString('ascii',0,4),'KMP3');
  for(const m of meta.meshes){const e=expected.get(m.name);assert.ok(e);assert.equal(m.lightOffset,e.offset);assert.equal(m.lightStride,e.keys.size);assert.equal(m.instanceCount,e.instances);
+  assert.equal(m.offsets.length,6);for(let i=0;i<m.instanceCount;i++)assert.equal(bytes.readFloatLE(start+m.offsets[5]+i*4),Math.fround(e.opacity[i]),'semantic opacity preserves instance/light order');
   for(let v=0;v<m.vertices;v++){const values=[0,1].flatMap(k=>[0,1,2].map(a=>bytes.readFloatLE(start+m.offsets[k]+(v*3+a)*4))),id=bytes.readFloatLE(start+m.offsets[4]+v*4);assert.equal(id,e.keys.get(values.join(',')));checked++;}
   triangles+=m.count*m.instanceCount/3;
  }
 }
 assert.equal(triangles,model.meshes.reduce((n,m)=>n+m.p.length/9*m.instances.length,0));
 assert.ok(model.areaBuildings.length>=150&&triangles<3000000,'bounded complete scene');
+assert.equal(model.cartography.townMaterial.opacity,.64);
+let translucent=0,protectedTown=0,mixedMeshes=0;
+for(const m of model.meshes){
+ if(m.instances.some(i=>i.townOpacity)&&m.instances.some(i=>!i.townOpacity))mixedMeshes++;
+ for(const i of m.instances){
+  if(i.townOpacity){
+   translucent++;assert.equal(i.group,'storybook-town');assert.equal(i.townPart,'architecture');assert.equal(i.townOpacity,.64);
+   assert.notEqual(i.mat,3,'stone remains opaque');assert.notEqual(i.mat,4,'plants remain opaque');
+   assert.ok(Math.max(...i.c)-Math.min(...i.c)<.025,'neutral town palette');
+  }else if(i.group==='storybook-town')protectedTown++;
+  if(/threshold|foundation/.test(m.name)||i.group!=='storybook-town'||i.mat===4)assert.ok(!i.townOpacity,'non-architecture remains opaque');
+ }
+}
+assert.ok(translucent>5000&&protectedTown>50&&mixedMeshes>0,'architecture selected per instance, with opaque exceptions');
 assert.equal(model.cartography.coordinateFrame.render,'east +X / up +Y / south +Z');
 for(const a of Object.values(model.cartography.landmarks))for(const b of Object.values(model.cartography.landmarks)){
  assert.equal(Math.sign(a.at[0]-b.at[0]),Math.sign(a.source[0]-b.source[0]));

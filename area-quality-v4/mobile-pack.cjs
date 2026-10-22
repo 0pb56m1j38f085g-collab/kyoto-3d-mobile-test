@@ -11,7 +11,7 @@ module.exports=function packMobile(model,site,sourceModelHash){
  const flush=()=>{
   if(!meshes.length)return;
   const meta=Buffer.from(JSON.stringify({meshes,sourceModelHash})),header=Buffer.alloc(16+((meta.length+3)&~3));
-  header.write('KMP2');header.writeUInt32LE(meta.length,4);header.writeUInt32LE(offset,8);meta.copy(header,16);
+  header.write('KMP3');header.writeUInt32LE(meta.length,4);header.writeUInt32LE(offset,8);meta.copy(header,16);
   const packed=Buffer.concat([header,...pieces]);if(packed.length>MAX_BYTES)throw Error('Mobile part exceeds 2 MiB');
   const sha256=hash(packed),compressed=zlib.gzipSync(packed,{level:9}),file=sha256.slice(0,24)+'.bin.gz';
   fs.writeFileSync(path.join(dir,file),compressed);
@@ -20,9 +20,9 @@ module.exports=function packMobile(model,site,sourceModelHash){
  };
  for(const m of model.meshes){
   if(!m.instances.length||!m.p.length)continue;
-  const instanceData=new Float32Array(m.instances.length*15);
+  const instanceData=new Float32Array(m.instances.length*15),townOpacity=new Float32Array(m.instances.map(i=>i.townOpacity||0));
   m.instances.forEach((i,k)=>instanceData.set([...i.p,...i.s,...i.q,...i.c,i.mat,i.ambient??1],k*15));
-  if(instanceData.byteLength+108>PAYLOAD_LIMIT)throw Error('Instance group exceeds mobile part budget: '+m.name);
+  if(instanceData.byteLength+townOpacity.byteLength+108>PAYLOAD_LIMIT)throw Error('Instance group exceeds mobile part budget: '+m.name);
   const lights=new Map();
   for(let v=0;v<m.p.length/3;v++){
    const key=[...m.p.slice(v*3,v*3+3),...m.n.slice(v*3,v*3+3)].map(Math.fround).join(',');
@@ -36,15 +36,15 @@ module.exports=function packMobile(model,site,sourceModelHash){
    for(let v=0;v<index.length;v++)for(const [a,b]of[[m.p,positions],[m.n,normals]])for(let k=0;k<3;k++){
     if(Math.fround(a[(start+v)*3+k])!==b[index[v]*3+k])throw Error('Mobile geometry differs: '+m.name);
    }
-   const size=positions.byteLength+normals.byteLength+indices.byteLength+instanceData.byteLength+lightIndices.byteLength;
+   const size=positions.byteLength+normals.byteLength+indices.byteLength+instanceData.byteLength+townOpacity.byteLength+lightIndices.byteLength;
    if(offset+size>PAYLOAD_LIMIT)flush();
    meshes.push({name:m.name,vertices:p.length/3,count:index.length,instanceCount:m.instances.length,lightOffset,lightStride:lights.size,
-    offsets:[append(positions),append(normals),append(indices),append(instanceData),append(lightIndices)]});
+    offsets:[append(positions),append(normals),append(indices),append(instanceData),append(lightIndices),append(townOpacity)]});
    batches++;vertices+=p.length/3;start+=index.length;map=new Map();p=[];n=[];index=[];lightIds=[];
   };
   for(let t=0;t<m.p.length/3;t+=3){
    // Reserve three new vertices before adding a whole triangle.
-   if(index.length&&p.length*8+lightIds.length*4+index.length*4+instanceData.byteLength+120>PAYLOAD_LIMIT)finish();
+   if(index.length&&p.length*8+lightIds.length*4+index.length*4+instanceData.byteLength+townOpacity.byteLength+120>PAYLOAD_LIMIT)finish();
    for(let v=t;v<t+3;v++){
     const values=[m.p[v*3],m.p[v*3+1],m.p[v*3+2],m.n[v*3],m.n[v*3+1],m.n[v*3+2]].map(Math.fround);
     const key=values.join(',');let i=map.get(key);

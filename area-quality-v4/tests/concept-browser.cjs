@@ -2,7 +2,7 @@
 // CI browser evidence. This is not a physical-iPhone certification.
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),assert=require('node:assert/strict');
 const engine=process.env.TEST_BROWSER||'webkit',browserType=require('playwright')[engine];
-const out=path.resolve('concept-v421-artifacts',engine);fs.mkdirSync(out,{recursive:true});
+const out=path.resolve('concept-v425-artifacts',engine);fs.mkdirSync(out,{recursive:true});
 const report={engine,checks:[],screenshots:[],physicalDevice:false};
 function check(name,ok,detail){report.checks.push({name,passed:!!ok,detail});assert.ok(ok,name);}
 (async()=>{let server,browser;try{
@@ -26,6 +26,12 @@ function check(name,ok,detail){report.checks.push({name,passed:!!ok,detail});ass
   check(device+' displaced labels retain geographic leaders',await page.evaluate(()=>[...document.querySelectorAll('.map-spot')].filter(e=>!e.hidden&&e.dataset.offscreen!=='true').every(e=>Math.hypot(Number(e.dataset.labelX)-Number(e.dataset.anchorX),Number(e.dataset.labelY)-Number(e.dataset.anchorY))<=12||!document.querySelector('.pin-leader[data-view='+e.dataset.view+']').hidden)));
   const snap=async name=>{await page.waitForTimeout(400);await page.evaluate(()=>{phoneTest.renderer.gl.finish();phoneTest.request();});await page.waitForTimeout(100);const f=device+'-'+name+'.png';await page.screenshot({path:path.join(out,f),timeout:120000});report.screenshots.push(f);};
   await snap('area');
+  check(device+' semantic town metadata loaded',await page.evaluate(()=>phoneTest.model.cartography.townMaterial.opacity===.64&&phoneTest.renderer.batches.some(b=>b.hasTown&&b.hasOpaque)));
+  const composite=await require('./town-compositing.cjs')(page);
+  check(device+' real alpha blend with visible background',composite.baked&&composite.msaa>1&&composite.alphaError<=2&&composite.front.some((v,i)=>Math.abs(v-composite.background[i])>5),composite);
+  check(device+' rear walls do not accumulate opacity',composite.rearError<=1,composite);
+  check(device+' transparency independent of draw order',composite.orderError<=1,composite);
+  check(device+' opaque foreground occludes transparent town',composite.occlusionError<=1&&composite.gl===0,composite);
   if(device==='iphone'){
    check('offscreen Yasaka has an explicit directional button',await page.locator('.map-spot[data-view=yasaka][data-offscreen=true]').isVisible());
    await page.locator('.map-spot[data-view=yasaka]').click();
@@ -36,6 +42,14 @@ function check(name,ok,detail){report.checks.push({name,passed:!!ok,detail});ass
    for(const id of ['temple','street','sannenzaka','hokanji','kodaiji','yasaka']){
     await page.evaluate(v=>phoneTest.view(v,false),id);await snap(id);check('view '+id+' draws',await page.evaluate(v=>phoneTest.selectedView===v&&phoneTest.renderer.gl.getError()===0,id));
    }
+   await page.evaluate(()=>phoneTest.view('street',false));
+   const before=await page.evaluate(()=>({...phoneTest.camera}));
+   const canvas=page.locator('canvas').first(),box=await canvas.boundingBox();
+   await page.mouse.move(box.x+box.width*.5,box.y+box.height*.55);await page.mouse.down();await page.mouse.move(box.x+box.width*.72,box.y+box.height*.59,{steps:6});await page.mouse.up();await snap('street-rotated');
+   check('rotation updates camera with transparent town',await page.evaluate(b=>Math.abs(phoneTest.camera.yaw-b.yaw)>.05&&phoneTest.renderer.gl.getError()===0,before));
+   const span=await page.evaluate(()=>phoneTest.camera.span);
+   await page.mouse.wheel(0,-220);await snap('street-zoomed');
+   check('zoom updates camera with transparent town',await page.evaluate(s=>phoneTest.camera.span<s&&phoneTest.renderer.gl.getError()===0,span));
    await page.evaluate(()=>phoneTest.view('area',false));await page.setViewportSize({width:390,height:660});await snap('short');
    await page.evaluate(()=>phoneTest.setQuality('high'));check('iPhone high quality available',await page.evaluate(()=>phoneTest.quality==='high'&&phoneTest.renderer.dpr===1.8));
    await page.reload();await page.waitForFunction(()=>window.__ready,null,{timeout:180000});check('reload keeps baked quality',await page.evaluate(()=>phoneTest.renderer.bakedEnabled&&phoneTest.quality==='standard'));

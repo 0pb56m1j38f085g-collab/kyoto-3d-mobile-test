@@ -180,12 +180,13 @@
   group='storybook-courtyards';
   for(const c of clearings){if(c.group==='main-hall'||c.group.includes('kodaiji'))continue;smallBox([(c.x0+c.x1)/2,base+.012,(c.z0+c.z1)/2],[c.x1-c.x0+.55,.035,c.z1-c.z0+.65],'#d8c8a9',0,3);}
   __STREETSCAPE_ART__
-  scene.areaQuality='v4.24-stone-streets';
+  scene.areaQuality='v4.25-translucent-town';
   scene.areaBuildings=houses;scene.areaStreets=lanes;
   scene.footprintBuildings=[];
   scene.stats={...scene.stats,trees:trees.length,illustrativeHouses:houses.length,mainHallInstances:2158};
   scene.cartography={mode:'illustrated-miniature',metric:false,displayScale,displayScaleEast,landmarks:layouts,clearings,trees:trees.length,houses:houses.length,routeGeometry:false,notice:'名所・街路・川の位置は同じ地理座標変換。建物の大きさ・山の高さ・川幅は誇張。経路・所要時間はこの表示形状から算出しません。',geographicSource:{roads:'area-data/historic-streets.json',buildings:'area-data/gion-footprints.json',west:'area-data/west-gion-reference.json',metresPerUnit:20,anchors:referenceAnchors},routeStatus:'Not implemented: no verified route or walking-time claim.'};
   scene.cartography.waterways={channels:waterways,crossings,omittedCulverts:westReference.water.filter(r=>r.tunnel).map(r=>r.id),policy:'OSM centre lines projected with the same transform as landmark anchors. Open water excludes culverts. Width and bank profiles illustrative, not surveyed shorelines or routes.',source:westReference.url,inputSha256:westReference.inputSha256,sources:['https://www.city.kyoto.lg.jp/kensetu/page/0000070773.html','https://shugakuryoko.kyoto.travel/article/wp-content/uploads/2018/08/kiyomizudera2.pdf']};
+  scene.cartography.townMaterial={version:1,opacity:.64,color:'pale neutral gray',scope:'explicit architectural parts of storybook-town instances only',compositing:'nearest surface alpha blend over opaque scenery; rear architectural layers suppressed',opaque:['landmarks','paving','steps','foundations','thresholds','plants','people']};
   scene.cartography.relief={surveyed:false,plainHeight:base,eastRidgeHeight:storyGround(11,8),templeLift:K.lift,houseHeightRange:[.88,1.61]};
   scene.cartography.streetCraft={version:1,reference:'https://plus.kyoto.travel/entry/higashiyamaeki',positionPolicy:'Unchanged OSM centre lines for depicted streets; illustrative widths, paving, grades and shopfronts. Not a survey of individual stones or shops.',omittedMinorWays:omittedDisplayRoads,omissionReason:'Three unnamed rear-access ways are retained in source data but omitted at the compressed illustration scale. This is not a complete navigable street map.',construction:streetConstruction};
   scene.areaSites.placementAccuracy='Illustrated display, deliberately not to scale. Original geographic source retained separately; no route-time calculation from display coordinates.';

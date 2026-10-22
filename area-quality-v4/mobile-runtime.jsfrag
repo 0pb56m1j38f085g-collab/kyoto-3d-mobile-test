@@ -49,17 +49,18 @@ async function uploadMobileStudy(renderer,model,progress){
     const digest=await crypto.subtle.digest('SHA-256',decoded);
     if([...new Uint8Array(digest)].map(v=>v.toString(16).padStart(2,'0')).join('')!==part.sha256)throw Error('3Dデータが破損しています。再読み込みしてください。');
     const view=new DataView(bytes.buffer),length=view.getUint32(4,true),start=16+((length+3)&~3);
-    if(view.getUint32(0,false)!==0x4b4d5032||length>65536||start>at||start+view.getUint32(8,true)!==at)throw Error('3Dデータの形式が不正です。');
+    if(view.getUint32(0,false)!==0x4b4d5033||length>65536||start>at||start+view.getUint32(8,true)!==at)throw Error('3Dデータの形式が不正です。');
     const meta=JSON.parse(new TextDecoder().decode(bytes.subarray(16,16+length)));
     if(meta.sourceModelHash!==model.sourceModelHash)throw Error('3Dデータの版が一致しません。');
     for(const m of meta.meshes){
-     const sizes=[m.vertices*3,m.vertices*3,m.count,m.instanceCount*15,m.vertices],names=['p','n','index','instanceData','lightIds'];
+     const sizes=[m.vertices*3,m.vertices*3,m.count,m.instanceCount*15,m.vertices,m.instanceCount],names=['p','n','index','instanceData','lightIds','townOpacity'];
      if(!Number.isSafeInteger(m.lightOffset)||!Number.isSafeInteger(m.lightStride)||m.lightOffset<0||m.lightStride<1||m.lightOffset+m.lightStride*m.instanceCount>model.lightSampleCount)throw Error('照明インデックスの範囲が不正です。');
-     for(let k=0;k<5;k++){
+     for(let k=0;k<6;k++){
       const offset=start+m.offsets[k];if(!Number.isSafeInteger(offset)||!Number.isSafeInteger(sizes[k])||sizes[k]<0||offset<start||offset%4||offset+sizes[k]*4>at)throw Error('3Dデータの範囲が不正です。');
       m[names[k]]=new (k===2?Uint32Array:Float32Array)(bytes.buffer,offset,sizes[k]);
      }
      for(const id of m.lightIds)if(!Number.isSafeInteger(id)||id<0||id>=m.lightStride)throw Error('照明インデックスが不正です。');
+     for(const a of m.townOpacity)if(!Number.isFinite(a)||a<0||a>=1)throw Error('町家の透過情報が不正です。');
      renderer.uploadPacked(m);
     }
     g.bindVertexArray(null);
