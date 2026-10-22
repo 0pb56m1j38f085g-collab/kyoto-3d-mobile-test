@@ -65,6 +65,10 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
   "let model,renderer,camera,selected='area',quality=lowMemoryIOS?'light':'standard',ready=false,contextLost=false,anim=null,raf=0,lastDraw=0,pointers=new Map(),previousGesture=null,modal=null,returnFocus=null,tickTimes=[],renderTimes=[],toastTimer,resizeTimer,paused=false;",
   'iOS default quality');
  app=exact(app,
+  "let bakedLighting=null;try{if(window.__BAKED_LIGHT_BASE64)",
+  "let bakedLighting=null;if(lowMemoryIOS){lightingState='iPhone用軽量照明';delete window.__BAKED_LIGHT_BASE64;}else try{if(window.__BAKED_LIGHT_BASE64)",
+  'skip baked light on iOS');
+ app=exact(app,
   "renderer=new Renderer(canvas,model,{dpr:modes.standard.dpr,shadowSize:3072,bakedLighting});renderer.ao=modes.standard.ao;renderer.focusEffect=modes.standard.focus;",
   "renderer=new Renderer(canvas,model,{dpr:modes[quality].dpr,shadowSize:lowMemoryIOS?1024:3072,bakedLighting});renderer.ao=modes[quality].ao;renderer.focusEffect=modes[quality].focus;",
   'iOS initial renderer memory');
