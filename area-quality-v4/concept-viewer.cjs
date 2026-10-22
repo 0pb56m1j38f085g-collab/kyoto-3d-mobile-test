@@ -3,7 +3,7 @@
 module.exports=({renderer,app,html})=>{
  const exact=(s,a,b)=>{if(!s.includes(a))throw Error('Concept viewer input missing: '+a.slice(0,110));return s.replace(a,b);};
  const cameras={
-  area:{target:[-8,5,-24],span:50,yaw:-.62,pitch:.49},
+  area:{target:[-8,5,-24],span:50,yaw:-.15,pitch:.62},
   temple:{target:[0,8,0],span:24,yaw:-.62,pitch:.40},
   hokanji:{target:[-15,5,-11],span:10,yaw:-.7,pitch:.48},
   kodaiji:{target:[-10,4,-18],span:16,yaw:-.65,pitch:.55},

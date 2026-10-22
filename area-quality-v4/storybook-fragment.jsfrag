@@ -4,7 +4,7 @@
  if(storybookMode){
   const referenceAnchors=JSON.parse(JSON.stringify(scene.areaSites.geographicAnchors));
   const westReference=__WEST_REFERENCE__;
-  const srcGround=ground,base=2.15,displayScale=.76,displayScaleEast=.56,northStretch=displayScale/.55;
+  const srcGround=ground,base=2.15,displayScale=1.02,displayScaleEast=.56,northStretch=displayScale/.55;
   // All location anchors share one monotonic projection. Only the silhouettes
   // grow around their anchors; landmarks are never independently repositioned.
   const display=p=>[p[0]*displayScaleEast,p[1]*displayScale];
