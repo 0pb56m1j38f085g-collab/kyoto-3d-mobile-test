@@ -79,6 +79,7 @@ let server,browser;
     await page.waitForTimeout(150);await page.evaluate(()=>phoneTest.renderer.gl.finish());
     const finalFrames=await page.evaluate(()=>phoneTest.renderer.frames);
     check(view+' completes two bounded mobile draws',finalFrames===frames+2,{before:frames,after:finalFrames});
+    if(view!=='street')check(view+' focus keeps the entire landmark in frame',await page.evaluate(v=>{const b=phoneTest.model.cartography.framing.bounds[v],points=[];for(const x of [b.x0,b.x1])for(const y of [b.y0,b.y1])for(const z of [b.z0,b.z1])points.push([x,y,z]);return points.every(p=>{const q=M.point(phoneTest.renderer.lastVP,p),x=(q[0]*.5+.5)*innerWidth,y=(.5-q[1]*.5)*innerHeight;return x>6&&x<innerWidth-6&&y>110&&y<innerHeight-25;});},view));
     await page.screenshot({path:path.join(out,'iphone-'+view+'.png'),timeout:120000});
    }
    await page.locator('#reset').click();check('reset returns to district',await page.evaluate(()=>phoneTest.selectedView==='area'));

@@ -11,7 +11,15 @@ module.exports=({renderer,app,html})=>{
   const p=copy(presets[name]),w=canvas.clientWidth,h=Math.max(1,canvas.clientHeight),aspect=w/h;
   const framing=model?.cartography?.framing,box=framing?.bounds[name==='corner'||name==='reverse'?'temple':name];
   if(box){p.target=[(box.x0+box.x1)/2,(box.y0+box.y1)/2,(box.z0+box.z1)/2];}
-  if(name!=='area'){if(aspect<1.05)p.span*=.76/aspect;return p;}
+  if(name!=='area'){
+   if(aspect<1.05)p.span*=.76/aspect;
+   if(box){const corners=[];for(const x of [box.x0,box.x1])for(const y of [box.y0,box.y1+.9])for(const z of [box.z0,box.z1])corners.push([x,y,z]);
+    for(let n=0;n<6;n++){const eye=V.add(p.target,[Math.sin(p.yaw)*Math.cos(p.pitch)*100,Math.sin(p.pitch)*100,Math.cos(p.yaw)*Math.cos(p.pitch)*100]),vp=M.mul(M.perspective(2*Math.atan(p.span/200),aspect,.25,250),M.look(eye,p.target)),top=1-2*(h<500?90:128)/h,bottom=1-84/h;
+     const grow=Math.max(...corners.map(v=>{const q=M.point(vp,v);return Math.max(Math.abs(q[0])/.9,q[1]>0?q[1]/top:-q[1]/bottom);}));if(grow<=1)break;p.span*=grow*1.01;
+    }
+   }
+   return p;
+  }
   // Fit the actual landmark silhouettes and verified water locations, not merely
   // pin centres. Safari's short visual viewport must not cut off the main hall.
   const points=framing?.overview||[];if(!points.length)return p;
