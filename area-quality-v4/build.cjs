@@ -42,8 +42,8 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
   "const params=new URLSearchParams(location.search);const lowMemoryIOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);window.__lowMemoryIOS=lowMemoryIOS;if(params.has('capture'))document.body.classList.add('capture');",
   'iOS low-memory detection');
  app=exact(app,
-  "const modes={standard:{dpr:Math.min(devicePixelRatio||1,1.25),ao:.50,focus:1.6},high:{dpr:Math.min(devicePixelRatio||1,1.8),ao:.57,focus:2.0},light:{dpr:Math.min(devicePixelRatio||1,.85),ao:.25,focus:0}};",
-  "const modes={standard:{dpr:Math.min(devicePixelRatio||1,1.25),ao:.50,focus:1.6},high:{dpr:Math.min(devicePixelRatio||1,1.8),ao:.57,focus:2.0},light:{dpr:Math.min(devicePixelRatio||1,lowMemoryIOS?.62:.85),ao:lowMemoryIOS?0:.25,focus:0}};",
+  "const modes={standard:{dpr:Math.min(devicePixelRatio||1,1.25),ao:.26,focus:2.0},high:{dpr:Math.min(devicePixelRatio||1,1.8),ao:.34,focus:2.8},light:{dpr:Math.min(devicePixelRatio||1,.85),ao:.12,focus:0}};",
+  "const modes={standard:{dpr:Math.min(devicePixelRatio||1,1.25),ao:.26,focus:2.0},high:{dpr:Math.min(devicePixelRatio||1,1.8),ao:.34,focus:2.8},light:{dpr:Math.min(devicePixelRatio||1,lowMemoryIOS?.62:.85),ao:lowMemoryIOS?0:.12,focus:0}};",
   'iOS light render mode');
  app=exact(app,
   "let model,renderer,camera,selected='area',quality='standard',ready=false,contextLost=false,anim=null,raf=0,lastDraw=0,pointers=new Map(),previousGesture=null,modal=null,returnFocus=null,tickTimes=[],renderTimes=[],toastTimer,resizeTimer,paused=false;",
@@ -54,12 +54,12 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
   "let bakedLighting=null;if(lowMemoryIOS){lightingState='iPhone用軽量照明';delete window.__BAKED_LIGHT_BASE64;}else try{if(window.__BAKED_LIGHT_BASE64)",
   'skip baked light on iOS');
  app=exact(app,
-  "renderer=new Renderer(canvas,model,{dpr:modes.standard.dpr,shadowSize:2048});renderer.ao=modes.standard.ao;renderer.focusEffect=modes.standard.focus;",
-  "renderer=new Renderer(canvas,model,{dpr:modes[quality].dpr,shadowSize:lowMemoryIOS?1024:2048});renderer.ao=modes[quality].ao;renderer.focusEffect=modes[quality].focus;",
+  "renderer=new Renderer(canvas,model,{dpr:modes.standard.dpr,shadowSize:3072,bakedLighting});renderer.ao=modes.standard.ao;renderer.focusEffect=modes.standard.focus;",
+  "renderer=new Renderer(canvas,model,{dpr:modes[quality].dpr,shadowSize:lowMemoryIOS?1024:3072,bakedLighting});renderer.ao=modes[quality].ao;renderer.focusEffect=modes[quality].focus;",
   'iOS initial renderer memory');
  app=exact(app,
-  "renderer=new Renderer(canvas,model,{dpr:modes[quality].dpr,shadowSize:2048});",
-  "renderer=new Renderer(canvas,model,{dpr:modes[quality].dpr,shadowSize:lowMemoryIOS?1024:2048});",
+  "renderer=new Renderer(canvas,model,{dpr:modes[quality].dpr,shadowSize:3072,bakedLighting:bakedAsset});",
+  "renderer=new Renderer(canvas,model,{dpr:modes[quality].dpr,shadowSize:lowMemoryIOS?1024:3072,bakedLighting:bakedAsset});",
   'iOS context restore memory');
  app=exact(app,
   "if(params.has('quality'))setQuality(params.get('quality'));",
