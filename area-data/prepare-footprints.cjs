@@ -1,0 +1,11 @@
+'use strict';
+// Reproducible subset of the already-reviewed OSM snapshot; no live API dependency.
+const fs=require('node:fs'),cp=require('node:child_process'),path=require('node:path');
+const source=JSON.parse(cp.execFileSync('git',['show','origin/area-higashiyama-osm-v1:area-data/higashiyama-osm-v1.json'],{maxBuffer:20*1024*1024}));
+const bounds={minX:-44,maxX:-36,minZ:20,maxZ:49};
+const inside=([x,z])=>x>=bounds.minX&&x<=bounds.maxX&&z>=bounds.minZ&&z<=bounds.maxZ;
+const buildings=source.buildings.filter(b=>b.points.every(inside));
+const roads=source.roads.filter(r=>r.points.some(inside)&&r.tunnel!=='yes');
+const data={source:source.source,license:source.license,retrievedAt:source.retrievedAt,origin:source.origin,metresPerUnit:20,bounds,buildings,roads};
+fs.writeFileSync(path.join(__dirname,'gion-footprints.json'),JSON.stringify(data));
+console.log(JSON.stringify({buildings:buildings.length,roads:roads.length}));

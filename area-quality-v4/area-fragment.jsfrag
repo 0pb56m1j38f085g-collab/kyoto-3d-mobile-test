@@ -578,6 +578,7 @@
   // Reject intersecting infill using all street segments, including lanes authored later.
  for(const args of houseQueue){
   const[x,z,a=0,s=1]=args,radius=1.04*s;
+  if(x>-44-radius&&x<-36+radius&&z>20-radius&&z<49+radius)continue;
   if(areaRoads.some(r=>r.pts.some((p,i)=>i&&dseg(x,z,r.pts[i-1],p)<r.width*.5+.75*s)))continue;
   if(placedHouses.some(p=>Math.hypot(x-p.x,z-p.z)<radius+p.radius))continue;
   if(Math.abs(x-yasakaX)<5.8&&z>yasakaZ-12.5&&z<yasakaZ+3.7)continue;
@@ -588,4 +589,4 @@
  scene.areaSites.placementAccuracy='Geographic landmark anchors. Landmark silhouettes reference official inventories; selected historic streets follow OSM ways; gardens, remaining streets and intermediate houses remain authored, not measured footprints.';
  scene.areaSites.referenceRevision='official-inventory-review-2026-10-22';
 
- scene.areaQuality='v4.9-coherent-district-and-landmark-detail';
+ scene.areaQuality='v4.10-coherent-district-and-landmark-detail';

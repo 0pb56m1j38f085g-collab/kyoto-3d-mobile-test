@@ -1,6 +1,6 @@
 'use strict';
 module.exports=({renderer,app,html})=>{
- const replace=(s,a,b,label)=>{if(!s.includes(a))throw Error('Missing v4.9 input: '+label);return s.replace(a,b);};
+ const replace=(s,a,b,label)=>{if(!s.includes(a))throw Error('Missing v4.10 input: '+label);return s.replace(a,b);};
  // Bound the total iOS drawing area, while avoiding the visibly blurred 0.62x phone canvas.
  app=replace(app,"lowMemoryIOS?.62:.85","lowMemoryIOS?Math.min(.9,Math.sqrt(420000/Math.max(1,innerWidth*innerHeight))):.85",'bounded iOS resolution');
  // A real overview camera with an axis that fits the long district on a portrait display.
@@ -8,10 +8,11 @@ module.exports=({renderer,app,html})=>{
  'area:{target:[-16,5.6,21],span:62,yaw:-.58,pitch:.65}', 'area camera');
  app=app.replace("const portraitScale=name==='area'?.42:","const portraitScale=name==='area'?.58:");
  app=app.replace("yasaka:{target:[-29.1,4.7,44.6],span:12.8,yaw:1.85,pitch:.38}","yasaka:{target:[-29.1,3.8,40.0],span:21,yaw:2.65,pitch:.72}");
- app=app.replace("street:{target:[-20.3,4.0,22.0],span:12.8,yaw:.78,pitch:.37}","street:{target:[-32.5,3.3,33.5],span:14,yaw:-.35,pitch:.56}");
+ app=app.replace("street:{target:[-20.3,4.0,22.0],span:12.8,yaw:.78,pitch:.37}","street:{target:[-39.7,2.45,32.8],span:6.2,yaw:-.18,pitch:.66}");
+ app=app.replaceAll(',10,Math.max(150,80/',',3.6,Math.max(150,80/');
  app=app.replace("else if(e.key==='Home')view('temple')","else if(e.key==='Home')view('area')");
  app=app.replace("$('reset').onclick=()=>{closeModal();view('temple');}","$('reset').onclick=()=>{closeModal();view('area');}");
- app=app.replace("'Kiyomizu quality v5'","'東山・祇園 v4.9'");
+ app=app.replace("'Kiyomizu quality v5'","'東山・祇園 v4.10'");
  app=replace(app,"camera=authored(params.get('view')||'area');ready=true;", "selected=Object.hasOwn(presets,params.get('view'))?params.get('view'):'area';camera=authored(selected);ready=true;$('quality').value=quality;$('quality-label').textContent=names[quality];document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===selected)));if(renderer.bakedMismatch)lightingState='動的照明（照明データ差異）';",'UI initial state');
  app=app.replace('kodaiji:{target:[-17.7,4.9,28.8],span:11.8,yaw:1.15,pitch:.38}','kodaiji:{target:[-17.7,3.6,30.5],span:15.8,yaw:.35,pitch:.67}');
  // Never allow a query parameter or settings change to silently remove the iPhone memory guard.

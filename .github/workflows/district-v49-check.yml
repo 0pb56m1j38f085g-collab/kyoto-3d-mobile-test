@@ -1,7 +1,7 @@
-name: Higashiyama v4.9 district and iOS regression
+name: Higashiyama v4.10 district and iOS regression
 on:
   push:
-    branches: [area-higashiyama-quality-v4, area-higashiyama-quality-v4.9]
+    branches: [area-higashiyama-quality-v4, area-higashiyama-quality-v4.10]
     paths:
       - 'area-quality-v4/**'
       - 'area-data/**'
@@ -29,7 +29,9 @@ jobs:
       - name: Check iPhone, iPad, district views and lighting fallback
         env:
           NODE_PATH: ${{ runner.temp }}/district-check/node_modules
-        run: node area-quality-v4/tests/district-check.cjs
+        run: |
+          node area-quality-v4/tests/footprints.cjs
+          node area-quality-v4/tests/district-check.cjs
       - if: always()
         uses: actions/upload-artifact@v5
         with:

@@ -1,0 +1,95 @@
+ // Gion western blocks: footprint coordinates retain the OSM source scale (20m/unit).
+ // Storey heights and roof types are explicit estimates, never survey claims.
+ const footprintData=__FOOTPRINT_DATA__,fb=footprintData.bounds;
+ const inFootprintBlock=(x,z,pad=0)=>x>fb.minX-pad&&x<fb.maxX+pad&&z>fb.minZ-pad&&z<fb.maxZ+pad;
+ for(const m of scene.meshes)m.instances=m.instances.filter(i=>!((i.group==='higashiyama-area'||i.group==='landscape')&&inFootprintBlock(i.p[0],i.p[2])));
+ scene.areaBuildings=scene.areaBuildings.filter(b=>!inFootprintBlock(b.x,b.z,1.2));
+ group='gion-footprint-blocks';
+ const blockMaterials={};
+ function blockMesh(color,material=1){const key=color+':'+material;if(!blockMaterials[key]){const m=mesh('gion-footprints-'+key);I(m,[0,0,0],[1,1,1],color,undefined,material);blockMaterials[key]=m;}return blockMaterials[key];}
+ const blockWood=blockMesh('#685044'),blockGlass=blockMesh('#465b58'),blockStone=blockMesh('#bfb7a5',3),blockRoad=blockMesh('#d8cbb4',3),blockTile=blockMesh('#929487',2);
+ const Q4=(m,a,b,c,d)=>m.quad(a,b,c,d);
+ const footprintRecords=[];
+ function clipRoof(poly,axis,mid,side){const out=[];for(let i=0;i<poly.length;i++){
+  const a=poly[i],b=poly[(i+1)%poly.length],da=(a[0]*axis[0]+a[1]*axis[1]-mid)*side,db=(b[0]*axis[0]+b[1]*axis[1]-mid)*side;
+  if(da>=-1e-9)out.push(a);if((da>1e-9&&db< -1e-9)||(da< -1e-9&&db>1e-9)){const t=da/(da-db);out.push([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]);}
+ }return out;}
+ for(const b of footprintData.buildings){
+  const p=b.polygon,ax=b.axes,center=b.center,y=Math.max(...p.map(q=>ground(q[0],q[1])))+.018,h=b.height;
+  const plaster=blockMesh(['#d8cdb6','#d4bea0','#dfd4bf','#cbb89b'][b.id%4]);
+  const roof=blockMesh(['#727671','#77796f','#626b69','#81796c'][b.id%4],2);
+  const short=Math.min(ax.hiU-ax.loU,ax.hiV-ax.loV),long=Math.max(ax.hiU-ax.loU,ax.hiV-ax.loV);
+  const axis=ax.hiU-ax.loU<ax.hiV-ax.loV?ax.u:ax.v,lo=axis===ax.u?ax.loU:ax.loV,hi=axis===ax.u?ax.hiU:ax.hiV,mid=(lo+hi)/2;
+  const gable=b.footprintArea<1.5&&!['hotel','public','commercial','apartments','roof'].includes(b.building)&&!b.name;
+  const rise=gable?Math.min(short*.30,.12):0;
+  const roofY=q=>y+h+rise*(1-Math.min(1,Math.abs(q[0]*axis[0]+q[1]*axis[1]-mid)/Math.max(short*.5,.001)));
+  for(let i=0;i<p.length;i++){
+   const a=p[i],c=p[(i+1)%p.length],topA=roofY(a),topC=roofY(c);
+   const L=Math.hypot(c[0]-a[0],c[1]-a[1]),nx=(c[1]-a[1])/L*.0015,nz=-(c[0]-a[0])/L*.0015;
+   const W=(t,yy)=>[a[0]+(c[0]-a[0])*t+nx,yy,a[1]+(c[1]-a[1])*t+nz],D=(t,yy)=>{const q=W(t,yy);return[q[0]+nx,yy,q[2]+nz]};
+   Q4(plaster,W(0,y),W(0,y+h),W(1,y+h),W(1,y));
+   Q4(blockStone,[a[0],ground(...a),a[1]],[a[0],y+.025,a[1]],[c[0],y+.025,c[1]],[c[0],ground(...c),c[1]]);
+   if(b.footprintArea<1.5){
+    Q4(blockWood,D(0,y+.025),D(0,y+h*.40),D(1,y+h*.40),D(1,y+.025));
+    Q4(blockWood,D(0,y+h*.52),D(0,y+h*.54),D(1,y+h*.54),D(1,y+h*.52));
+    Q4(blockWood,D(0,y+h-.009),D(0,y+h),D(1,y+h),D(1,y+h-.009));
+    for(let j=0;j<=Math.floor(L/.15);j++){const t=j/Math.max(1,Math.floor(L/.15)),dt=Math.min(.018,.006/L);Q4(blockWood,D(Math.max(0,t-dt),y+.03),D(Math.max(0,t-dt),y+h),D(Math.min(1,t+dt),y+h),D(Math.min(1,t+dt),y+.03));}
+   }
+   const pieces=[a],da=a[0]*axis[0]+a[1]*axis[1]-mid,dc=c[0]*axis[0]+c[1]*axis[1]-mid;
+   if(da*dc<0){const t=da/(da-dc);pieces.push([a[0]+(c[0]-a[0])*t,a[1]+(c[1]-a[1])*t]);}pieces.push(c);
+   if(rise>0)for(let j=1;j<pieces.length;j++){const a=pieces[j-1],c=pieces[j];if(roofY(a)+roofY(c)>2*(y+h)+1e-8)Q4(plaster,[a[0],y+h,a[1]],[a[0],roofY(a),a[1]],[c[0],roofY(c),c[1]],[c[0],y+h,c[1]]);}
+  }
+  // Thin tile joints follow the actual clipped roof, including recessed footprint corners.
+  if(gable){
+   const along=[-axis[1],axis[0]],projections=p.map(q=>q[0]*along[0]+q[1]*along[1]),min=Math.min(...projections),max=Math.max(...projections);
+   for(let u=min+.02;u<max;u+=.035){
+    const hits=[];for(let i=0;i<p.length;i++){const a=p[i],c=p[(i+1)%p.length],ua=a[0]*along[0]+a[1]*along[1],uc=c[0]*along[0]+c[1]*along[1];if((ua<=u&&uc>u)||(uc<=u&&ua>u)){const t=(u-ua)/(uc-ua);hits.push([a[0]+(c[0]-a[0])*t,a[1]+(c[1]-a[1])*t]);}}
+    hits.sort((a,c)=>(a[0]-c[0])*axis[0]+(a[1]-c[1])*axis[1]);
+    for(let k=1;k<hits.length;k+=2){const ends=[hits[k-1]],a=hits[k-1],c=hits[k],da=a[0]*axis[0]+a[1]*axis[1]-mid,dc=c[0]*axis[0]+c[1]*axis[1]-mid;if(da*dc<0){const t=da/(da-dc);ends.push([a[0]+(c[0]-a[0])*t,a[1]+(c[1]-a[1])*t]);}ends.push(c);
+     for(let j=1;j<ends.length;j++){const A=ends[j-1],B=ends[j],P=(q,s)=>[q[0]+along[0]*s*.0015,roofY(q)+.0015,q[1]+along[1]*s*.0015];Q4(blockTile,P(A,-1),P(A,1),P(B,1),P(B,-1));}
+    }
+   }
+  }
+  for(const tri of b.triangles)for(const side of[-1,1]){
+   const polygon=clipRoof(tri,axis,mid,side);for(let j=1;j<polygon.length-1;j++){
+    const a=polygon[0],c=polygon[j],d=polygon[j+1];roof.tri([a[0],roofY(a),a[1]],[d[0],roofY(d),d[1]],[c[0],roofY(c),c[1]]);
+   }
+  }
+  // Place a facade only on the source edge facing the nearest road, not every party wall.
+  let front=null;
+  for(let i=0;i<p.length;i++){
+   const a=p[i],c=p[(i+1)%p.length],len=Math.hypot(c[0]-a[0],c[1]-a[1]);if(len<.10)continue;
+   const mx=(a[0]+c[0])/2,mz=(a[1]+c[1])/2;let dist=Infinity;
+   for(const r of footprintData.roads)for(let j=1;j<r.points.length;j++)dist=Math.min(dist,dseg(mx,mz,r.points[j-1],r.points[j]));
+   if(!front||dist<front.dist)front={a,c,len,dist};
+  }
+  if(front&&front.dist<.8&&short<1.1){
+   const {a,c,len}=front,dx=(c[0]-a[0])/len,dz=(c[1]-a[1])/len,nx=dz*.002,nz=-dx*.002;
+   const P=(t,yy,lift=.008)=>[a[0]+dx*len*t+dz*lift,yy,a[1]+dz*len*t-dx*lift],G=(t,yy)=>P(t,yy,.006);
+   Q4(blockGlass,G(.10,y+h*.62),G(.10,y+h*.88),G(.90,y+h*.88),G(.90,y+h*.62));
+   Q4(blockGlass,G(.12,y+.035),G(.12,y+h*.36),G(.88,y+h*.36),G(.88,y+.035));
+   for(let k=0;k<Math.min(35,Math.ceil(len/.02));k++){
+    const t=.13+k/Math.min(35,Math.ceil(len/.02))*.74;Q4(blockWood,P(t,y+.035),P(t,y+h*.36),P(t+.012,y+h*.36),P(t+.012,y+.035));
+   }
+   for(let k=0;k<Math.min(28,Math.ceil(len/.025));k++){
+    const t=.06+k/Math.min(28,Math.ceil(len/.025))*.88;Q4(plaster,P(t,y+h*.62),P(t+.012,y+h*.62),P(t+.012,y+h*.88),P(t,y+h*.88));
+   }
+   // First floor canopy, shallow enough to preserve alley clearance.
+   const E=(t,yy,o)=>{const q=P(t,yy);return[q[0]+dz*o,yy,q[2]-dx*o]};
+   Q4(roof,E(.02,y+h*.49,0),E(.98,y+h*.49,0),E(.98,y+h*.45,.035),E(.02,y+h*.45,.035));
+  }
+  footprintRecords.push({id:b.id,name:b.name,points:b.points,area:b.footprintArea,heightMetres:h*20,heightSource:b.heightSource,roofSource:b.roofSource});
+ }
+ // Clip source roads to the mapped block and keep their physical width separate from authored roads.
+ function clipBlock(a,b){let t0=0,t1=1;const dx=b[0]-a[0],dz=b[1]-a[1];for(const[p,q]of[[-dx,a[0]-fb.minX],[dx,fb.maxX-a[0]],[-dz,a[1]-fb.minZ],[dz,fb.maxZ-a[1]]]){
+  if(Math.abs(p)<1e-10){if(q<0)return null;}else{const t=q/p;if(p<0)t0=Math.max(t0,t);else t1=Math.min(t1,t);if(t0>t1)return null;}
+ }return[[a[0]+dx*t0,a[1]+dz*t0],[a[0]+dx*t1,a[1]+dz*t1]];}
+ for(const r of footprintData.roads)for(let j=1;j<r.points.length;j++){
+  const seg=clipBlock(r.points[j-1],r.points[j]);if(!seg)continue;const[a,b]=seg,dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz);if(len<.005)continue;
+  const width=['primary','secondary','tertiary'].includes(r.highway)?.45:['residential','unclassified'].includes(r.highway)?.22:.10;
+  const n=[-dz/len*width/2,dx/len*width/2],P=(p,s)=>[p[0]+n[0]*s,ground(p[0]+n[0]*s,p[1]+n[1]*s)+.012,p[1]+n[1]*s];
+  Q4(blockRoad,P(a,-1),P(a,1),P(b,1),P(b,-1));
+ }
+ scene.footprintBuildings=footprintRecords;
+ scene.areaSites.footprintReference={source:footprintData.source,license:footprintData.license,retrievedAt:footprintData.retrievedAt,bounds:fb,count:footprintRecords.length,rejected:footprintData.rejected,metresPerUnit:20,roofAndHeight:'inferred unless tagged; footprint coordinates retained'};
+ group='higashiyama-area';
