@@ -20,6 +20,11 @@ jobs:
       - name: Prepare WebKit
         timeout-minutes: 5
         run: |
+          # Azure's Ubuntu mirror stalled twice while downloading these packages.
+          # Keep Ubuntu's signed package metadata; use its official HTTPS archive.
+          if [ -f /etc/apt/apt-mirrors.txt ]; then
+            sudo sed -i 's|http://azure.archive.ubuntu.com/ubuntu|https://archive.ubuntu.com/ubuntu|g' /etc/apt/apt-mirrors.txt
+          fi
           npm install --prefix "$RUNNER_TEMP/webkit-capture" --no-audit --no-fund playwright@1.55.0
           "$RUNNER_TEMP/webkit-capture/node_modules/.bin/playwright" install --with-deps webkit
       - name: Capture after actual frames and presentation ticks
