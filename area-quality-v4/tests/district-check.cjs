@@ -3,7 +3,7 @@ const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_pro
 const {chromium,webkit}=require('playwright');
 const out=path.resolve('district-v49-artifacts');fs.mkdirSync(out,{recursive:true});
 const base=process.env.CHECK_BASE_URL||'http://127.0.0.1:4189';
-const report={revision:'area-higashiyama-quality-v4.19',base,cases:[],checks:[]};
+const report={revision:'area-higashiyama-quality-v4.20',base,cases:[],checks:[]};
 const check=(name,passed,detail)=>{report.checks.push({name,passed:!!passed,detail});assert.ok(passed,name);};
 let server,browser;
 (async()=>{try{
@@ -29,6 +29,8 @@ let server,browser;
   check(kind+' current model loaded',s.revision===report.revision,s.revision);
   check(kind+' no runtime errors',!s.errors.length&&!record.errors.length,{app:s.errors,page:record.errors});
   check(kind+' focal plane follows overview camera',await page.evaluate(()=>{const r=phoneTest.renderer,g=r.gl,focus=g.getUniform(r.composite,g.getUniformLocation(r.composite,'focus'));return phoneTest.camera.target.every((v,i)=>Math.abs(v-focus[i])<1e-4);}));
+  check(kind+' no bottom menu, direction visible',await page.evaluate(()=>!document.querySelector('section.bottom')&&!document.querySelector('nav.tabs')&&document.querySelector('#orientation').textContent==='画面上：南 · 右：西'&&Math.abs(Math.abs(Number(document.querySelector('#compass').dataset.northAngle))-180)<.1));
+  check(kind+' Kamo on right in south-up view',await page.evaluate(()=>{const c=phoneTest.model.cartography,r=c.waterways.channels.find(r=>r.name==='鴨川'),p=r.points[Math.floor(r.points.length/2)],vp=phoneTest.renderer.lastVP;return M.point(vp,[p[0],2.15,p[1]])[0]>M.point(vp,c.landmarkPins.yasaka)[0];}));
   if(mobile){
    record.memory=await page.evaluate(()=>({
     ...phoneTest.model.mobileMemory,modelBuildMs:window.__modelMs,startupMs:window.__startupMs,
@@ -59,10 +61,18 @@ let server,browser;
    await page.evaluate(()=>document.querySelector('#toast').hidden=true);
    check('all four landmarks visible in portrait overview',s.labels.length===4,s.labels);
    await page.screenshot({path:path.join(out,'iphone-overview.png'),timeout:120000});
+   await page.setViewportSize({width:390,height:660});await page.waitForTimeout(400);await page.evaluate(()=>phoneTest.renderer.gl.finish());
+   check('short Safari viewport keeps all four pins and landmark bounds',await page.evaluate(()=>{const w=innerWidth,h=innerHeight,c=phoneTest.model.cartography;return [...document.querySelectorAll('.map-spot')].filter(e=>!e.hidden).length===4&&c.framing.overview.every(p=>{const q=M.point(phoneTest.renderer.lastVP,p),x=(q[0]*.5+.5)*w,y=(.5-q[1]*.5)*h;return x>6&&x<w-6&&y>110&&y<h-25;});}));
+   await page.screenshot({path:path.join(out,'iphone-short-overview.png'),timeout:120000});
+   await page.locator('#compass').click();await page.waitForTimeout(150);
+   check('compass changes to north-up without mirrored east/west',await page.evaluate(()=>document.querySelector('#orientation').textContent==='画面上：北 · 右：東'&&Math.abs(Number(document.querySelector('#compass').dataset.northAngle))<.1));
+   await page.setViewportSize({width:390,height:844});await page.waitForTimeout(400);
    for(const view of ['hokanji','kodaiji','yasaka','street','temple']){
+    const beforeReset=await page.evaluate(()=>phoneTest.renderer.frames);await page.locator('#reset').click();await page.waitForFunction(f=>phoneTest.selectedView==='area'&&phoneTest.renderer.frames>=f+2,beforeReset,{timeout:30000});
     const frames=await page.evaluate(()=>phoneTest.renderer.frames);
-    await page.locator('[data-view="'+view+'"]').click();
-    await page.waitForFunction(v=>document.querySelector('[data-view="'+v+'"]').getAttribute('aria-pressed')==='true',view);
+    if(view==='street')await page.evaluate(()=>phoneTest.view('street',false));
+    else await page.locator('.map-spot[data-view="'+view+'"]').click();
+    await page.waitForFunction(v=>phoneTest.selectedView===v,view);
     await page.waitForFunction(f=>phoneTest.renderer.frames>=f+2,frames,{timeout:30000});
     await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
     await page.waitForTimeout(150);await page.evaluate(()=>phoneTest.renderer.gl.finish());
@@ -70,7 +80,7 @@ let server,browser;
     check(view+' completes two bounded mobile draws',finalFrames===frames+2,{before:frames,after:finalFrames});
     await page.screenshot({path:path.join(out,'iphone-'+view+'.png'),timeout:120000});
    }
-   await page.locator('#reset').click();check('reset returns to district',await page.locator('[data-view="area"]').getAttribute('aria-pressed')==='true');
+   await page.locator('#reset').click();check('reset returns to district',await page.evaluate(()=>phoneTest.selectedView==='area'));
    await page.setViewportSize({width:844,height:390});await page.waitForTimeout(350);await page.evaluate(()=>phoneTest.renderer.gl.finish());
    check('landscape resize keeps drawing',await page.evaluate(()=>phoneTest.ready&&phoneTest.renderer.gl.getError()===0));
    await page.screenshot({path:path.join(out,'iphone-landscape.png'),timeout:120000});
