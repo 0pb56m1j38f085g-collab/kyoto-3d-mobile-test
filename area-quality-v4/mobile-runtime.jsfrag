@@ -1,31 +1,74 @@
 
 function isLowMemoryIOS(){return /iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);}
-async function loadMobileStudy(asset,progress){
- if(typeof DecompressionStream!=='function')throw Error('この軽量3Dの読み込みにはSafariの更新が必要です。');
+async function loadMobileStudy(asset){
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),120000);
  try{
   const response=await fetch(asset.url,{signal:controller.signal});
   if(!response.ok)throw Error('3Dデータの取得に失敗しました（HTTP '+response.status+'）。');
-  // Stream into ONE bounded buffer. Response.arrayBuffer() can require a second
-  // full-size allocation; no per-vertex JS arrays or string-key maps are made here.
-  const bytes=new Uint8Array(asset.bytes),reader=response.body.pipeThrough(new DecompressionStream('gzip')).getReader();let at=0;
-  try{while(true){const {done,value}=await reader.read();if(done)break;if(at+value.length>bytes.length)throw Error('3Dデータのサイズが一致しません。');bytes.set(value,at);at+=value.length;progress(Math.min(99,Math.floor(at/bytes.length*100)));}}
-  finally{reader.releaseLock();}
-  if(at!==asset.bytes)throw Error('3Dデータの読み込みが途中で止まりました。再読み込みしてください。');
-  const view=new DataView(bytes.buffer);
-  if(view.getUint32(0,false)!==0x4b4d5031)throw Error('3Dデータの形式が不正です。');
-  const length=view.getUint32(4,true),start=16+((length+3)&~3);
-  if(start>bytes.length||start+view.getUint32(8,true)!==bytes.length)throw Error('3Dデータのサイズが不正です。');
-  const model=JSON.parse(new TextDecoder().decode(bytes.subarray(16,16+length)));
-  if(model.sourceModelHash!==asset.sourceModelHash||model.revision!==asset.revision)throw Error('3Dデータの版が一致しません。');
-  for(const m of model.meshes){
-   const sizes=[m.vertices*3,m.vertices*3,m.count,m.instanceCount*15],names=['p','n','index','instanceData'];
-   for(let k=0;k<4;k++){
-    const offset=start+m.offsets[k];if(offset<start||offset%4||offset+sizes[k]*4>bytes.length)throw Error('3Dデータの範囲が不正です。');
-    m[names[k]]=new (k===2?Uint32Array:Float32Array)(bytes.buffer,offset,sizes[k]);
-   }
-  }
-  model.mobileMemory={geometryBytes:asset.bytes,downloadBytes:asset.compressedBytes,proceduralBuild:false,runtimeVertexIndexing:false};
-  progress(100);return model;
+  const model=await response.json();
+  if(model.sourceModelHash!==asset.sourceModelHash||model.revision!==asset.revision||!model.mobilePacked||model.mobileChunks.length!==asset.chunkCount)throw Error('3Dデータの版が一致しません。');
+  model.mobileMemory={geometryBytes:asset.bytes,downloadBytes:asset.compressedBytes,chunkCount:asset.chunkCount,maxChunkBytes:asset.maxChunkBytes,maxCompressedChunkBytes:asset.maxCompressedChunkBytes,
+   retainedGeometryBytes:0,stagingBytes:0,uploadedChunks:0,proceduralBuild:false,runtimeVertexIndexing:false};
+  return model;
  }finally{clearTimeout(timer);controller.abort();}
+}
+// A fence drains GPU commands before the next part; timers let the page paint.
+async function mobileGPUFence(g,signal){
+ const fence=g.fenceSync(g.SYNC_GPU_COMMANDS_COMPLETE,0);g.flush();const started=performance.now();
+ try{while(true){
+  if(signal.aborted||g.isContextLost())throw Error('3D表示が中断されました。再読み込みしてください。');
+  const status=g.clientWaitSync(fence,0,0);
+  if(status===g.ALREADY_SIGNALED||status===g.CONDITION_SATISFIED)return;
+  if(status===g.WAIT_FAILED||performance.now()-started>30000)throw Error('3Dの描画準備に失敗しました。再読み込みしてください。');
+  await new Promise(r=>setTimeout(r,16));
+ }}finally{g.deleteSync(fence);}
+}
+async function uploadMobileStudy(renderer,model,progress){
+ const controller=new AbortController();renderer.mobileAbort=controller;
+ const g=renderer.gl,memory=model.mobileMemory;
+ if(!model.mobileChunks.length||memory.maxChunkBytes>2*1024*1024||memory.maxCompressedChunkBytes>2*1024*1024)throw Error('3Dデータの分割サイズが不正です。');
+ const bytes=new Uint8Array(memory.maxChunkBytes),compressed=new Uint8Array(memory.maxCompressedChunkBytes);
+ memory.stagingBytes=bytes.byteLength+compressed.byteLength;memory.uploadedChunks=0;
+ try{
+  for(const part of model.mobileChunks){
+   if(controller.signal.aborted||g.isContextLost())throw Error('3D表示が中断されました。');
+   const timer=setTimeout(()=>controller.abort(),120000);
+   try{
+    progress('寺社と町並みを準備しています… '+memory.uploadedChunks+' / '+memory.chunkCount);
+    const response=await fetch(part.url,{signal:controller.signal});
+    if(!response.ok)throw Error('3Dデータの取得に失敗しました（HTTP '+response.status+'）。');
+    const reader=response.body.getReader();let at=0;
+    try{while(true){const {done,value}=await reader.read();if(done)break;if(at+value.length>part.compressedBytes||at+value.length>compressed.length)throw Error('3Dデータのサイズが一致しません。');compressed.set(value,at);at+=value.length;}}
+    finally{await reader.cancel().catch(()=>{});reader.releaseLock();}
+    if(at!==part.compressedBytes)throw Error('3Dデータの読み込みが途中で止まりました。再読み込みしてください。');
+    // Both input and output buffers are reused. Native DecompressionStream kept
+    // tens of MB of unreachable output chunks alive until a later GC in v4.15.
+    const decoded=fflate.gunzipSync(compressed.subarray(0,at),{out:bytes.subarray(0,part.bytes)});
+    at=decoded.byteLength;
+    if(at!==part.bytes||decoded.buffer!==bytes.buffer)throw Error('3Dデータの展開サイズが一致しません。');
+    const digest=await crypto.subtle.digest('SHA-256',decoded);
+    if([...new Uint8Array(digest)].map(v=>v.toString(16).padStart(2,'0')).join('')!==part.sha256)throw Error('3Dデータが破損しています。再読み込みしてください。');
+    const view=new DataView(bytes.buffer),length=view.getUint32(4,true),start=16+((length+3)&~3);
+    if(view.getUint32(0,false)!==0x4b4d5032||length>65536||start>at||start+view.getUint32(8,true)!==at)throw Error('3Dデータの形式が不正です。');
+    const meta=JSON.parse(new TextDecoder().decode(bytes.subarray(16,16+length)));
+    if(meta.sourceModelHash!==model.sourceModelHash)throw Error('3Dデータの版が一致しません。');
+    for(const m of meta.meshes){
+     const sizes=[m.vertices*3,m.vertices*3,m.count,m.instanceCount*15],names=['p','n','index','instanceData'];
+     for(let k=0;k<4;k++){
+      const offset=start+m.offsets[k];if(!Number.isSafeInteger(offset)||!Number.isSafeInteger(sizes[k])||sizes[k]<0||offset<start||offset%4||offset+sizes[k]*4>at)throw Error('3Dデータの範囲が不正です。');
+      m[names[k]]=new (k===2?Uint32Array:Float32Array)(bytes.buffer,offset,sizes[k]);
+     }
+     renderer.uploadPacked(m);
+    }
+    g.bindVertexArray(null);
+    if(g.getError()!==g.NO_ERROR)throw Error('描画用メモリを確保できませんでした。再読み込みしてください。');
+    await mobileGPUFence(g,controller.signal);
+    memory.uploadedChunks++;await new Promise(r=>setTimeout(r,0));
+   }finally{clearTimeout(timer);}
+  }
+  if(renderer.batches.reduce((s,b)=>s+b.count*b.instances/3,0)!==model.stats.triangles)throw Error('3Dの形状数が一致しません。');
+  renderer.uploadedUniqueVertices=model.stats.uploadedUniqueVertices;
+  progress('3Dを表示しています…');await new Promise(r=>setTimeout(r,32));
+ }catch(e){renderer.discardMobileGeometry();throw e;}
+ finally{memory.stagingBytes=0;renderer.mobileAbort=null;controller.abort();}
 }

@@ -1,6 +1,6 @@
 'use strict';
 module.exports=({renderer,app,html})=>{
- const replace=(s,a,b,label)=>{if(!s.includes(a))throw Error('Missing v4.15 input: '+label);return s.replace(a,b);};
+ const replace=(s,a,b,label)=>{if(!s.includes(a))throw Error('Missing v4.16 input: '+label);return s.replace(a,b);};
  // Bound the total iOS drawing area, while avoiding the visibly blurred 0.62x phone canvas.
  app=replace(app,"lowMemoryIOS?.62:.85","lowMemoryIOS?Math.min(.9,Math.sqrt(420000/Math.max(1,innerWidth*innerHeight))):.85",'bounded iOS resolution');
  // A real overview camera with an axis that fits the long district on a portrait display.
@@ -16,34 +16,36 @@ module.exports=({renderer,app,html})=>{
  app=app.replaceAll(',10,Math.max(150,80/',',3.6,Math.max(150,80/');
  app=app.replace("else if(e.key==='Home')view('temple')","else if(e.key==='Home')view('area')");
  app=app.replace("$('reset').onclick=()=>{closeModal();view('temple');}","$('reset').onclick=()=>{closeModal();view('area');}");
- app=app.replace("'Kiyomizu quality v5'","'東山・祇園 v4.15'");
+ app=app.replace("'Kiyomizu quality v5'","'東山・祇園 v4.16'");
  app=replace(app,"camera=authored(params.get('view')||'area');ready=true;", "selected=Object.hasOwn(presets,params.get('view'))?params.get('view'):'area';camera=authored(selected);ready=true;$('quality').value=quality;$('quality-label').textContent=names[quality];document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===selected)));if(renderer.bakedMismatch)lightingState='動的照明（照明データ差異）';",'UI initial state');
  app=app.replace('kodaiji:{target:[-17.7,4.9,28.8],span:11.8,yaw:1.15,pitch:.38}','kodaiji:{target:[-15.0,2.05,32.2],span:12.8,yaw:3.45,pitch:.70}');
  // Never allow a query parameter or settings change to silently remove the iPhone memory guard.
  app=replace(app,"function setQuality(value){if(!modes[value]||!ready)return;", "function setQuality(value){if(!modes[value]||!ready)return;if(lowMemoryIOS&&value!=='light'){value='light';toast('この端末では軽量表示を使用します。');}", 'iOS guard');
  // iOS must never construct the full procedural scene or per-vertex string Maps.
- app=replace(app,'model=makeStudy();',"model=lowMemoryIOS?await loadMobileStudy(__MOBILE_ASSET__,p=>{$('load-message').textContent='軽量3Dデータを読み込んでいます… '+p+'%';}):makeStudy();",'precompiled mobile model');
+ app=replace(app,'model=makeStudy();',"model=lowMemoryIOS?await loadMobileStudy(__MOBILE_ASSET__):makeStudy();",'precompiled mobile manifest');
  app=app.replaceAll('shadowSize:lowMemoryIOS?1024:3072,','lowMemory:lowMemoryIOS,shadowSize:lowMemoryIOS?1024:3072,');
- app=replace(app,'`間接照明: ${lightingState}`','`間接照明: ${lightingState}`,model.mobileMemory?`事前計算モデル: ${(model.mobileMemory.geometryBytes/1048576).toFixed(1)} MiB / 端末内の形状生成なし`:"モデル: 端末内生成"','mobile diagnostics');
+ app=replace(app,"contextLost=true;if(raf)","contextLost=true;renderer?.mobileAbort?.abort();if(raf)",'cancel upload on context loss');
+ app=replace(app,"canvas.addEventListener('webglcontextrestored',()=>{try{", "canvas.addEventListener('webglcontextrestored',async()=>{if(!window.phoneTest||renderer?.mobileAbort){fail('描画の準備が中断されました。再読み込みしてください。');return;}try{$('loading').hidden=false;$('error').hidden=true;window.__ready=false;",'async context restore');
+ app=app.replaceAll('renderer.ao=modes[quality].ao;',"if(lowMemoryIOS)await uploadMobileStudy(renderer,model,text=>{$('load-message').textContent=text;});renderer.ao=modes[quality].ao;");
+ app=replace(app,'`間接照明: ${lightingState}`','`間接照明: ${lightingState}`,model.mobileMemory?`分割読込: ${model.mobileMemory.uploadedChunks} / ${model.mobileMemory.chunkCount}、作業バッファ最大 ${(model.mobileMemory.maxChunkBytes/1048576).toFixed(2)} MiB、形状のCPU保持なし`:"モデル: 端末内生成"','mobile diagnostics');
  renderer=replace(renderer,"antialias:true,alpha:false","antialias:!options.lowMemory,alpha:false",'iOS default antialias memory');
  renderer=replace(renderer,'this.msSamples=Math.min(g.getParameter(g.MAX_SAMPLES),w*h>1400000?2:4);','this.msSamples=this.options.lowMemory?1:Math.min(g.getParameter(g.MAX_SAMPLES),w*h>1400000?2:4);','iOS multisample memory');
- renderer=replace(renderer,'for(const m of this.scene.meshes){if(!m.instances.length||!m.p.length)continue;',`for(const m of this.scene.meshes){
- if(m.prepacked){this.uploadPacked(m);totalVertices+=m.vertices;continue;}
- if(!m.instances.length||!m.p.length)continue;`,'packed upload branch');
- renderer=replace(renderer,' upload(){const g=this.gl;',` uploadPacked(m){const g=this.gl,vao=g.createVertexArray();g.bindVertexArray(vao);
-  for(const[loc,size,a]of[[0,3,m.p],[1,3,m.n]]){const buffer=g.createBuffer();g.bindBuffer(g.ARRAY_BUFFER,buffer);g.bufferData(g.ARRAY_BUFFER,a,g.STATIC_DRAW);g.enableVertexAttribArray(loc);g.vertexAttribPointer(loc,size,g.FLOAT,false,0,0);}
+ renderer=replace(renderer,'this.batches=[];let lightOffset=0,totalVertices=0;', 'this.batches=[];if(this.scene.mobilePacked){this.lightSampleCount=0;this.uploadedUniqueVertices=0;return;}let lightOffset=0,totalVertices=0;', 'deferred mobile upload');
+ renderer=replace(renderer,' upload(){const g=this.gl;',` discardMobileGeometry(){const g=this.gl;for(const b of this.batches){g.deleteVertexArray(b.vao);for(const buffer of b.buffers||[])g.deleteBuffer(buffer);}this.batches=[];}
+ uploadPacked(m){const g=this.gl,vao=g.createVertexArray(),buffers=[];g.bindVertexArray(vao);
+  for(const[loc,size,a]of[[0,3,m.p],[1,3,m.n]]){const buffer=g.createBuffer();buffers.push(buffer);g.bindBuffer(g.ARRAY_BUFFER,buffer);g.bufferData(g.ARRAY_BUFFER,a,g.STATIC_DRAW);g.enableVertexAttribArray(loc);g.vertexAttribPointer(loc,size,g.FLOAT,false,0,0);}
   g.disableVertexAttribArray(2);g.vertexAttrib2f(2,0,0);
   g.disableVertexAttribArray(8);g.vertexAttrib1f(8,0);
-  const index=g.createBuffer();g.bindBuffer(g.ELEMENT_ARRAY_BUFFER,index);g.bufferData(g.ELEMENT_ARRAY_BUFFER,m.index,g.STATIC_DRAW);
-  const instances=g.createBuffer();g.bindBuffer(g.ARRAY_BUFFER,instances);g.bufferData(g.ARRAY_BUFFER,m.instanceData,g.STATIC_DRAW);
+  const index=g.createBuffer();buffers.push(index);g.bindBuffer(g.ELEMENT_ARRAY_BUFFER,index);g.bufferData(g.ELEMENT_ARRAY_BUFFER,m.index,g.STATIC_DRAW);
+  const instances=g.createBuffer();buffers.push(instances);g.bindBuffer(g.ARRAY_BUFFER,instances);g.bufferData(g.ARRAY_BUFFER,m.instanceData,g.STATIC_DRAW);
   for(const[l,size,offset]of[[3,3,0],[4,3,3],[5,4,6],[6,4,10],[7,1,14]]){g.enableVertexAttribArray(l);g.vertexAttribPointer(l,size,g.FLOAT,false,60,offset*4);g.vertexAttribDivisor(l,1);}
-  this.batches.push({vao,count:m.count,indexType:g.UNSIGNED_INT,instances:m.instanceCount,name:m.name,lightOffset:0,lightStride:0,vertices:m.vertices});
+  this.batches.push({vao,buffers,count:m.count,indexType:g.UNSIGNED_INT,instances:m.instanceCount,name:m.name,lightOffset:0,lightStride:0,vertices:m.vertices});
  }
- upload(){const g=this.gl;`,'zero-copy typed array upload');
+ upload(){const g=this.gl;`,'bounded typed array upload');
  // A dynamic boot avoids even fetching/parsing the 3.4 MB procedural scene on iOS.
- html=replace(html,'<script src="src/scene.js?v=area-higashiyama-quality-v4.15"></script><script src="src/app.js?v=area-higashiyama-quality-v4.15"></script>',`<script>
+ html=replace(html,'<script src="src/scene.js?v=area-higashiyama-quality-v4.16"></script><script src="src/app.js?v=area-higashiyama-quality-v4.16"></script>',`<script>
  (async()=>{const script=src=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=()=>reject(Error('3Dコードを取得できませんでした。'));document.body.appendChild(s);});
- try{if(!isLowMemoryIOS())await script('src/scene.js?v=area-higashiyama-quality-v4.15');await script('src/app.js?v=area-higashiyama-quality-v4.15');}
+ try{if(!isLowMemoryIOS())await script('src/scene.js?v=area-higashiyama-quality-v4.16');await script('src/app.js?v=area-higashiyama-quality-v4.16');}
  catch(e){window.__error=e.message;document.getElementById('loading').hidden=true;document.getElementById('error').hidden=false;document.getElementById('error-message').textContent=e.message;document.getElementById('reload').onclick=()=>location.reload();}})();
  </script>`,'mobile conditional boot');
  // Labels attach to the actual 3D world. Selection is available for every district landmark.

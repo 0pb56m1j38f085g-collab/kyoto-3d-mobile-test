@@ -15,15 +15,20 @@ const local='http://127.0.0.1:4191',publicBase='https://higashiyama-quality-v4.o
   if(baseline)await context.route(publicBase+'/**',async route=>{const r=await fetch(route.request().url(),{signal:AbortSignal.timeout(90000)});await route.fulfill({status:r.status,contentType:r.headers.get('content-type')||'application/octet-stream',body:Buffer.from(await r.arrayBuffer())});});
   const page=await context.newPage(),session=await context.newCDPSession(page),record={baseline,base,requests:[],errors:[]};report.cases.push(record);
   page.on('request',r=>record.requests.push(r.url()));page.on('pageerror',e=>record.errors.push(String(e)));
+  record.startupSamples=[];let sampling=true;
+  const sampler=(async()=>{while(sampling){try{record.startupSamples.push(await session.send('Runtime.getHeapUsage'));}catch(_){break;}await new Promise(r=>setTimeout(r,100));}})();
   await page.goto(base+'/?quality=high&view=area',{waitUntil:'load',timeout:120000});
   await page.waitForFunction(()=>window.__ready||window.__error,null,{timeout:180000});
+  sampling=false;await sampler;
   record.firstFrameHeap=await session.send('Runtime.getHeapUsage');
+  record.sampledPeakBackingBytes=Math.max(...record.startupSamples.map(s=>s.backingStorageSize),record.firstFrameHeap.backingStorageSize);
   record.state=await page.evaluate(()=>({revision:phoneTest.model.revision,ready:phoneTest.ready,frames:phoneTest.renderer.frames,ms:window.__startupMs,memory:phoneTest.model.mobileMemory||null,stats:phoneTest.model.stats,gl:phoneTest.renderer.gl.getError()}));
   assert.ok(record.state.ready&&!record.state.gl&&!record.errors.length);
   await session.send('HeapProfiler.collectGarbage');record.afterGC=await session.send('Runtime.getHeapUsage');
   if(!baseline){
    assert.ok(record.afterGC.usedSize<64*1024*1024,'bounded JS object heap (not total process/GPU memory)');
-   assert.ok(record.afterGC.backingStorageSize<110*1024*1024,'bounded typed-array backing storage');
+   assert.ok(record.afterGC.backingStorageSize<8*1024*1024,'no retained monolithic CPU geometry');
+   assert.ok(record.sampledPeakBackingBytes<64*1024*1024,'sampled startup backing storage budget; not total process/GPU peak');
    for(const view of ['temple','hokanji','kodaiji','yasaka','street','area']){
     await page.evaluate(v=>phoneTest.view(v,false),view);await page.waitForTimeout(100);await page.evaluate(()=>phoneTest.renderer.gl.finish());
     await page.screenshot({path:path.join(output,'packed-'+view+'.png'),timeout:120000});
@@ -32,7 +37,7 @@ const local='http://127.0.0.1:4191',publicBase='https://higashiyama-quality-v4.o
    await page.evaluate(()=>phoneTest.renderer.gl.finish());assert.equal(await page.evaluate(()=>phoneTest.renderer.gl.getError()),0);
    await session.send('HeapProfiler.collectGarbage');record.afterInteractionGC=await session.send('Runtime.getHeapUsage');
    assert.ok(record.afterInteractionGC.usedSize<64*1024*1024);
-   assert.ok(record.afterInteractionGC.backingStorageSize<110*1024*1024);
+   assert.ok(record.afterInteractionGC.backingStorageSize<8*1024*1024);
   }
   await context.close();
  }

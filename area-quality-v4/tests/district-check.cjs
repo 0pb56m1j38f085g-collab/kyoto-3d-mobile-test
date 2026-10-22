@@ -3,7 +3,7 @@ const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_pro
 const {chromium,webkit}=require('playwright');
 const out=path.resolve('district-v49-artifacts');fs.mkdirSync(out,{recursive:true});
 const base=process.env.CHECK_BASE_URL||'http://127.0.0.1:4189';
-const report={revision:'area-higashiyama-quality-v4.15',base,cases:[],checks:[]};
+const report={revision:'area-higashiyama-quality-v4.16',base,cases:[],checks:[]};
 const check=(name,passed,detail)=>{report.checks.push({name,passed:!!passed,detail});assert.ok(passed,name);};
 let server,browser;
 (async()=>{try{
@@ -17,8 +17,10 @@ let server,browser;
  for(const kind of ['iphone','ipad','fallback']){
   const mobile=kind!=='fallback';const ctx=await browser.newContext({viewport:kind==='ipad'?{width:820,height:1180}:kind==='iphone'?{width:390,height:844}:{width:1280,height:960},deviceScaleFactor:mobile?3:1,isMobile:mobile,hasTouch:mobile,reducedMotion:'reduce',...(mobile?{userAgent:kind==='iphone'?'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) AppleWebKit/605.1.15 Version/18.0 Safari/605.1.15'}:{})});
   if(kind==='ipad')await ctx.addInitScript(()=>{Object.defineProperty(navigator,'platform',{get:()=> 'MacIntel'});Object.defineProperty(navigator,'maxTouchPoints',{get:()=>5});});
-  const page=await ctx.newPage(),record={kind,requests:[],errors:[]};report.cases.push(record);
-  page.on('request',r=>record.requests.push(r.url()));page.on('pageerror',e=>record.errors.push(String(e)));
+  const page=await ctx.newPage(),record={kind,requests:[],errors:[],maxPartsInFlight:0};report.cases.push(record);
+  const inFlight=new Set();
+  page.on('request',r=>{record.requests.push(r.url());if(/\/mobile\/.*\.bin\.gz/.test(r.url())){inFlight.add(r);record.maxPartsInFlight=Math.max(record.maxPartsInFlight,inFlight.size);}});
+  page.on('requestfinished',r=>inFlight.delete(r));page.on('requestfailed',r=>inFlight.delete(r));page.on('pageerror',e=>record.errors.push(String(e)));
   if(!mobile){await page.route('**/lighting.bin*',r=>{const body=Buffer.alloc(12);body.write('KVL1');body.writeUInt32LE(1,4);return r.fulfill({status:200,contentType:'application/octet-stream',body});});}
   await page.goto(base+'/?quality=high&view=area',{waitUntil:'load',timeout:120000});
   await page.waitForFunction(()=>window.__ready||window.__error,null,{timeout:180000});
@@ -31,14 +33,16 @@ let server,browser;
    record.memory=await page.evaluate(()=>({
     ...phoneTest.model.mobileMemory,modelBuildMs:window.__modelMs,startupMs:window.__startupMs,
     proceduralCodeLoaded:typeof makeStudy!=='undefined',
-    buffers:new Set(phoneTest.model.meshes.flatMap(m=>[m.p.buffer,m.n.buffer,m.index.buffer,m.instanceData.buffer])).size,
-    packedMeshes:phoneTest.model.meshes.every(m=>m.prepacked&&m.p instanceof Float32Array&&m.index instanceof Uint32Array),
+    cpuMeshes:phoneTest.model.meshes.length,
+    batchTypedArrays:phoneTest.renderer.batches.flatMap(Object.values).filter(ArrayBuffer.isView).length,
+    uploadedTriangles:phoneTest.renderer.batches.reduce((s,b)=>s+b.count*b.instances/3,0),
     lightSamples:phoneTest.renderer.lightSampleCount,msSamples:phoneTest.renderer.msSamples
    }));
    check(kind+' never fetches procedural scene',!record.requests.some(u=>/\/scene\.js/.test(u))&&!record.memory.proceduralCodeLoaded,record.requests);
-   check(kind+' uses one bounded typed geometry buffer',record.memory.buffers===1&&record.memory.packedMeshes&&record.memory.geometryBytes<=96*1024*1024,record.memory);
+   check(kind+' sequential parts no larger than 2 MiB',record.maxPartsInFlight===1&&record.memory.maxChunkBytes<=2*1024*1024&&record.memory.uploadedChunks===record.memory.chunkCount,record.memory);
+   check(kind+' retains no CPU geometry after upload',record.memory.cpuMeshes===0&&record.memory.batchTypedArrays===0&&record.memory.stagingBytes===0&&record.memory.retainedGeometryBytes===0,record.memory);
    check(kind+' skips runtime geometry and lighting index generation',!record.memory.proceduralBuild&&!record.memory.runtimeVertexIndexing&&record.memory.lightSamples===0,record.memory);
-   check(kind+' preserves every rendered triangle and instance',s.stats.triangles===4965647&&s.stats.instances===23659,s.stats);
+   check(kind+' preserves every rendered triangle and source instance',s.stats.triangles===4965647&&record.memory.uploadedTriangles===4965647&&s.stats.instances===23659,s.stats);
    check(kind+' no multisample attachments',record.memory.msSamples===1,record.memory);
    check(kind+' skips lighting download',!record.requests.some(u=>/lighting\.bin/.test(u)),record.requests);
    check(kind+' stays light and reports light',s.lowMemoryIOS&&s.quality==='light'&&s.qualityText==='軽量'&&s.qualitySelect==='light',s);
@@ -64,14 +68,15 @@ let server,browser;
    await page.screenshot({path:path.join(out,'iphone-landscape.png'),timeout:120000});
    check('main hall geometry preserved',s.stats.mainHallInstances===2158,s.stats.mainHallInstances);
    check('2843 polygon buildings, thirteen metric landmarks and normalized Kiyomizu loaded',await page.evaluate(()=>phoneTest.model.footprintBuildings.filter(b=>!b.custom).length===2843&&phoneTest.model.metricLandmarks.length===13&&phoneTest.model.kiyomizuPlacement.uniformScale<.12));
-   // Exercise the retained packed buffer after WebGL context loss, not just startup.
+   // Restoration must refetch parts, because no CPU geometry is retained.
    const canLose=await page.evaluate(()=>!!phoneTest.renderer.gl.getExtension('WEBGL_lose_context'));
    if(canLose){
+    const before=record.requests.filter(u=>/\/mobile\/.*\.bin\.gz/.test(u)).length;
     await page.evaluate(()=>{window.__lose=phoneTest.renderer.gl.getExtension('WEBGL_lose_context');window.__lose.loseContext();});
     await page.waitForFunction(()=>!document.querySelector('#error').hidden);
     await page.evaluate(()=>window.__lose.restoreContext());
     await page.waitForFunction(()=>document.querySelector('#error').hidden&&phoneTest.renderer.frames>0,null,{timeout:120000});
-    check('packed model restores after context loss',await page.evaluate(()=>phoneTest.ready&&phoneTest.renderer.gl.getError()===0&&phoneTest.model.mobilePacked));
+    check('model refetches and restores after context loss',record.requests.filter(u=>/\/mobile\/.*\.bin\.gz/.test(u)).length-before===record.memory.chunkCount&&await page.evaluate(()=>phoneTest.ready&&phoneTest.renderer.gl.getError()===0&&phoneTest.model.mobileMemory.stagingBytes===0));
    }
    await page.reload({waitUntil:'load',timeout:120000});
    await page.waitForFunction(()=>window.__ready||window.__error,null,{timeout:180000});
@@ -81,11 +86,21 @@ let server,browser;
   await ctx.close();
  }
  // Network failures must produce a readable retry screen, never the old heavy path.
- const failedContext=await browser.newContext({viewport:{width:390,height:844},userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1'});
- const failed=await failedContext.newPage();await failed.route('**/mobile/*.bin.gz',r=>r.fulfill({status:503,body:'temporarily unavailable'}));
- await failed.goto(base,{waitUntil:'load'});await failed.waitForFunction(()=>!!window.__error);
- check('mobile network failure offers retry without heavy fallback',await failed.evaluate(()=>!document.querySelector('#error').hidden&&document.querySelector('#error-message').textContent.includes('503')&&typeof makeStudy==='undefined'));
- await failedContext.close();
+ for(const failure of ['503','truncated','corrupt','context-loss']){
+  const failedContext=await browser.newContext({viewport:{width:390,height:844},userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1'});
+  const failed=await failedContext.newPage();let parts=0;
+  await failed.route('**/mobile/*.bin.gz',async route=>{
+   if(++parts!==5)return route.continue();
+   if(failure==='503')return route.fulfill({status:503,body:'temporarily unavailable'});
+   if(failure==='truncated'){const response=await route.fetch(),body=await response.body();return route.fulfill({status:200,contentType:'application/gzip',body:body.subarray(0,body.length-32)});}
+   if(failure==='corrupt'){const response=await route.fetch(),z=require('node:zlib'),raw=z.gunzipSync(await response.body());raw[raw.length-12]^=1;return route.fulfill({status:200,contentType:'application/gzip',body:z.gzipSync(raw)});}
+   await failed.evaluate(()=>document.querySelector('#scene').getContext('webgl2').getExtension('WEBGL_lose_context').loseContext());
+   await route.abort();
+  });
+  await failed.goto(base,{waitUntil:'load'});await failed.waitForFunction(()=>!!window.__error,null,{timeout:120000});
+  check('mid-load '+failure+' offers retry without heavy fallback',await failed.evaluate(()=>!document.querySelector('#error').hidden&&!window.__ready&&typeof makeStudy==='undefined'));
+  await failedContext.close();
+ }
  report.ok=true;
 }catch(e){report.ok=false;report.failure=String(e.stack||e);process.exitCode=1;}
 finally{if(browser)await browser.close();if(server)server.kill();fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({ok:report.ok,failure:report.failure,checks:report.checks.map(c=>({name:c.name,passed:c.passed}))},null,2));}})();

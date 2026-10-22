@@ -1,4 +1,60 @@
-# v4.15 — iPhone startup incident and bounded model loading
+# iPhone startup incidents — v4.15 and v4.16
+
+## v4.16: actual v4.15 device failure at 98% (2026-10-22)
+
+The user reported that physical iPhone Safari reached 98% and then displayed
+"A problem repeatedly occurred" at `?v=4.15`. **v4.15 did not resolve the actual
+device failure.** Its successful automated WebKit/Chromium tests do not override
+this evidence. The last percentage does not identify the exact failing operation:
+the next synchronous upload could run before another paint. The OS termination
+reason remains unknown.
+
+The new path removes the retained 86,299,052-byte CPU model and the bulk GPU
+upload. It uses 47 content-addressed gzip parts, each at most 2,031,824 bytes after
+expansion. The same destination buffer is reused for all parts. A second bounded
+buffer is reused for compressed input. The pinned MIT-licensed fflate 0.8.3
+decoder writes directly into the destination; no procedural scene, vertex Maps,
+or baked-light file is loaded on iOS. Every decompressed part's SHA-256 is checked
+before upload. Native gzip streams were evaluated in an intermediate version but
+left tens of MB of short-lived output buffers waiting for garbage collection.
+
+A GPU fence drains each part's upload commands before the next part starts.
+Loading yields to the page between parts and describes preparation progress
+without presenting a download percentage as overall startup completion. CPU
+geometry is not retained after upload; context restoration refetches parts.
+Partial download/decode/GL failures release uploaded geometry and show retry.
+Context loss during initial preparation also shows retry rather than using an
+incomplete model.
+
+All 4,965,647 rendered triangles and 23,659 source instances remain. Splitting
+changes 168 source meshes into 197 draw batches (some instance transforms are
+repeated between batches). Every expanded Float32 position and normal is checked
+against its original triangle at build time. The canonical geometry and baked
+lighting hashes remain unchanged from v4.15. No hosting plan was changed.
+
+Local Chromium passed all 48 district checks, including iPhone/iPad configuration,
+all six views, no lighting/procedural requests, one part in flight, no retained
+CPU geometry, refetch/restoration after context loss, reload, and mid-load HTTP
+503, truncated/corrupt data and context-loss retry screens. This is desktop
+software WebGL, not a physical device.
+
+In that environment, first-frame JS object heap was 6,982,340 B and backing
+storage 49,773,380 B. The sampled startup maximum backing storage was 49,773,380 B
+(100 ms sampling can miss short peaks). After forced GC these were 3,404,852 B
+and 376,392 B; the latter remained unchanged after view switches/rotation.
+There are still transient decoder/network allocations awaiting GC. Do not claim
+that the 2,031,824 B output plus 849,933 B input buffers are the entire CPU heap.
+The automated budgets allow browser/GC variability: backing storage below 64 MiB
+during sampled startup and below 8 MiB after GC. GPU/process memory is excluded.
+
+WebKit CI and the public build must also be verified before handoff.
+Physical iPhone stability still requires device confirmation; neither
+the 2 MiB part limit nor JS backing-store measurements describe total app/GPU
+memory or guarantee an iOS memory limit.
+
+---
+
+## Historical v4.15 implementation (superseded)
 
 ## Incident (2026-10-22)
 
