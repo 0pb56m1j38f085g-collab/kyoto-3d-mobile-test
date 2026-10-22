@@ -24,7 +24,7 @@
   }
   I(roof,[cx,y,cz],[1,1,1],color,Q.y(yaw),2);I(edge,[cx,y,cz],[1,1,1],'#514c45',Q.y(yaw),2);
   const T=p=>[cx+Math.cos(yaw)*p[0]+Math.sin(yaw)*p[2],y+p[1],cz-Math.sin(yaw)*p[0]+Math.cos(yaw)*p[2]];
-  beam(T([-w*ridge,h+.02,0]),T([w*ridge,h+.02,0]),Math.min(.08,w*.04),'#6d6d65',Math.min(.13,d*.06));
+  if(ridge>0)beam(T([-w*ridge,h+.02,0]),T([w*ridge,h+.02,0]),Math.min(.08,w*.04),'#6d6d65',Math.min(.13,d*.06));
   if(w>2)for(const side of[0,1])for(const u of[-1,1])for(let k=0;k<7;k++){
    const a=P(u,k/7,side),b=P(u,(k+1)/7,side);a[1]+=.018;b[1]+=.018;beam(T(a),T(b),.025,'#878578');
   }
@@ -198,7 +198,9 @@
   ball([x,y+6.28*s,z],[.09*s,.14*s,.09*s],'#a48e67',tiny,1);
   areaStoneWall([x-2.4*s,z-2.1*s],[x+2.3*s,z-2.1*s],.48*s);
  }
+ group='legacy-hokanji';
  hokanjiPagoda(areaAnchor.hokanji[0],areaAnchor.hokanji[1],1.06);
+ group='higashiyama-area';
 
  function templeCompound(x,z,s=1){
   const y=ground(x,z),wood='#966b4d',roof='#72645c';
@@ -329,6 +331,7 @@
   beam([x-dx*1.10,y+2.60*s,z-dz*1.10],[x+dx*1.10,y+2.60*s,z+dz*1.10],.19*s,c,.20*s);
   for(const side of[-1,1])ball([x+Math.cos(a)*side*1.85*s,y+2.60*s,z-Math.sin(a)*side*1.85*s],[.10*s,.10*s,.10*s],'#bdbbae',tiny,3);
  }
+ group='legacy-yasaka';
  areaTorii(areaAnchor.yasaka[0],areaAnchor.yasaka[1]-11.8,1.14,0);
  const yasakaY=ground(areaAnchor.yasaka[0],areaAnchor.yasaka[1]),yasakaX=areaAnchor.yasaka[0],yasakaZ=areaAnchor.yasaka[1];
  // Yasaka main massing with layered shrine details
@@ -414,6 +417,7 @@
  }
 
 
+ group='higashiyama-area';
  // Human scale extends through the whole district; tiny figures make streets and forecourts legible.
  for(let n=1;n<eastSpine.length-1;n++){
   const a=eastSpine[n-1],b=eastSpine[n],c=eastSpine[n+1];
@@ -578,7 +582,7 @@
   // Reject intersecting infill using all street segments, including lanes authored later.
  for(const args of houseQueue){
   const[x,z,a=0,s=1]=args,radius=1.04*s;
-  if(x>-44-radius&&x<-36+radius&&z>20-radius&&z<49+radius)continue;
+  if(x>-44-radius&&x<-24+radius&&z>15-radius&&z<52+radius)continue;
   if(areaRoads.some(r=>r.pts.some((p,i)=>i&&dseg(x,z,r.pts[i-1],p)<r.width*.5+.75*s)))continue;
   if(placedHouses.some(p=>Math.hypot(x-p.x,z-p.z)<radius+p.radius))continue;
   if(Math.abs(x-yasakaX)<5.8&&z>yasakaZ-12.5&&z<yasakaZ+3.7)continue;
@@ -589,4 +593,4 @@
  scene.areaSites.placementAccuracy='Geographic landmark anchors. Landmark silhouettes reference official inventories; selected historic streets follow OSM ways; gardens, remaining streets and intermediate houses remain authored, not measured footprints.';
  scene.areaSites.referenceRevision='official-inventory-review-2026-10-22';
 
- scene.areaQuality='v4.10-coherent-district-and-landmark-detail';
+ scene.areaQuality='v4.11-coherent-district-and-landmark-detail';

@@ -1,0 +1,157 @@
+ // Architectural models are authored in metres, then transformed once into the
+ // same 20 m/unit coordinates as the source streets and building footprints.
+ // These are reference-calibrated reconstructions, not measured survey models.
+ const metricRecords=[];
+ function metricPlacement(id){
+  const b=footprintData.buildings.find(b=>b.id===id),a=b.axes;
+  const center=[a.u[0]*(a.loU+a.hiU)/2+a.v[0]*(a.loV+a.hiV)/2,a.u[1]*(a.loU+a.hiU)/2+a.v[1]*(a.loV+a.hiV)/2];
+  const u=Math.abs(a.u[0])>Math.abs(a.v[0])?a.u:a.v,sign=u[0]<0?-1:1;
+  return{b,center,yaw:-Math.atan2(u[1]*sign,u[0]*sign),width:20*(Math.abs(a.u[0])>Math.abs(a.v[0])?a.hiU-a.loU:a.hiV-a.loV),depth:20*(Math.abs(a.u[0])>Math.abs(a.v[0])?a.hiV-a.loV:a.hiU-a.loU)};
+ }
+ function metricModel(key,id,heightMetres,heightSource,draw){
+  const p=metricPlacement(id),y=Math.max(...p.b.polygon.map(q=>ground(...q)))+.018;
+  const previous=group;group='metric-'+key;draw(p);const cs=Math.cos(p.yaw),sn=Math.sin(p.yaw),rotation=Q.y(p.yaw);
+  for(const m of scene.meshes)for(const i of m.instances)if(i.group===group){
+   const [x,yy,z]=i.p;i.p=QGA([p.center[0]+(cs*x+sn*z)/20,y+yy/20,p.center[1]+(-sn*x+cs*z)/20]);
+   i.s=QGA(i.s.map(v=>v/20));i.q=QGA(Q.mul(rotation,i.q));
+  }
+  const record={key,sourceWay:id,center:p.center,baseY:y,yaw:p.yaw,heightMetres,heightSource,group,metresPerUnit:20,planSource:'OSM oriented envelope; roof/eave boundary interpretation remains uncertain',details:'reconstructed proportions, not surveyed'};
+  metricRecords.push(record);footprintRecords.push({id,name:p.b.name,points:p.b.points,area:p.b.footprintArea,heightMetres,heightSource,roofSource:'custom reference-calibrated reconstruction',custom:true});group=previous;return record;
+ }
+ // Irimoya: curved lower hip skirt plus a vertical triangular upper gable.
+ // Unlike a plain hip roof, this exposes the characteristic white gable/truss.
+ function metricIrimoya(name,w,d,y,h,color='#79695d'){
+  const m=mesh(name),fascia=mesh(name+'-fascia'),cut=.40,ridge=.30;
+  const H=t=>h*(1-t)+h*.10*Math.sin(t*Math.PI)-h*.10*Math.sin(t*Math.PI*.5)+h*.08*t**8;
+  const X=t=>w*(t<cut?ridge:ridge+(.5-ridge)*(t-cut)/(1-cut));
+  const P=(u,t,k)=>k<2?[u*X(t),y+H(t),(k===0?1:-1)*d*.5*t]:[(k===2?1:-1)*X(t),y+H(t),u*d*.5*t];
+  const normal=(u,t,k)=>{let n=V.unit(V.cross(V.sub(P(u+.0001,t,k),P(u-.0001,t,k)),V.sub(P(u,t+.0001,k),P(u,t-.0001,k))));return n[1]<0?V.mul(n,-1):n;};
+  for(let k=0;k<4;k++)for(let a=0;a<24;a++)for(let j=0;j<16;j++){
+   const start=k<2?0:cut,u=-1+a/12,v=u+1/12,t=start+(1-start)*j/16,tt=start+(1-start)*(j+1)/16;
+   m.tri(P(u,t,k),P(v,t,k),P(v,tt,k),normal(u,t,k),normal(v,t,k),normal(v,tt,k));
+   m.tri(P(u,t,k),P(v,tt,k),P(u,tt,k),normal(u,t,k),normal(v,tt,k),normal(u,tt,k));
+  }
+  for(let k=0;k<4;k++)for(let a=0;a<24;a++){const p=P(-1+a/12,1,k),q=P(-1+(a+1)/12,1,k);fascia.quad(p,q,[q[0],q[1]-.22,q[2]],[p[0],p[1]-.22,p[2]]);}
+  I(m,[0,0,0],[1,1,1],color,undefined,2);I(fascia,[0,0,0],[1,1,1],'#51463d',undefined,2);
+  for(const side of[-1,1]){
+   const x=side*w*ridge,g=mesh(name+'-gable-'+side),a=[x,y+h,0],b=[x,y+H(cut),-d*.5*cut],c=[x,y+H(cut),d*.5*cut];
+   g.tri(a,b,c,[side,0,0]);I(g,[0,0,0],[1,1,1],'#e7dfcc',undefined,1);
+   beam(a,b,.16,'#806750');beam(a,c,.16,'#806750');beam(b,c,.18,'#806750');
+   beam([x+side*.07,y+H(cut),0],[x+side*.07,y+h-.30,0],.16,'#806750');
+   for(const s of[-1,1])beam([x+side*.08,y+H(cut)+.24,s*d*.13],[x+side*.08,y+h-.65,0],.11,'#806750');
+  }
+  box([0,y+h+.125,0],[w*.66,.25,.38],'#62574a',0,1);
+ }
+ const tower=metricModel('hokanji',371717416,46,'Kyoto Tourism Federation published overall height',p=>{
+  const wood='#8d765a',dark='#514337';
+  box([0,.275,0],[7.2,.55,7.2],'#b5afa0',0,3);
+  const bases=[.55,7.3,13.95,20.45,26.8],heights=[4.9,4.2,4.1,4,3.9];
+  for(let k=0;k<5;k++){
+   const w=6.4-k*.36,b=bases[k],h=heights[k],eave=p.width-k*1.0;
+   box([0,b+h*.5,0],[w,h,w],wood,0,1);
+   for(const side of[-1,1])for(let bay=-1;bay<=1;bay++){
+    const u=bay*w/3;
+    plate([u,b+h*.47,side*(w*.5+.025)],[w*.27,h*.66,.08],dark,0,1);
+    plate([side*(w*.5+.025),b+h*.47,u],[.08,h*.66,w*.27],dark,0,1);
+    for(let post=0;post<2;post++){
+     const v=u+(post?1:-1)*w/6;
+     pole([v,b,side*w*.51],[v,b+h,side*w*.51],.15,dark);
+     pole([side*w*.51,b,v],[side*w*.51,b+h,v],.15,dark);
+    }
+    for(let j=0;j<3;j++){
+     box([u,b+h-.10+j*.19,side*(w*.51+j*.19)],[.6,.18,.7+j*.35],'#ac906b',0,1);
+     box([side*(w*.51+j*.19),b+h-.10+j*.19,u],[.7+j*.35,.18,.6],'#ac906b',0,1);
+    }
+   }
+   if(k>0){
+    plate([0,b+.14,0],[w+2,.20,w+2],'#987957',0,1);
+    for(const side of[-1,1]){
+     for(let j=-4;j<=4;j++){const u=j*(w+1.8)/8;pole([u,b+.2,side*(w*.5+.9)],[u,b+1.05,side*(w*.5+.9)],.075,dark);pole([side*(w*.5+.9),b+.2,u],[side*(w*.5+.9),b+1.05,u],.075,dark);}
+     beam([-(w*.5+.9),b+1.05,side*(w*.5+.9)],[(w*.5+.9),b+1.05,side*(w*.5+.9)],.11,dark);
+     beam([side*(w*.5+.9),b+1.05,-(w*.5+.9)],[side*(w*.5+.9),b+1.05,(w*.5+.9)],.11,dark);
+    }
+   }
+   areaHip('metric-hokanji-roof-'+k,0,0,eave,eave,b+h,2.25-k*.11,0,'#646762');
+  }
+  // Five roofs and nine distinct sorin rings; the terminal tip is 46 m above base.
+  pole([0,32.35,0],[0,45.6,0],.17,'#86765c');
+  for(let j=0;j<9;j++){
+   const r=1.18-j*.04,yy=35.4+j*.78;
+   for(let k=0;k<24;k++){const a=k*Math.PI/12,b=(k+1)*Math.PI/12;beam([Math.cos(a)*r,yy,Math.sin(a)*r],[Math.cos(b)*r,yy,Math.sin(b)*r],.11,'#8c7c62');}
+  }
+  ball([0,43.7,0],[.42,.65,.42],'#978367',tiny,1);
+  pole([0,44.1,0],[0,46,0],.095,'#a28c67');
+ });
+ const honden=metricModel('yasaka-honden',88108397,15.53,'Yasaka Shrine official architecture page published height',p=>{
+  const w=p.width,d=p.depth,bodyW=w*.71,bodyD=d*.73;
+  box([0,.40,0],[bodyW+1.8,.8,bodyD+1.8],'#c8bda6',0,3);
+  box([0,3.5,0],[bodyW,5.8,bodyD],'#b45640',0,1);
+  for(const side of[-1,1]){
+   box([side*w*.42,2.4,.7],[w*.15,4.2,d*.83],'#c27750',0,1);
+   areaHip('metric-yasaka-matahisa-'+side,side*w*.42,.7,w*.17,d*.89,4.2,1.45,.27,'#807064');
+  }
+  box([0,2.3,d*.42],[w*.77,4,d*.15],'#b76c4b',0,1);
+  areaHip('metric-yasaka-matahisa-north',0,d*.42,w*.80,d*.17,4.1,1.25,.27,'#807064');
+  metricIrimoya('metric-yasaka-main-roof',w*.90,d*.94,6.7,8.58,'#7c6656');
+  const z=-bodyD*.5-.08;
+  plate([0,.90,z-1.0],[bodyW+1.2,.30,2.2],'#ae855e',0,1);
+  for(let i=0;i<=7;i++)pole([-bodyW*.5+i*bodyW/7,.85,z-.10],[-bodyW*.5+i*bodyW/7,6.65,z-.10],.22,'#ae4935');
+  for(let i=0;i<7;i++){
+   const x=-bodyW*.5+(i+.5)*bodyW/7,bay=bodyW/7;
+   plate([x,3.55,z],[bay*.86,4.8,.12],'#e5d5b8',0,1);
+   for(let j=-3;j<=3;j++)plate([x+j*bay/9,3.45,z-.09],[.075,4.3,.12],'#74573d',0,1);
+   box([x,6.3,z-.17],[bay*.90,.25,.75],'#c36c4b',0,1);
+   ball([x,5.4,z-.70],[.32,.44,.32],'#e8d4ae',tiny,1);
+  }
+  for(let j=0;j<6;j++)plate([0,.08+j*.13,z-2.8+j*.29],[9.6,.16,.40],'#c5bdab',0,3);
+ });
+ const maiden=metricModel('yasaka-maiden',105449709,8.1,'estimated from reference photographs; not a measured height',p=>{
+  const w=p.width,d=p.depth;
+  plate([0,.75,0],[w*.88,1.0,d*.88],'#ae8158',0,1);
+  for(const side of[-1,1])for(let i=-2;i<=2;i++)pole([i*w*.17,1.0,side*d*.35],[i*w*.17,5.85,side*d*.35],.18,'#b15a3e');
+  metricIrimoya('metric-yasaka-maiden-roof',w,d,5.75,2.1,'#656c69');
+  for(const side of[-1,1])for(let j=-5;j<=5;j++){
+   pole([j*w*.075,4.35,side*d*.38],[j*w*.075,5.75,side*d*.38],.035,'#6b5341');
+   ball([j*w*.075,4.85,side*d*.38],[.27,.43,.27],j%3?'#ead9b7':'#d9be8e',tiny,1);
+  }
+ });
+ const southGate=metricModel('yasaka-south-gate',88108386,10.4,'estimated from reference photographs; not a measured height',p=>{
+  const w=p.width,d=p.depth;
+  for(const side of[-1,1]){
+   box([side*w*.29,2.1,0],[w*.16,4.2,d*.55],'#bd5b42',0,1);
+   for(const s of[-1,1])pole([side*w*.29+s*.65,.1,d*.29],[side*w*.29+s*.65,4.6,d*.29],.22,'#a94936');
+  }
+  plate([0,4.65,0],[w*.96,.6,d*.74],'#b85b43',0,1);
+  box([0,6.2,0],[w*.80,2.6,d*.59],'#e8ddc9',0,1);
+  for(const side of[-1,1])for(let j=-4;j<=4;j++){
+   pole([j*w*.085,4.9,side*d*.30],[j*w*.085,7.5,side*d*.30],.13,'#b6543d');
+   pole([j*w*.102,4.9,side*d*.36],[j*w*.102,6.0,side*d*.36],.08,'#bc5e43');
+  }
+  metricIrimoya('metric-yasaka-south-gate-roof',w,d,7.4,2.75,'#626b67');
+ });
+ // Ground-plane precinct, not oversized floating authored slabs. Actual OSM
+ // footways remain visible over this inferred gravel surface.
+ group='metric-precinct-landscape';
+ const gravel=mesh('metric-yasaka-gravel');
+ for(let x=-33.5;x<-26.5;x+=.2)for(let z=44.5;z<49.4;z+=.2){
+  const P=(xx,zz)=>[xx,ground(xx,zz)+.006,zz];gravel.quad(P(x,z),P(x,z+.2),P(x+.2,z+.2),P(x+.2,z),[0,1,0]);
+ }
+ I(gravel,[0,0,0],[1,1,1],'#ddd4bf',undefined,0);
+ // Small 3–6 m crowns at the precinct edge. Positions/species remain illustrative.
+ for(let j=0;j<24;j++){
+  const x=-33.2+(j%8)*.91,z=j<8?49.5:j<16?44.2:50.3;
+  const r=.12+(j%3)*.025,y=ground(x,z);
+  pole([x,y,z],[x,y+.22,z],.013,'#8b7454');
+  ball([x,y+.23,z],[r,r*1.1,r],j%5===0?'#b8b986':'#839a64',tiny,4);
+ }
+ scene.metricLandmarks=metricRecords;
+ scene.areaSites.metricLandmarks=metricRecords;
+ scene.areaSites.footprintReference.count=footprintRecords.length;
+ scene.areaSites.footprintReference.customLandmarks=metricRecords.length;
+ scene.areaSites.scaleStatus='Gion/Hokanji/Yasaka block uses 20 m/unit; Kiyomizu/Kodaiji and authored context remain exaggerated. Not a globally scale-accurate map.';
+ scene.areaSites.placementAccuracy='1304 polygon buildings and four reference-calibrated landmark models use the OSM block coordinates; other districts remain authored.';
+ for(const [key,r]of[['hokanji',tower],['yasaka',honden]]){
+  const anchor=scene.areaSites.geographicAnchors[key];anchor.previousRepresentativePoint={lat:anchor.lat,lon:anchor.lon,local:anchor.local};
+  delete anchor.lat;delete anchor.lon;anchor.local=r.center;anchor.sourceWay=r.sourceWay;anchor.positionSource='OSM footprint envelope centre, not entrance';
+ }
+ group='higashiyama-area';

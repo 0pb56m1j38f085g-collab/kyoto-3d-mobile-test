@@ -1,8 +1,8 @@
- // Gion western blocks: footprint coordinates retain the OSM source scale (20m/unit).
+ // Gion, Hokanji and Yasaka blocks retain the OSM source scale (20m/unit).
  // Storey heights and roof types are explicit estimates, never survey claims.
  const footprintData=__FOOTPRINT_DATA__,fb=footprintData.bounds;
  const inFootprintBlock=(x,z,pad=0)=>x>fb.minX-pad&&x<fb.maxX+pad&&z>fb.minZ-pad&&z<fb.maxZ+pad;
- for(const m of scene.meshes)m.instances=m.instances.filter(i=>!((i.group==='higashiyama-area'||i.group==='landscape')&&inFootprintBlock(i.p[0],i.p[2])));
+ for(const m of scene.meshes)m.instances=m.instances.filter(i=>!(['legacy-hokanji','legacy-yasaka'].includes(i.group)||((i.group==='higashiyama-area'||i.group==='landscape')&&inFootprintBlock(i.p[0],i.p[2]))));
  scene.areaBuildings=scene.areaBuildings.filter(b=>!inFootprintBlock(b.x,b.z,1.2));
  group='gion-footprint-blocks';
  const blockMaterials={};
@@ -15,6 +15,7 @@
   if(da>=-1e-9)out.push(a);if((da>1e-9&&db< -1e-9)||(da< -1e-9&&db>1e-9)){const t=da/(da-db);out.push([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]);}
  }return out;}
  for(const b of footprintData.buildings){
+  if(footprintData.customLandmarkIds.includes(b.id))continue;
   const p=b.polygon,ax=b.axes,center=b.center,y=Math.max(...p.map(q=>ground(q[0],q[1])))+.018,h=b.height;
   const plaster=blockMesh(['#d8cdb6','#d4bea0','#dfd4bf','#cbb89b'][b.id%4]);
   const roof=blockMesh(['#727671','#77796f','#626b69','#81796c'][b.id%4],2);

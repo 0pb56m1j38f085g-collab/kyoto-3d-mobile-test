@@ -1,7 +1,7 @@
-name: Higashiyama v4.10 district and iOS regression
+name: Higashiyama v4.11 district and iOS regression
 on:
   push:
-    branches: [area-higashiyama-quality-v4, area-higashiyama-quality-v4.10]
+    branches: [area-higashiyama-quality-v4, area-higashiyama-quality-v4.11]
     paths:
       - 'area-quality-v4/**'
       - 'area-data/**'
@@ -32,6 +32,7 @@ jobs:
         run: |
           node area-quality-v4/tests/footprints.cjs
           node area-quality-v4/tests/district-check.cjs
+          node area-quality-v4/tests/metric-landmarks.cjs
       - if: always()
         uses: actions/upload-artifact@v5
         with:

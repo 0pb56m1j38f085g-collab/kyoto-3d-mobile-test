@@ -10,7 +10,7 @@ const check=(n,v,d)=>{report.checks.push({name:n,passed:!!v,detail:d});assert.ok
  browser=await chromium.launch({headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
  const ctx=await browser.newContext({viewport:{width:430,height:932},deviceScaleFactor:1,reducedMotion:'reduce'});page=await ctx.newPage();page.on('pageerror',e=>report.errors.push(String(e)));
  await page.goto(BASE+'/?quality=light&capture=1&view=area',{waitUntil:'load',timeout:90000});await page.waitForFunction(()=>window.phoneTest?.ready||window.__error,null,{timeout:120000});
- check('viewer initializes',await page.evaluate(()=>!!phoneTest?.ready&&!window.__error),await page.evaluate(()=>window.__error||null));check('v4.4 loaded',await page.evaluate(()=>phoneTest.model.revision==='area-higashiyama-quality-v4.10'),await page.evaluate(()=>phoneTest.model.revision));
+ check('viewer initializes',await page.evaluate(()=>!!phoneTest?.ready&&!window.__error),await page.evaluate(()=>window.__error||null));check('v4.4 loaded',await page.evaluate(()=>phoneTest.model.revision==='area-higashiyama-quality-v4.11'),await page.evaluate(()=>phoneTest.model.revision));
  const snap=async(v,n,w=430,h=932)=>{await page.setViewportSize({width:w,height:h});await page.evaluate(v=>phoneTest.view(v,false),v);await page.waitForTimeout(500);await page.screenshot({path:path.join(OUT,n),timeout:120000});report.shots.push(n)};
  await snap('area','area-mobile.png');
  const candidates=[

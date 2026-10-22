@@ -21,6 +21,10 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
 (async()=>{
  const [rendererB,appB,indexB,sceneB]=await Promise.all(['src/renderer.js','src/app.js','index.html','src/scene.js'].map(fetchFixed));
  let renderer=rendererB.toString('utf8'),app=appB.toString('utf8'),html=indexB.toString('utf8'),scene=sceneB.toString('utf8');
+ // The old decorative terrain wave is three metres high at geographic scale.
+ // Reduce it in the mapped urban block; this is still synthetic, not DEM data.
+ scene=exact(scene,'.15*Math.sin(x*.48)*Math.cos(z*.35)',
+  '(.15-.14*smooth((x+45)/1)*smooth((-23-x)/1)*smooth((z-14)/1)*smooth((53-z)/1))*Math.sin(x*.48)*Math.cos(z*.35)','urban ground amplitude');
  // Cross-engine deterministic storage. V8 and WebKit may differ by a few ULPs in
  // procedural trig results; quantize only stored render geometry/transforms so the
  // baked-light index ordering/count is identical across engines.
@@ -39,9 +43,9 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  const streetData=JSON.parse(fs.readFileSync(path.join(root,'../area-data/historic-streets.json'),'utf8'));
  const footprintData=require('./footprints.cjs').compile(JSON.parse(fs.readFileSync(path.join(root,'../area-data/gion-footprints.json'),'utf8')));
  const footprintFragment=fs.readFileSync(path.join(root,'footprint-fragment.jsfrag'),'utf8').replace('__FOOTPRINT_DATA__',JSON.stringify(footprintData));
- const fragment=fs.readFileSync(path.join(root,'area-fragment.jsfrag'),'utf8').replace('__HISTORIC_STREETS__',JSON.stringify(streetData.roads))+'\n'+footprintFragment;
+ const fragment=fs.readFileSync(path.join(root,'area-fragment.jsfrag'),'utf8').replace('__HISTORIC_STREETS__',JSON.stringify(streetData.roads))+'\n'+footprintFragment+'\n'+fs.readFileSync(path.join(root,'metric-landmarks.jsfrag'),'utf8');
  scene=exact(scene,"\n group='distant-context';","\n"+fragment+"\n group='distant-context';",'area insertion point');
- scene=exact(scene,"scene.revision='quality-v5.4';","scene.revision='area-higashiyama-quality-v4.10';",'area revision');
+ scene=exact(scene,"scene.revision='quality-v5.4';","scene.revision='area-higashiyama-quality-v4.11';",'area revision');
  scene=scene.replace("scene.areaQuality='v3-detailed-landmarks-and-streetscape';","scene.areaQuality='v4-cleared-urban-corridor-and-baked-lighting';");
  scene=exact(scene,
   "scene.named={temple:{target:[-1,7.2,-.4],span:29,yaw:.64,pitch:.43},corner:{target:[1.9,8.5,1.4],span:15.7,yaw:.65,pitch:.31},reverse:{target:[-1,7.4,-.4],span:29,yaw:-.54,pitch:.43}};",
@@ -86,11 +90,11 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  const portraitOld="if(aspect<1.05){p.span*=.78/aspect;p.target[1]+=.2;}";
  if(!app.includes(portraitOld))throw Error('Unexpected portrait camera scaling input');
  app=app.replace(portraitOld,"if(aspect<1.05){const areaLandmark=['hokanji','kodaiji','yasaka','street'].includes(name);const portraitScale=name==='area'?.42:(areaLandmark?.58:.78);p.span*=portraitScale/aspect;p.target[1]+=name==='area'?-.12:.2;}");
- app=app.replaceAll("lighting.bin?v=quality-v5.4","lighting.bin?v=area-higashiyama-quality-v4.10");
- app=app.replaceAll("quality-v5.4","area-higashiyama-quality-v4.10");
+ app=app.replaceAll("lighting.bin?v=quality-v5.4","lighting.bin?v=area-higashiyama-quality-v4.11");
+ app=app.replaceAll("quality-v5.4","area-higashiyama-quality-v4.11");
  app=exact(app,
-  "fetch('./lighting.bin?v=area-higashiyama-quality-v4.10',{signal:controller.signal})",
-  "fetch('./lighting.bin?v=area-higashiyama-quality-v4.10',{signal:controller.signal,cache:'no-store'})",
+  "fetch('./lighting.bin?v=area-higashiyama-quality-v4.11',{signal:controller.signal})",
+  "fetch('./lighting.bin?v=area-higashiyama-quality-v4.11',{signal:controller.signal,cache:'no-store'})",
   'cache-safe lighting fetch');
  app=app.replace("camera.target[0]=clamp(camera.target[0],-7,10);camera.target[1]=clamp(camera.target[1],3.5,11);camera.target[2]=clamp(camera.target[2],-7,7);",
                  "camera.target[0]=clamp(camera.target[0],-46,18);camera.target[1]=clamp(camera.target[1],2,17);camera.target[2]=clamp(camera.target[2],-14,54);");
@@ -99,7 +103,7 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  html=html.replaceAll("建築・景観 v5 · 春の造形見本","東山・祇園 · エリア品質 v4");
  html=html.replace('data-view="temple" aria-pressed="true">本堂全景</button><button data-view="corner" aria-pressed="false">近くで見る</button><button data-view="reverse" aria-pressed="false">別の角度</button>',
                    'data-view="area" aria-pressed="true">エリア全体</button><button data-view="temple" aria-pressed="false">清水寺</button><button data-view="hokanji" aria-pressed="false">八坂の塔</button>');
- html=html.replaceAll("quality-v5.4","area-higashiyama-quality-v4.10");
+ html=html.replaceAll("quality-v5.4","area-higashiyama-quality-v4.11");
  // Area presentation finish: preserve baked contact lighting while moving the district
  // slightly closer to the approved soft pastel concept. Exact replacements refuse
  // to run if the reviewed Kiyomizu renderer changes.
@@ -121,7 +125,7 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  for(const file of ['renderer.js','scene.js','app.js'])cp.execFileSync(process.execPath,['--check',path.join(site,'src',file)],{stdio:'inherit'});
  const context=vm.createContext({console,performance});for(const file of ['renderer.js','scene.js'])vm.runInContext(fs.readFileSync(path.join(site,'src',file),'utf8'),context,{filename:file});
  const model=vm.runInContext('makeStudy()',context,{timeout:240000});
- if(model.revision!=='area-higashiyama-quality-v4.10'||model.areaQuality!=='v4.10-coherent-district-and-landmark-detail')throw Error('Wrong area revision');
+ if(model.revision!=='area-higashiyama-quality-v4.11'||model.areaQuality!=='v4.11-coherent-district-and-landmark-detail')throw Error('Wrong area revision');
  if(!model.areaSites||!model.areaSites.geographicAnchors)throw Error('Area anchors missing');
  let size=12,instances=0;
  for(const m of model.meshes){
@@ -166,12 +170,12 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  // Cache-safe finalization: JS and lighting URLs share the exact geometry/light token.
  const appPath=path.join(site,'src/app.js'),htmlPath=path.join(site,'index.html');
  let cacheSafeApp=fs.readFileSync(appPath,'utf8'),cacheSafeHtml=fs.readFileSync(htmlPath,'utf8');
- cacheSafeApp=cacheSafeApp.replaceAll('lighting.bin?v=area-higashiyama-quality-v4.10','lighting.bin?v='+assetToken);
- cacheSafeHtml=cacheSafeHtml.replaceAll('area-higashiyama-quality-v4.10',assetToken);
+ cacheSafeApp=cacheSafeApp.replaceAll('lighting.bin?v=area-higashiyama-quality-v4.11','lighting.bin?v='+assetToken);
+ cacheSafeHtml=cacheSafeHtml.replaceAll('area-higashiyama-quality-v4.11',assetToken);
  fs.writeFileSync(appPath,cacheSafeApp);fs.writeFileSync(htmlPath,cacheSafeHtml);
  const viewerHashes={};for(const file of['src/renderer.js','src/scene.js','src/app.js','index.html'])viewerHashes[file]=sha(fs.readFileSync(path.join(site,file)));
  const triangles=model.meshes.reduce((n,m)=>n+m.p.length/9*m.instances.length,0);
- const info={revision:model.revision,viewerRevision:'area-higashiyama-quality-v4.10-deterministic',viewerHashes,modelHash,bakerHash,meshes:model.meshes.length,instances,triangles,lightSamples,rays:Number(rays),lightingBytes:light.length,lightingHash,architecture:model.stats,areaSites:model.areaSites,surveyed:false,assetToken,description:'Higashiyama miniature with Kiyomizu v5.4 presentation pipeline and a geometry-matched baked light field. Geographic anchors are real; intermediate streets and structures remain authored.'};
+ const info={revision:model.revision,viewerRevision:'area-higashiyama-quality-v4.11-deterministic',viewerHashes,modelHash,bakerHash,meshes:model.meshes.length,instances,triangles,lightSamples,rays:Number(rays),lightingBytes:light.length,lightingHash,architecture:model.stats,areaSites:model.areaSites,surveyed:false,assetToken,description:'Higashiyama miniature with geometry-matched baked light. A continuous Gion/Hokanji/Yasaka block contains 1304 polygon buildings and four reference-calibrated landmark models at 20m/unit. Roof details and most heights are inferred; Kiyomizu/Kodaiji and other authored context remain exaggerated.'};
  fs.writeFileSync(path.join(site,'build-info.json'),JSON.stringify(info,null,2));
  console.log('AREA_BUILD_VALIDATED',JSON.stringify({modelHash,meshes:model.meshes.length,instances,triangles,lightSamples,lightingBytes:light.length}));
 })().catch(e=>{console.error(e);process.exitCode=1;});

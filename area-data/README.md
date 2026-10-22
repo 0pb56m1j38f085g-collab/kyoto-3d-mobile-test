@@ -27,3 +27,30 @@ Architectural language reference: Kyoto City's Gion Shinbashi conservation plan 
 ## Remaining accuracy work after v4.10
 
 Real footprint alignment, common scale for landmarks/ordinary buildings, measured roof proportions, precinct orientation, terrain elevation and the full Gion district (including buildings beyond the captured bounding box) are still required before the requested high-accuracy target can be considered complete. The generated concept artwork is a presentation reference, not geographic evidence.
+
+## v4.11: connected Gion, Hokanji and Yasaka reference block
+
+The current `gion-footprints.json` expands to x=-44..-24, z=15..52: 1,314 building ways and 236 road ways. Six tiny outlines are explicitly rejected; 1,304 buildings use polygon walls/roofs, while four named ways are reserved for custom models. Thus the 1,308 records must **not** be described as 1,308 individually accurate reconstructions. Source simplification, incomplete tags and missing multipolygon/boundary-crossing buildings remain limitations.
+
+The four custom models are authored in metres and converted once with the same 20 m/unit scale used by roads and ordinary buildings:
+
+| Model | OSM way | Calibration | Still inferred |
+| --- | --- | --- | --- |
+| Hokanji tower | 371717416 | Source envelope centre/orientation; published 46 m height; 6.4 m first-storey body reference | Individual storey heights, eave taper, brackets and finial proportions |
+| Yasaka main hall | 88108397 | Source envelope centre/orientation; official 15.53 m height | Relationship between mapped outline, walls and eaves; roof curvature and facade dimensions |
+| Yasaka dance pavilion | 105449709 | Source envelope centre/orientation and approximate envelope dimensions | 8.1 m height and all vertical proportions |
+| Yasaka south gate | 88108386 | Source envelope centre/orientation and approximate envelope dimensions | 10.4 m height and all vertical proportions |
+
+References checked 2026-10-22:
+
+- Kyoto Tourism Federation: https://www.kyoto-kankou.or.jp/info_search/128 — tower height 46 m and 6.4 m square description. The latter is treated as a first-storey body reference, not the wider eave envelope; that boundary interpretation is not survey-verified.
+- Yasaka Shrine: https://www.yasaka-jinja.or.jp/about/architecture/ — height 15.53 m, building area 662.38 m², eave area 1,049.50 m², roof surface area 1,320 m²; official plan, side elevation and precinct photograph. These areas describe **different boundaries** and are not substituted for one another. The OSM polygon area (about 813 m²) does not match either official building or eave area, so footprint boundary identification remains unresolved.
+- The official side elevation informs the irimoya upper gable and lower hip skirt; no reference photographs are redistributed as textures.
+
+Source building positions correct the earlier representative-point placement and stretched gate–pavilion–main-hall sequence. Roof profiles and timber construction remain simplified interpretations. The oversized legacy Hokanji/Yasaka instances are removed; the custom models do not duplicate the generic footprint masses. The urban terrain's decorative wave is reduced to avoid metre-scale artificial undulations, but **no DEM or surveyed elevation has been added**. Gravel and vegetation remain authored.
+
+`tests/metric-landmarks.cjs` measures transformed mesh vertices (not just metadata) to check heights, grounding, source-centre alignment, precinct sequence and removal of obsolete geometry. Kiyomizu's existing main-hall geometry is preserved.
+
+### Not complete
+
+Kiyomizu and Kodaiji still use exaggerated architectural scales, as does context outside the mapped block. Global scale consistency, individual roof/wall verification, accurate topography, full precinct footprints and complete geographic coverage are **not complete**. The main goal of concept-quality, high-accuracy reproduction has not yet been achieved.

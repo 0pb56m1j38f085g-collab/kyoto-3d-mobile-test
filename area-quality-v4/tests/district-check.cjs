@@ -3,7 +3,7 @@ const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_pro
 const {chromium,webkit}=require('playwright');
 const out=path.resolve('district-v49-artifacts');fs.mkdirSync(out,{recursive:true});
 const base=process.env.CHECK_BASE_URL||'http://127.0.0.1:4189';
-const report={revision:'area-higashiyama-quality-v4.10',base,cases:[],checks:[]};
+const report={revision:'area-higashiyama-quality-v4.11',base,cases:[],checks:[]};
 const check=(name,passed,detail)=>{report.checks.push({name,passed:!!passed,detail});assert.ok(passed,name);};
 let server,browser;
 (async()=>{try{
@@ -50,7 +50,7 @@ let server,browser;
    check('landscape resize keeps drawing',await page.evaluate(()=>phoneTest.ready&&phoneTest.renderer.gl.getError()===0));
    await page.screenshot({path:path.join(out,'iphone-landscape.png'),timeout:120000});
    check('main hall geometry preserved',s.stats.mainHallInstances===2158,s.stats.mainHallInstances);
-   check('235 reference footprints loaded',await page.evaluate(()=>phoneTest.model.footprintBuildings.length===235));
+   check('1304 polygon buildings and four custom landmarks loaded',await page.evaluate(()=>phoneTest.model.footprintBuildings.filter(b=>!b.custom).length===1304&&phoneTest.model.metricLandmarks.length===4));
   }
   check(kind+' no late errors',!record.errors.length&&await page.evaluate(()=>phoneTest.errors.length===0),record.errors);
   await ctx.close();
