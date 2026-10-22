@@ -1,4 +1,5 @@
 'use strict';
+// Rerun after WebKit baked-light fallback deploy f3c3dee.
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const {webkit}=require('playwright');
 const URL='https://higashiyama-quality-v4.onrender.com/?live-webkit=1';
