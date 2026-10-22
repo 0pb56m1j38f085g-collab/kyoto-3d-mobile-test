@@ -47,7 +47,9 @@ let server,browser;
    check(kind+' skips lighting download',!record.requests.some(u=>/lighting\.bin/.test(u)),record.requests);
    check(kind+' stays light and reports light',s.lowMemoryIOS&&s.quality==='light'&&s.qualityText==='軽量'&&s.qualitySelect==='light',s);
    check(kind+' dynamic lighting enabled',!s.bakedEnabled&&s.shadowSize===1024,s);
-   await page.evaluate(()=>phoneTest.setQuality('high'));check(kind+' settings cannot bypass memory guard',await page.evaluate(()=>phoneTest.quality==='light'));
+   const qualityFrames=await page.evaluate(()=>{const frames=phoneTest.renderer.frames;phoneTest.setQuality('high');return frames;});
+   await page.waitForFunction(f=>phoneTest.renderer.frames>=f+2,qualityFrames,{timeout:30000});
+   check(kind+' settings cannot bypass memory guard',await page.evaluate(()=>phoneTest.quality==='light'));
   }else{
    check('mismatched lighting gracefully falls back',!!s.bakedMismatch&&!s.bakedEnabled,s);
    check('fallback allocates usable shadow map',s.shadowSize===3072,s.shadowSize);
@@ -63,7 +65,8 @@ let server,browser;
     await page.waitForFunction(f=>phoneTest.renderer.frames>=f+2,frames,{timeout:30000});
     await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
     await page.waitForTimeout(150);await page.evaluate(()=>phoneTest.renderer.gl.finish());
-    check(view+' completes two bounded mobile draws',await page.evaluate(f=>phoneTest.renderer.frames===f+2,frames));
+    const finalFrames=await page.evaluate(()=>phoneTest.renderer.frames);
+    check(view+' completes two bounded mobile draws',finalFrames===frames+2,{before:frames,after:finalFrames});
     await page.screenshot({path:path.join(out,'iphone-'+view+'.png'),timeout:120000});
    }
    await page.locator('#reset').click();check('reset returns to district',await page.locator('[data-view="area"]').getAttribute('aria-pressed')==='true');
