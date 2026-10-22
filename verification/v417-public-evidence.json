@@ -1,0 +1,122 @@
+{
+  "environment": "Public bytes / host-relayed Chromium; not physical iPhone",
+  "cases": [
+    {
+      "mobile": true,
+      "requests": [
+        "https://higashiyama-quality-v4.onrender.com/?v=4.17&quality=high",
+        "https://higashiyama-quality-v4.onrender.com/src/renderer.js?v=17e23b2d2873-2c0c16606e08-1d89604ee22a",
+        "https://higashiyama-quality-v4.onrender.com/src/app.js?v=17e23b2d2873-2c0c16606e08-1d89604ee22a",
+        "https://higashiyama-quality-v4.onrender.com/mobile/71e0d3456fb3498b0ccbc6e1.json",
+        "https://higashiyama-quality-v4.onrender.com/mobile/fd0b03cbcdb0a25c8cd59d38.bin.gz",
+        "https://higashiyama-quality-v4.onrender.com/mobile/7a390744e0c71ea7eab4e580.bin.gz",
+        "https://higashiyama-quality-v4.onrender.com/mobile/2863fe4111ba38ac24121636.bin.gz"
+      ],
+      "errors": [],
+      "state": {
+        "ready": true,
+        "revision": "area-higashiyama-quality-v4.17",
+        "quality": "light",
+        "baked": false,
+        "frames": 2,
+        "gl": 0,
+        "errors": [],
+        "memory": {
+          "geometryBytes": 5135224,
+          "downloadBytes": 1288440,
+          "chunkCount": 3,
+          "maxChunkBytes": 2042716,
+          "maxCompressedChunkBytes": 539868,
+          "retainedGeometryBytes": 0,
+          "stagingBytes": 0,
+          "uploadedChunks": 3,
+          "proceduralBuild": false,
+          "runtimeVertexIndexing": false
+        },
+        "stats": {
+          "mainHallInstances": 2158,
+          "trees": 270,
+          "stageSupportCount": 18,
+          "mainBays": [
+            9,
+            7
+          ],
+          "surveyed": false,
+          "illustrativeHouses": 90,
+          "triangles": 777574,
+          "instances": 7552,
+          "drawCalls": 149,
+          "uploadedUniqueVertices": 110040
+        },
+        "labels": [
+          "清水寺",
+          "八坂の塔",
+          "高台寺",
+          "八坂神社"
+        ]
+      }
+    },
+    {
+      "mobile": false,
+      "requests": [
+        "https://higashiyama-quality-v4.onrender.com/?v=4.17&quality=high",
+        "https://higashiyama-quality-v4.onrender.com/src/renderer.js?v=17e23b2d2873-2c0c16606e08-1d89604ee22a",
+        "https://higashiyama-quality-v4.onrender.com/src/scene.js?v=17e23b2d2873-2c0c16606e08-1d89604ee22a",
+        "https://higashiyama-quality-v4.onrender.com/src/app.js?v=17e23b2d2873-2c0c16606e08-1d89604ee22a",
+        "https://higashiyama-quality-v4.onrender.com/lighting.bin?v=17e23b2d2873-2c0c16606e08-1d89604ee22a"
+      ],
+      "errors": [],
+      "state": {
+        "ready": true,
+        "revision": "area-higashiyama-quality-v4.17",
+        "quality": "high",
+        "baked": true,
+        "frames": 1,
+        "gl": 0,
+        "errors": [],
+        "stats": {
+          "mainHallInstances": 2158,
+          "trees": 270,
+          "stageSupportCount": 18,
+          "mainBays": [
+            9,
+            7
+          ],
+          "surveyed": false,
+          "illustrativeHouses": 90,
+          "triangles": 777574,
+          "instances": 7552,
+          "drawCalls": 149,
+          "uploadedUniqueVertices": 230595
+        },
+        "labels": [
+          "清水寺",
+          "八坂の塔",
+          "高台寺",
+          "八坂神社"
+        ]
+      }
+    }
+  ],
+  "revision": "area-higashiyama-quality-v4.17",
+  "assetToken": "17e23b2d2873-2c0c16606e08-1d89604ee22a",
+  "allAssetHashesVerified": true,
+  "mobile": {
+    "url": "./mobile/71e0d3456fb3498b0ccbc6e1.json",
+    "manifestBytes": 48030,
+    "sha256": "71e0d3456fb3498b0ccbc6e105a2f95dbd93eff03e22567ffc1995c835d1ebbe",
+    "revision": "area-higashiyama-quality-v4.17",
+    "sourceModelHash": "17e23b2d28737a8bf3506c344bf1f677ccc647561570fa06471064162f948547",
+    "bytes": 5135224,
+    "compressedBytes": 1288440,
+    "maxChunkBytes": 2042716,
+    "maxCompressedChunkBytes": 539868,
+    "chunkCount": 3,
+    "triangles": 777574,
+    "instances": 7552,
+    "meshes": 149,
+    "batches": 149,
+    "geometry": "identical Float32 positions, normals, triangle order/winding and instance transforms; no LOD; unused UV omitted"
+  },
+  "ok": true
+}

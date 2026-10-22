@@ -1,0 +1,1223 @@
+{
+  "sourceCommit": "b43160a0a031d7d77ad2d6cb4cb1177201c0edcb",
+  "environment": "GitHub-hosted Linux; Playwright 1.55.0 WebKit and software Chromium. Not physical iPhone.",
+  "webkit": {
+    "runId": 39812569230,
+    "artifactId": 12440568292,
+    "ok": true,
+    "checks": [
+      {
+        "name": "geometry validates",
+        "passed": true
+      },
+      {
+        "name": "iphone actual frame drawn",
+        "passed": true
+      },
+      {
+        "name": "iphone current model loaded",
+        "passed": true
+      },
+      {
+        "name": "iphone no runtime errors",
+        "passed": true
+      },
+      {
+        "name": "iphone focal plane follows overview camera",
+        "passed": true
+      },
+      {
+        "name": "iphone never fetches procedural scene",
+        "passed": true
+      },
+      {
+        "name": "iphone sequential parts no larger than 2 MiB",
+        "passed": true
+      },
+      {
+        "name": "iphone retains no CPU geometry after upload",
+        "passed": true
+      },
+      {
+        "name": "iphone skips runtime geometry and lighting index generation",
+        "passed": true
+      },
+      {
+        "name": "iphone smaller illustrated geometry uploaded without loss",
+        "passed": true
+      },
+      {
+        "name": "iphone no multisample attachments",
+        "passed": true
+      },
+      {
+        "name": "iphone skips lighting download",
+        "passed": true
+      },
+      {
+        "name": "iphone stays light and reports light",
+        "passed": true
+      },
+      {
+        "name": "iphone dynamic lighting enabled",
+        "passed": true
+      },
+      {
+        "name": "iphone settings cannot bypass memory guard",
+        "passed": true
+      },
+      {
+        "name": "all four landmarks visible in portrait overview",
+        "passed": true
+      },
+      {
+        "name": "hokanji completes two bounded mobile draws",
+        "passed": true
+      },
+      {
+        "name": "kodaiji completes two bounded mobile draws",
+        "passed": true
+      },
+      {
+        "name": "yasaka completes two bounded mobile draws",
+        "passed": true
+      },
+      {
+        "name": "street completes two bounded mobile draws",
+        "passed": true
+      },
+      {
+        "name": "temple completes two bounded mobile draws",
+        "passed": true
+      },
+      {
+        "name": "reset returns to district",
+        "passed": true
+      },
+      {
+        "name": "landscape resize keeps drawing",
+        "passed": true
+      },
+      {
+        "name": "main hall geometry preserved",
+        "passed": true
+      },
+      {
+        "name": "illustrated map separates display from geographic data",
+        "passed": true
+      },
+      {
+        "name": "model refetches and restores after context loss",
+        "passed": true
+      },
+      {
+        "name": "iPhone reload draws without procedural generation",
+        "passed": true
+      },
+      {
+        "name": "iphone no late errors",
+        "passed": true
+      },
+      {
+        "name": "ipad actual frame drawn",
+        "passed": true
+      },
+      {
+        "name": "ipad current model loaded",
+        "passed": true
+      },
+      {
+        "name": "ipad no runtime errors",
+        "passed": true
+      },
+      {
+        "name": "ipad focal plane follows overview camera",
+        "passed": true
+      },
+      {
+        "name": "ipad never fetches procedural scene",
+        "passed": true
+      },
+      {
+        "name": "ipad sequential parts no larger than 2 MiB",
+        "passed": true
+      },
+      {
+        "name": "ipad retains no CPU geometry after upload",
+        "passed": true
+      },
+      {
+        "name": "ipad skips runtime geometry and lighting index generation",
+        "passed": true
+      },
+      {
+        "name": "ipad smaller illustrated geometry uploaded without loss",
+        "passed": true
+      },
+      {
+        "name": "ipad no multisample attachments",
+        "passed": true
+      },
+      {
+        "name": "ipad skips lighting download",
+        "passed": true
+      },
+      {
+        "name": "ipad stays light and reports light",
+        "passed": true
+      },
+      {
+        "name": "ipad dynamic lighting enabled",
+        "passed": true
+      },
+      {
+        "name": "ipad settings cannot bypass memory guard",
+        "passed": true
+      },
+      {
+        "name": "ipad no late errors",
+        "passed": true
+      },
+      {
+        "name": "fallback actual frame drawn",
+        "passed": true
+      },
+      {
+        "name": "fallback current model loaded",
+        "passed": true
+      },
+      {
+        "name": "fallback no runtime errors",
+        "passed": true
+      },
+      {
+        "name": "fallback focal plane follows overview camera",
+        "passed": true
+      },
+      {
+        "name": "mismatched lighting gracefully falls back",
+        "passed": true
+      },
+      {
+        "name": "fallback allocates usable shadow map",
+        "passed": true
+      },
+      {
+        "name": "fallback no late errors",
+        "passed": true
+      },
+      {
+        "name": "mid-load 503 offers retry without heavy fallback",
+        "passed": true
+      },
+      {
+        "name": "mid-load truncated offers retry without heavy fallback",
+        "passed": true
+      },
+      {
+        "name": "mid-load corrupt offers retry without heavy fallback",
+        "passed": true
+      },
+      {
+        "name": "mid-load context-loss offers retry without heavy fallback",
+        "passed": true
+      }
+    ],
+    "iphone": {
+      "ready": true,
+      "revision": "area-higashiyama-quality-v4.17",
+      "quality": "light",
+      "qualityText": "軽量",
+      "qualitySelect": "light",
+      "lowMemoryIOS": true,
+      "bakedEnabled": false,
+      "shadowSize": 1024,
+      "bakedMismatch": null,
+      "frames": 2,
+      "glError": 0,
+      "errors": [],
+      "stats": {
+        "mainHallInstances": 2158,
+        "trees": 270,
+        "stageSupportCount": 18,
+        "mainBays": [
+          9,
+          7
+        ],
+        "surveyed": false,
+        "illustrativeHouses": 90,
+        "triangles": 777574,
+        "instances": 7552,
+        "drawCalls": 149,
+        "uploadedUniqueVertices": 110040
+      },
+      "houses": 90,
+      "roads": {
+        "source": "OpenStreetMap contributors",
+        "license": "ODbL 1.0",
+        "wayIds": [
+          24516359,
+          28514434,
+          30882783,
+          30913263,
+          157527438,
+          179116810,
+          371739384,
+          371739385,
+          526198271,
+          526198278,
+          550360170,
+          747033984,
+          747033985,
+          1251544286,
+          1491152444,
+          1569088146,
+          1569088147,
+          1569088149
+        ]
+      },
+      "labels": [
+        "清水寺",
+        "八坂の塔",
+        "高台寺",
+        "八坂神社"
+      ]
+    },
+    "iphoneMemory": {
+      "geometryBytes": 5135224,
+      "downloadBytes": 1288440,
+      "chunkCount": 3,
+      "maxChunkBytes": 2042716,
+      "maxCompressedChunkBytes": 539868,
+      "retainedGeometryBytes": 0,
+      "stagingBytes": 0,
+      "uploadedChunks": 3,
+      "proceduralBuild": false,
+      "runtimeVertexIndexing": false,
+      "modelBuildMs": 7,
+      "startupMs": 4177,
+      "proceduralCodeLoaded": false,
+      "cpuMeshes": 0,
+      "batchTypedArrays": 0,
+      "uploadedTriangles": 777574,
+      "lightSamples": 0,
+      "msSamples": 1
+    },
+    "iphoneRequests": [
+      "http://127.0.0.1:4189/?quality=high&view=area",
+      "http://127.0.0.1:4189/src/renderer.js?v=area-higashiyama-quality-v4.17",
+      "http://127.0.0.1:4189/src/app.js?v=area-higashiyama-quality-v4.17",
+      "http://127.0.0.1:4189/mobile/71e0d3456fb3498b0ccbc6e1.json",
+      "http://127.0.0.1:4189/mobile/fd0b03cbcdb0a25c8cd59d38.bin.gz",
+      "http://127.0.0.1:4189/mobile/7a390744e0c71ea7eab4e580.bin.gz",
+      "http://127.0.0.1:4189/mobile/2863fe4111ba38ac24121636.bin.gz",
+      "http://127.0.0.1:4189/mobile/fd0b03cbcdb0a25c8cd59d38.bin.gz",
+      "http://127.0.0.1:4189/mobile/7a390744e0c71ea7eab4e580.bin.gz",
+      "http://127.0.0.1:4189/mobile/2863fe4111ba38ac24121636.bin.gz",
+      "http://127.0.0.1:4189/?quality=high&view=area",
+      "http://127.0.0.1:4189/src/renderer.js?v=area-higashiyama-quality-v4.17",
+      "http://127.0.0.1:4189/src/app.js?v=area-higashiyama-quality-v4.17",
+      "http://127.0.0.1:4189/mobile/71e0d3456fb3498b0ccbc6e1.json",
+      "http://127.0.0.1:4189/mobile/fd0b03cbcdb0a25c8cd59d38.bin.gz",
+      "http://127.0.0.1:4189/mobile/7a390744e0c71ea7eab4e580.bin.gz",
+      "http://127.0.0.1:4189/mobile/2863fe4111ba38ac24121636.bin.gz"
+    ]
+  },
+  "baked": {
+    "runId": 39812569371,
+    "artifactId": 12439699013,
+    "ok": true,
+    "checks": [
+      {
+        "name": "24-sample area build completed",
+        "passed": true,
+        "detail": {
+          "status": 0,
+          "signal": null
+        }
+      },
+      {
+        "name": "Correct area revision",
+        "passed": true,
+        "detail": "area-higashiyama-quality-v4.17"
+      },
+      {
+        "name": "Baked light data belongs to this model",
+        "passed": true,
+        "detail": {
+          "bytes": 1901232,
+          "samples": 475306,
+          "rays": 24
+        }
+      },
+      {
+        "name": "Local site started",
+        "passed": true
+      },
+      {
+        "name": "3D initializes",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "Baked lighting active",
+        "passed": true,
+        "detail": {
+          "baked": true,
+          "count": 475306
+        }
+      },
+      {
+        "name": "v4 area model loaded",
+        "passed": true,
+        "detail": "area-higashiyama-quality-v4.17"
+      },
+      {
+        "name": "No WebGL error",
+        "passed": true
+      },
+      {
+        "name": "No runtime errors",
+        "passed": true,
+        "detail": []
+      }
+    ],
+    "build": {
+      "revision": "area-higashiyama-quality-v4.17",
+      "viewerRevision": "area-higashiyama-quality-v4.17-deterministic",
+      "viewerHashes": {
+        "src/renderer.js": "f775c621c10c88bb1faed1a4540e9762bd6882398739d206f0cd05e1e55ab2aa",
+        "src/scene.js": "dea745def837d6bee9b2189a1873135bd630f0c22484aa9d9083ef66e47d63fe",
+        "src/app.js": "0cb9cb03ea0d9d11726f68a2ce35a8b7a4518e152dcc7f9f47aa62c0d2ffed87",
+        "index.html": "074c9adaee3d17f0bc3800bde61fc93f2c5899edfd6becabf3f570594fc8b41c"
+      },
+      "modelHash": "17e23b2d28737a8bf3506c344bf1f677ccc647561570fa06471064162f948547",
+      "bakerHash": "6030fe648b3462e8500059545dc08370839114fb4b3cfef8646a7d8042c1048b",
+      "meshes": 149,
+      "instances": 7552,
+      "triangles": 777574,
+      "lightSamples": 475306,
+      "rays": 24,
+      "lightingBytes": 1901232,
+      "lightingHash": "2c0c16606e080a21c25c8f95e276d02418d00bad1242f8f761bc9e034c93e05a",
+      "architecture": {
+        "mainHallInstances": 2158,
+        "trees": 270,
+        "stageSupportCount": 18,
+        "mainBays": [
+          9,
+          7
+        ],
+        "surveyed": false,
+        "illustrativeHouses": 90
+      },
+      "areaSites": {
+        "scaleMetresPerUnit": 20,
+        "geographicAnchors": {
+          "kiyomizu": {
+            "local": [
+              -0.023049999999999973,
+              -0.7225562499999998
+            ],
+            "sourceWay": 102164590,
+            "positionSource": "Provisional roof centre aligned to northern OSM edge; not entrance"
+          },
+          "hokanji": {
+            "local": [
+              -26.223499999999998,
+              19.656500000000005
+            ],
+            "previousRepresentativePoint": {
+              "lat": 34.99855,
+              "lon": 135.77925,
+              "local": [
+                -26.22,
+                16.62
+              ]
+            },
+            "sourceWay": 371717416,
+            "positionSource": "OSM footprint envelope centre, not entrance"
+          },
+          "kodaiji": {
+            "local": [
+              -17.112873721670677,
+              31.862298116702135
+            ],
+            "previousRepresentativePoint": {
+              "lat": 35.0007611,
+              "lon": 135.7811139,
+              "local": [
+                -17.72,
+                28.84
+              ]
+            },
+            "sourceWay": 522959943,
+            "positionSource": "OSM footprint envelope centre, not entrance"
+          },
+          "yasaka": {
+            "local": [
+              -29.35619256939882,
+              47.78699067591103
+            ],
+            "previousRepresentativePoint": {
+              "lat": 35.00361,
+              "lon": 135.77861,
+              "local": [
+                -29.14,
+                44.59
+              ]
+            },
+            "sourceWay": 88108397,
+            "positionSource": "OSM footprint envelope centre, not entrance"
+          }
+        },
+        "placementAccuracy": "Illustrated display, deliberately not to scale. Original geographic source retained separately; no route-time calculation from display coordinates.",
+        "roadReference": {
+          "source": "OpenStreetMap contributors",
+          "license": "ODbL 1.0",
+          "wayIds": [
+            24516359,
+            28514434,
+            30882783,
+            30913263,
+            157527438,
+            179116810,
+            371739384,
+            371739385,
+            526198271,
+            526198278,
+            550360170,
+            747033984,
+            747033985,
+            1251544286,
+            1491152444,
+            1569088146,
+            1569088147,
+            1569088149
+          ]
+        },
+        "referenceRevision": "official-inventory-review-2026-10-22",
+        "footprintReference": {
+          "source": "OpenStreetMap contributors / Overpass API",
+          "license": "ODbL 1.0",
+          "displayedIndividualFootprints": false
+        },
+        "kodaijiReference": {
+          "source": "https://www.kodaiji.com/haikan.html",
+          "plan": "https://www.kodaiji.com/img/keidaizu.png",
+          "architecture": [
+            "https://online.bunka.go.jp/db/heritages/detail/189623",
+            "https://online.bunka.go.jp/db/heritages/detail/122594"
+          ],
+          "placement": "nine individual OSM footprints; 20 metres per unit",
+          "confirmed": "Kaisando east/northeast of Hojo; Otamaya east of Kaisando; two ponds on either side of Kaisando; Kasatei north of Shiguretei",
+          "inferred": "all nine heights; eave/wall boundaries; roof profiles; pavilion within the Kange-tsudai corridor footprint; garden shorelines, planting, terrain and corridor rise",
+          "ponds": [
+            {
+              "name": "Engetsu",
+              "polygon": [
+                [
+                  -16.82,
+                  34.1
+                ],
+                [
+                  -16.35,
+                  34.22
+                ],
+                [
+                  -16.02,
+                  34.06
+                ],
+                [
+                  -16,
+                  33.72
+                ],
+                [
+                  -16.23,
+                  33.42
+                ],
+                [
+                  -16.02,
+                  33.12
+                ],
+                [
+                  -15.91,
+                  32.72
+                ],
+                [
+                  -16.02,
+                  32.3
+                ],
+                [
+                  -16.36,
+                  32.48
+                ],
+                [
+                  -16.5,
+                  32.83
+                ],
+                [
+                  -16.78,
+                  32.96
+                ],
+                [
+                  -16.67,
+                  33.35
+                ],
+                [
+                  -16.85,
+                  33.72
+                ]
+              ]
+            },
+            {
+              "name": "Garyo",
+              "polygon": [
+                [
+                  -14.61,
+                  34.2
+                ],
+                [
+                  -14.19,
+                  34.4
+                ],
+                [
+                  -13.97,
+                  34.17
+                ],
+                [
+                  -14.18,
+                  33.75
+                ],
+                [
+                  -14.09,
+                  33.25
+                ],
+                [
+                  -13.88,
+                  32.75
+                ],
+                [
+                  -13.96,
+                  32.13
+                ],
+                [
+                  -14.28,
+                  31.67
+                ],
+                [
+                  -14.58,
+                  31.64
+                ],
+                [
+                  -14.78,
+                  32.07
+                ],
+                [
+                  -14.7,
+                  32.7
+                ],
+                [
+                  -14.68,
+                  33.3
+                ]
+              ]
+            }
+          ],
+          "surveyComplete": false
+        },
+        "metricLandmarks": [
+          {
+            "key": "hokanji",
+            "sourceWay": 371717416,
+            "center": [
+              -26.223499999999998,
+              19.656500000000005
+            ],
+            "baseY": 2.1692633598829474,
+            "yaw": -0.036237905730631466,
+            "heightMetres": 46,
+            "heightSource": "Kyoto Tourism Federation published overall height",
+            "group": "metric-hokanji",
+            "metresPerUnit": 20,
+            "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+            "details": "reconstructed proportions, not surveyed"
+          },
+          {
+            "key": "yasaka-honden",
+            "sourceWay": 88108397,
+            "center": [
+              -29.35619256939882,
+              47.78699067591103
+            ],
+            "baseY": 2.175021666923515,
+            "yaw": 0.08437336532110574,
+            "heightMetres": 15.53,
+            "heightSource": "Yasaka Shrine official architecture page published height",
+            "group": "metric-yasaka-honden",
+            "metresPerUnit": 20,
+            "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+            "details": "reconstructed proportions, not surveyed"
+          },
+          {
+            "key": "yasaka-maiden",
+            "sourceWay": 105449709,
+            "center": [
+              -29.46649999999999,
+              46.38199999999999
+            ],
+            "baseY": 2.1770675877680783,
+            "yaw": 0.08001037173638305,
+            "heightMetres": 8.1,
+            "heightSource": "estimated from reference photographs; not a measured height",
+            "group": "metric-yasaka-maiden",
+            "metresPerUnit": 20,
+            "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+            "details": "reconstructed proportions, not surveyed"
+          },
+          {
+            "key": "yasaka-south-gate",
+            "sourceWay": 88108386,
+            "center": [
+              -29.54400887066486,
+              44.730316630885035
+            ],
+            "baseY": 2.1779061804493867,
+            "yaw": 0.08058520127715077,
+            "heightMetres": 10.4,
+            "heightSource": "estimated from reference photographs; not a measured height",
+            "group": "metric-yasaka-south-gate",
+            "metresPerUnit": 20,
+            "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+            "details": "reconstructed proportions, not surveyed"
+          },
+          {
+            "key": "kodaiji-hojo",
+            "sourceWay": 522959943,
+            "center": [
+              -17.112873721670677,
+              31.862298116702135
+            ],
+            "baseY": 2.1681781556876505,
+            "yaw": 0.11420204858047181,
+            "heightMetres": 8.8,
+            "heightSource": "estimated from architectural references; not a measured height",
+            "group": "metric-kodaiji-hojo",
+            "metresPerUnit": 20,
+            "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+            "details": "reconstructed proportions, not surveyed"
+          },
+          {
+            "key": "kodaiji-kuri",
+            "sourceWay": 191037928,
+            "center": [
+              -18.6965,
+              32.1985
+            ],
+            "baseY": 2.167739706318955,
+            "yaw": 0.11507785315014689,
+            "heightMetres": 10.8,
+            "heightSource": "estimated from architectural references; not a measured height",
+            "group": "metric-kodaiji-kuri",
+            "metresPerUnit": 20,
+            "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+            "details": "reconstructed proportions, not surveyed"
+          },
+          {
+            "key": "kodaiji-kaisando",
+            "sourceWay": 541086536,
+            "center": [
+              -15.098499999999996,
+              32.95349999999999
+            ],
+            "baseY": 2.16514949174161,
+            "yaw": 0.1153881143236936,
+            "heightMetres": 9.4,
+            "heightSource": "estimated from architectural references; not a measured height",
+            "group": "metric-kodaiji-kaisando",
+            "metresPerUnit": 20,
+            "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+            "details": "reconstructed proportions, not surveyed"
+          },
+          {
+            "key": "kodaiji-otamaya",
+            "sourceWay": 541086532,
+            "center": [
+              -12.959551214812304,
+              32.74080180898577
+            ],
+            "baseY": 2.1692562691983737,
+            "yaw": 0.28468689968609073,
+            "heightMetres": 8.1,
+            "heightSource": "estimated from architectural references; not a measured height",
+            "group": "metric-kodaiji-otamaya",
+            "metresPerUnit": 20,
+            "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+            "details": "reconstructed proportions, not surveyed"
+          },
+          {
+            "key": "kodaiji-kangetsudai",
+            "sourceWay": 653725971,
+            "center": [
+              -16.08943860554811,
+              32.75408237693378
+            ],
+            "baseY": 2.1640458582200326,
+            "yaw": 0.11385064097536081,
+            "heightMetres": 4.85,
+            "heightSource": "estimated from architectural references; not a measured height",
+            "group": "metric-kodaiji-kangetsudai",
+            "metresPerUnit": 20,
+            "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+            "details": "reconstructed proportions, not surveyed"
+          },
+          {
+            "key": "kodaiji-garyoro",
+            "sourceWay": 541086534,
+            "center": [
+              -14.019651877567473,
+              32.97245520140279
+            ],
+            "baseY": 2.167573903432634,
+            "yaw": 0.1279829469673252,
+            "heightMetres": 5,
+            "heightSource": "estimated from architectural references; not a measured height",
+            "group": "metric-kodaiji-garyoro",
+            "metresPerUnit": 20,
+            "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+            "details": "reconstructed proportions, not surveyed"
+          },
+          {
+            "key": "kodaiji-kasatei",
+            "sourceWay": 522959927,
+            "center": [
+              -10.667000216968152,
+              31.34656161895434
+            ],
+            "baseY": 2.1682403780713595,
+            "yaw": -0.003521112208634833,
+            "heightMetres": 4.5,
+            "heightSource": "estimated from architectural references; not a measured height",
+            "group": "metric-kodaiji-kasatei",
+            "metresPerUnit": 20,
+            "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+            "details": "reconstructed proportions, not surveyed"
+          },
+          {
+            "key": "kodaiji-shiguretei",
+            "sourceWay": 542345560,
+            "center": [
+              -10.715615383605414,
+              30.743499658628384
+            ],
+            "baseY": 2.166353764161847,
+            "yaw": -0.0029585712493531264,
+            "heightMetres": 7.4,
+            "heightSource": "estimated from architectural references; not a measured height",
+            "group": "metric-kodaiji-shiguretei",
+            "metresPerUnit": 20,
+            "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+            "details": "reconstructed proportions, not surveyed"
+          },
+          {
+            "key": "kodaiji-chokushimon",
+            "sourceWay": 541086527,
+            "center": [
+              -17.285499999999995,
+              30.441999999999993
+            ],
+            "baseY": 2.1716426814575676,
+            "yaw": 0.11430321098432765,
+            "heightMetres": 5,
+            "heightSource": "estimated from architectural references; not a measured height",
+            "group": "metric-kodaiji-chokushimon",
+            "metresPerUnit": 20,
+            "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+            "details": "reconstructed proportions, not surveyed"
+          }
+        ],
+        "scaleStatus": "Display has no uniform geographic scale.",
+        "kiyomizuPlacement": {
+          "sourceWay": 102164590,
+          "source": {
+            "source": "OpenStreetMap contributors / Overpass API",
+            "license": "ODbL 1.0",
+            "retrievedAt": "2026-10-21T23:52:43.766Z",
+            "origin": {
+              "lat": 34.995,
+              "lon": 135.785
+            },
+            "metresPerUnit": 20,
+            "sourceWay": 102164590,
+            "points": [
+              [
+                -1.057,
+                -0.209
+              ],
+              [
+                0.8,
+                0.087
+              ],
+              [
+                1.088,
+                -1.698
+              ],
+              [
+                0.555,
+                -1.783
+              ],
+              [
+                0.513,
+                -1.532
+              ],
+              [
+                -0.264,
+                -1.663
+              ],
+              [
+                -0.224,
+                -1.901
+              ],
+              [
+                -0.759,
+                -1.986
+              ],
+              [
+                -0.826,
+                -1.569
+              ],
+              [
+                -1.132,
+                -1.618
+              ],
+              [
+                -1.232,
+                -0.999
+              ],
+              [
+                -0.937,
+                -0.952
+              ],
+              [
+                -1.057,
+                -0.209
+              ]
+            ],
+            "alignmentEdge": [
+              0,
+              1
+            ],
+            "alignmentAssumption": "The northern source edge is treated as the rear eave of the main roof; boundary interpretation is provisional, not surveyed.",
+            "officialContext": "https://www.kiyomizudera.or.jp/map.php"
+          },
+          "uniformScale": 0.11752767293812125,
+          "cos": 0.9875333791481375,
+          "sin": 0.15740973625624594,
+          "rearCentre": [
+            -0.12849999999999995,
+            -0.061
+          ],
+          "baseY": 2.15,
+          "localRearZ": -8.85,
+          "roofCentre": [
+            -0.023049999999999973,
+            3.825944616097609,
+            -0.7225562499999998
+          ],
+          "stageCentre": [
+            0.09146500000000005,
+            3.0549630816235336,
+            -1.440983125
+          ],
+          "method": "Uniform scale from provisional north roof edge; reflected front axis; all inherited geometry transformed together.",
+          "terrain": "Synthetic local slope joined to illustrative district ground; no surveyed altitude.",
+          "surveyed": false
+        },
+        "contextPolicy": {
+          "authoredMiniature": true,
+          "vegetation": "Decorative, including pink blossom accents; not live seasonal conditions.",
+          "houses": "Selected source centres with illustrative repeated machiya silhouettes; not individual shop identification."
+        },
+        "frontageReference": {
+          "method": "outward-facing road visibility with adjacent-building exclusion",
+          "count": 0,
+          "joinery": "illustrative; not an individual facade survey"
+        }
+      },
+      "surveyed": false,
+      "assetToken": "17e23b2d2873-2c0c16606e08-1d89604ee22a",
+      "description": "Illustrated Higashiyama / Gion miniature: enlarged landmark silhouettes, selected illustrative machiya and low-cost decorative groves. Display scale and spacing are deliberately non-metric. Original geographic inputs remain separate; route and walking-time guidance is not yet implemented. Not a surveyed model or live flowering report.",
+      "mobileAsset": {
+        "url": "./mobile/71e0d3456fb3498b0ccbc6e1.json",
+        "manifestBytes": 48030,
+        "sha256": "71e0d3456fb3498b0ccbc6e105a2f95dbd93eff03e22567ffc1995c835d1ebbe",
+        "revision": "area-higashiyama-quality-v4.17",
+        "sourceModelHash": "17e23b2d28737a8bf3506c344bf1f677ccc647561570fa06471064162f948547",
+        "bytes": 5135224,
+        "compressedBytes": 1288440,
+        "maxChunkBytes": 2042716,
+        "maxCompressedChunkBytes": 539868,
+        "chunkCount": 3,
+        "triangles": 777574,
+        "instances": 7552,
+        "meshes": 149,
+        "batches": 149,
+        "geometry": "identical Float32 positions, normals, triangle order/winding and instance transforms; no LOD; unused UV omitted"
+      },
+      "cartography": {
+        "mode": "illustrated-miniature",
+        "metric": false,
+        "displayScale": 0.55,
+        "landmarks": {
+          "temple": {
+            "source": [
+              -0.023049999999999973,
+              -0.7225562499999998
+            ],
+            "at": [
+              0,
+              -1
+            ],
+            "scale": 2.6
+          },
+          "hokanji": {
+            "source": [
+              -26.223499999999998,
+              19.656500000000005
+            ],
+            "at": [
+              -14.422925,
+              10.811075000000004
+            ],
+            "scale": 3
+          },
+          "yasaka": {
+            "source": [
+              -29.4,
+              46.6
+            ],
+            "at": [
+              -16.17,
+              25.63
+            ],
+            "scale": 1.65
+          },
+          "kodaiji": {
+            "source": [
+              -15.8,
+              32.1
+            ],
+            "at": [
+              -7.5,
+              17.2
+            ],
+            "scale": 1.4
+          }
+        },
+        "clearings": [
+          {
+            "group": "metric-hokanji",
+            "x0": -15.454214391095311,
+            "x1": -13.391645608904689,
+            "z0": 9.779785608904689,
+            "z1": 11.842354391095311
+          },
+          {
+            "group": "metric-yasaka-honden",
+            "x0": -17.5764692514539,
+            "x1": -14.609240748546098,
+            "z0": 26.454602680382948,
+            "z1": 28.788394750187877
+          },
+          {
+            "group": "metric-yasaka-maiden",
+            "x0": -16.864650988174866,
+            "x1": -15.694809011825136,
+            "z0": 24.74055306027309,
+            "z1": 25.800046939726908
+          },
+          {
+            "group": "metric-yasaka-south-gate",
+            "x0": -17.240853997216664,
+            "x1": -15.57438600278334,
+            "z0": 21.95153512003043,
+            "z1": 23.13852487996957
+          },
+          {
+            "group": "metric-kodaiji-hojo",
+            "x0": -10.37559648851021,
+            "x1": -8.239197102645466,
+            "z0": 16.17019624835623,
+            "z1": 17.52620233923398
+          },
+          {
+            "group": "metric-kodaiji-kuri",
+            "x0": -12.26560350086223,
+            "x1": -10.844596499137769,
+            "z0": 16.603997417147866,
+            "z1": 18.071802582852136
+          },
+          {
+            "group": "metric-kodaiji-kaisando",
+            "x0": -7.021198050578392,
+            "x1": -6.014601949421608,
+            "z0": 17.82389524251959,
+            "z1": 18.96590475748041
+          },
+          {
+            "group": "metric-kodaiji-otamaya",
+            "x0": -3.9467988080759313,
+            "x1": -2.982199976109098,
+            "z0": 17.579327008763652,
+            "z1": 18.601396546054612
+          },
+          {
+            "group": "metric-kodaiji-kangetsudai",
+            "x0": -8.78101242386013,
+            "x1": -7.03206757613987,
+            "z0": 17.8814824499504,
+            "z1": 18.40679213851339
+          },
+          {
+            "group": "metric-kodaiji-garyoro",
+            "x0": -6.070999965105516,
+            "x1": -3.9440200348944843,
+            "z0": 18.159919494292257,
+            "z1": 18.682960505707744
+          },
+          {
+            "group": "metric-kodaiji-kasatei",
+            "x0": -0.489616845735539,
+            "x1": -0.137983154264461,
+            "z0": 15.945087190119143,
+            "z1": 16.345292809880856
+          },
+          {
+            "group": "metric-kodaiji-shiguretei",
+            "x0": -0.6190083876436534,
+            "x1": -0.14473161235634652,
+            "z0": 15.118199059239734,
+            "z1": 15.483600940760267
+          },
+          {
+            "group": "metric-kodaiji-chokushimon",
+            "x0": -9.836599726293267,
+            "x1": -9.322800273706735,
+            "z0": 14.635200167880335,
+            "z1": 15.123799858941076
+          },
+          {
+            "group": "main-hall",
+            "x0": -3.974605140861022,
+            "x1": 2.8368312517072503,
+            "z0": -3.6701424211686997,
+            "z1": 1.1090143561432748
+          }
+        ],
+        "trees": 270,
+        "houses": 90,
+        "routeGeometry": false,
+        "notice": "建物の大きさ・間隔・道幅を調整したイラストマップ。経路・所要時間はこの表示形状から算出しません。",
+        "geographicSource": {
+          "roads": "area-data/historic-streets.json",
+          "buildings": "area-data/gion-footprints.json",
+          "metresPerUnit": 20,
+          "anchors": {
+            "kiyomizu": {
+              "local": [
+                -0.023049999999999973,
+                -0.7225562499999998
+              ],
+              "sourceWay": 102164590,
+              "positionSource": "Provisional roof centre aligned to northern OSM edge; not entrance"
+            },
+            "hokanji": {
+              "local": [
+                -26.223499999999998,
+                19.656500000000005
+              ],
+              "previousRepresentativePoint": {
+                "lat": 34.99855,
+                "lon": 135.77925,
+                "local": [
+                  -26.22,
+                  16.62
+                ]
+              },
+              "sourceWay": 371717416,
+              "positionSource": "OSM footprint envelope centre, not entrance"
+            },
+            "kodaiji": {
+              "local": [
+                -17.112873721670677,
+                31.862298116702135
+              ],
+              "previousRepresentativePoint": {
+                "lat": 35.0007611,
+                "lon": 135.7811139,
+                "local": [
+                  -17.72,
+                  28.84
+                ]
+              },
+              "sourceWay": 522959943,
+              "positionSource": "OSM footprint envelope centre, not entrance"
+            },
+            "yasaka": {
+              "local": [
+                -29.35619256939882,
+                47.78699067591103
+              ],
+              "previousRepresentativePoint": {
+                "lat": 35.00361,
+                "lon": 135.77861,
+                "local": [
+                  -29.14,
+                  44.59
+                ]
+              },
+              "sourceWay": 88108397,
+              "positionSource": "OSM footprint envelope centre, not entrance"
+            }
+          }
+        },
+        "routeStatus": "Not implemented: no verified route or walking-time claim."
+      }
+    }
+  },
+  "memory": {
+    "ok": true,
+    "sampledPeakBackingBytes": 5556915,
+    "limitation": "Sampled backing storage only, excludes GPU/native/whole-browser memory"
+  },
+  "geometry": {
+    "ok": true,
+    "revision": "area-higashiyama-quality-v4.17",
+    "triangles": 777574,
+    "instances": 7552,
+    "trees": 270,
+    "houses": 90,
+    "mobile": {
+      "url": "./mobile/71e0d3456fb3498b0ccbc6e1.json",
+      "manifestBytes": 48030,
+      "sha256": "71e0d3456fb3498b0ccbc6e105a2f95dbd93eff03e22567ffc1995c835d1ebbe",
+      "revision": "area-higashiyama-quality-v4.17",
+      "sourceModelHash": "17e23b2d28737a8bf3506c344bf1f677ccc647561570fa06471064162f948547",
+      "bytes": 5135224,
+      "compressedBytes": 1288440,
+      "maxChunkBytes": 2042716,
+      "maxCompressedChunkBytes": 539868,
+      "chunkCount": 3,
+      "triangles": 777574,
+      "instances": 7552,
+      "meshes": 149,
+      "batches": 149,
+      "geometry": "identical Float32 positions, normals, triangle order/winding and instance transforms; no LOD; unused UV omitted"
+    },
+    "geographicSourceHashes": {
+      "historic-streets.json": "170bb89edda78d10fd84b45ce089fdcc7f6906abf913a3bacecdcc2f92a39151",
+      "gion-footprints.json": "d0d1e9120fe00f0c2e242bbc350475dc23cc49ce023cbbedcb54fe446058792b"
+    },
+    "limitations": "建物の大きさ・間隔・道幅を調整したイラストマップ。経路・所要時間はこの表示形状から算出しません。"
+  }
+}
