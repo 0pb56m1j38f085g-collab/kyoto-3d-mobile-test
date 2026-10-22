@@ -3,7 +3,7 @@ const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),asse
 const {audit,bounds,world}=require('../architecture-audit.cjs');
 const ctx=vm.createContext({console,performance});
 for(const file of ['renderer.js','scene.js'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../site/src',file),'utf8'),ctx);
-const model=vm.runInContext('makeStudy()',ctx,{timeout:240000});
+const model=vm.runInContext('makeStudy({reference:true})',ctx,{timeout:240000});
 const evidence=require('../../quality-v5/references/architecture-evidence.json');
 const report=audit(model,evidence);
 assert.equal(report.measured.wholeMainHall.instances,2158);

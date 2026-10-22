@@ -2,7 +2,7 @@
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
 const ctx=vm.createContext({console,performance});
 for(const f of['renderer.js','scene.js'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../site/src',f),'utf8'),ctx);
-const m=vm.runInContext('makeStudy()',ctx,{timeout:240000});
+const m=vm.runInContext('makeStudy({reference:true})',ctx,{timeout:240000});
 const retired=['higashiyama-area','landscape','distant-context','legacy-hokanji','legacy-kodaiji','legacy-yasaka'];
 assert.ok(m.meshes.every(mesh=>mesh.instances.every(i=>!retired.includes(i.group))));
 assert.equal(m.areaBuildings.length,0);assert.equal(m.areaStreets.length,0);

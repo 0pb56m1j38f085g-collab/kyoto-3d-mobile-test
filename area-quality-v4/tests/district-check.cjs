@@ -3,7 +3,7 @@ const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_pro
 const {chromium,webkit}=require('playwright');
 const out=path.resolve('district-v49-artifacts');fs.mkdirSync(out,{recursive:true});
 const base=process.env.CHECK_BASE_URL||'http://127.0.0.1:4189';
-const report={revision:'area-higashiyama-quality-v4.16.1',base,cases:[],checks:[]};
+const report={revision:'area-higashiyama-quality-v4.17',base,cases:[],checks:[]};
 const check=(name,passed,detail)=>{report.checks.push({name,passed:!!passed,detail});assert.ok(passed,name);};
 let server,browser;
 (async()=>{try{
@@ -42,7 +42,7 @@ let server,browser;
    check(kind+' sequential parts no larger than 2 MiB',record.maxPartsInFlight===1&&record.memory.maxChunkBytes<=2*1024*1024&&record.memory.uploadedChunks===record.memory.chunkCount,record.memory);
    check(kind+' retains no CPU geometry after upload',record.memory.cpuMeshes===0&&record.memory.batchTypedArrays===0&&record.memory.stagingBytes===0&&record.memory.retainedGeometryBytes===0,record.memory);
    check(kind+' skips runtime geometry and lighting index generation',!record.memory.proceduralBuild&&!record.memory.runtimeVertexIndexing&&record.memory.lightSamples===0,record.memory);
-   check(kind+' preserves every rendered triangle and source instance',s.stats.triangles===4965647&&record.memory.uploadedTriangles===4965647&&s.stats.instances===23659,s.stats);
+   check(kind+' smaller illustrated geometry uploaded without loss',s.stats.triangles<1000000&&record.memory.uploadedTriangles===s.stats.triangles&&s.stats.instances<12000,s.stats);
    check(kind+' no multisample attachments',record.memory.msSamples===1,record.memory);
    check(kind+' skips lighting download',!record.requests.some(u=>/lighting\.bin/.test(u)),record.requests);
    check(kind+' stays light and reports light',s.lowMemoryIOS&&s.quality==='light'&&s.qualityText==='軽量'&&s.qualitySelect==='light',s);
@@ -74,7 +74,7 @@ let server,browser;
    check('landscape resize keeps drawing',await page.evaluate(()=>phoneTest.ready&&phoneTest.renderer.gl.getError()===0));
    await page.screenshot({path:path.join(out,'iphone-landscape.png'),timeout:120000});
    check('main hall geometry preserved',s.stats.mainHallInstances===2158,s.stats.mainHallInstances);
-   check('2843 polygon buildings, thirteen metric landmarks and normalized Kiyomizu loaded',await page.evaluate(()=>phoneTest.model.footprintBuildings.filter(b=>!b.custom).length===2843&&phoneTest.model.metricLandmarks.length===13&&phoneTest.model.kiyomizuPlacement.uniformScale<.12));
+   check('illustrated map separates display from geographic data',await page.evaluate(()=>phoneTest.model.cartography.mode==='illustrated-miniature'&&!phoneTest.model.cartography.metric&&!phoneTest.model.cartography.routeGeometry&&phoneTest.model.metricLandmarks.length===13&&phoneTest.model.areaBuildings.length>30));
    // Restoration must refetch parts, because no CPU geometry is retained.
    const canLose=await page.evaluate(()=>!!phoneTest.renderer.gl.getExtension('WEBGL_lose_context'));
    if(canLose){
@@ -97,7 +97,7 @@ let server,browser;
   const failedContext=await browser.newContext({viewport:{width:390,height:844},userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1'});
   const failed=await failedContext.newPage();let parts=0;
   await failed.route('**/mobile/*.bin.gz',async route=>{
-   if(++parts!==5)return route.continue();
+   if(++parts!==2)return route.continue();
    if(failure==='503')return route.fulfill({status:503,body:'temporarily unavailable'});
    if(failure==='truncated'){const response=await route.fetch(),body=await response.body();return route.fulfill({status:200,contentType:'application/gzip',body:body.subarray(0,body.length-32)});}
    if(failure==='corrupt'){const response=await route.fetch(),z=require('node:zlib'),raw=z.gunzipSync(await response.body());raw[raw.length-12]^=1;return route.fulfill({status:200,contentType:'application/gzip',body:z.gzipSync(raw)});}

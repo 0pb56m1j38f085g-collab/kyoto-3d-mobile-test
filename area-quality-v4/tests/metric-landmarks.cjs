@@ -2,7 +2,7 @@
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
 const ctx=vm.createContext({console,performance});
 for(const file of ['renderer.js','scene.js'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../site/src',file),'utf8'),ctx);
-const model=vm.runInContext('makeStudy()',ctx,{timeout:240000});
+const model=vm.runInContext('makeStudy({reference:true})',ctx,{timeout:240000});
 function world(v,i){
  const [x,y,z]=v.map((v,k)=>v*i.s[k]),[qx,qy,qz,qw]=i.q;
  const tx=2*(qy*z-qz*y),ty=2*(qz*x-qx*z),tz=2*(qx*y-qy*x);
