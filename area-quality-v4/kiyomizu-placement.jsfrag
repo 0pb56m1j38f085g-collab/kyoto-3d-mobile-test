@@ -1,0 +1,55 @@
+ // Normalize the entire inherited study together, before authoring the district.
+ // Source coordinates: east +X / north +Z. The old study's front was +Z;
+ // reflect Z (including normals/winding), preserving the west approach on the west.
+ const kiyomizuSource=__KIYOMIZU_SOURCE__;
+ const ka=kiyomizuSource.points[0],kb=kiyomizuSource.points[1];
+ const kd=Math.hypot(kb[0]-ka[0],kb[1]-ka[1]),ks=kd/16;
+ const kc=(kb[0]-ka[0])/kd,kn=(kb[1]-ka[1])/kd;
+ const kcx=(ka[0]+kb[0])/2,kcz=(ka[1]+kb[1])/2,ky=2.15;
+ const oldKiyomizuGround=ground;
+ const kiyomizuToWorld=p=>{const u=p[0]*ks,v=-(p[2]+8.85)*ks;return[kcx+kc*u-kn*v,ky+p[1]*ks,kcz+kn*u+kc*v];};
+ const kiyomizuToLocal=(x,z)=>{const dx=x-kcx,dz=z-kcz;return[(kc*dx+kn*dz)/ks,-(-kn*dx+kc*dz)/ks-8.85];};
+ for(const original of [...scene.meshes]){
+  if(!original.instances.length)continue;
+  const instances=original.instances;original.instances=[];
+  const name=original.name;original.name='shared-'+name;
+  if(name==='continuous-wooded-escarpment')continue; // Rebuilt as continuous district terrain below.
+  const copy=mesh(name);
+  for(let t=0;t<original.p.length/9;t++)for(const j of [0,2,1]){
+   const k=t*9+j*3,u=t*6+j*2;
+   copy.p.push(original.p[k],original.p[k+1],-original.p[k+2]);
+   copy.n.push(original.n[k],original.n[k+1],-original.n[k+2]);
+   copy.u.push(original.u[u],original.u[u+1]);
+  }
+  for(const i of instances){
+   if(i.group==='main-hall'&&name==='thin-planks'&&Math.abs(i.s[0]-8.2)<1e-5&&Math.abs(i.s[1]-.34)<1e-5)i.architecturePart='projecting-stage';
+   const q=i.q;i.q=QGA(Q.mul(Q.y(-Math.atan2(kn,kc)),[-q[0],-q[1],q[2],q[3]]));
+   i.p=QGA(kiyomizuToWorld(i.p));i.s=QGA(i.s.map(v=>v*ks));
+   if(i.anchor)i.anchor=QGA(kiyomizuToWorld(i.anchor));
+   if(i.group==='landscape')i.group='kiyomizu-landscape';
+   if(i.group==='visitors')i.group='kiyomizu-visitors';
+   copy.instances.push(i);
+  }
+ }
+ // Keep the local terrain profile under the transformed footings, walks and trees.
+ // Smoothly join it to the district's illustrative ground; no DEM accuracy is claimed.
+ ground=(x,z)=>{
+  const [lx,lz]=kiyomizuToLocal(x,z);
+  const outside=Math.max(-62-lx,lx-45.25,-49-lz,lz-38.75,0)*ks;
+  const weight=1-smooth(outside/1.5),base=2.15+.01*Math.sin(x*.48)*Math.cos(z*.35);
+  return base*(1-weight)+(ky+ks*oldKiyomizuGround(clamp(lx,-62,45.25),clamp(lz,-49,38.75)))*weight;
+ };
+ group='district-terrain';
+ const joinedTerrain=mesh('continuous-wooded-escarpment');
+ const terrainPoint=(x,z)=>[x,ground(x,z),z];
+ const terrainQuad=(x,z,step)=>{const a=terrainPoint(x,z),b=terrainPoint(x+step,z),c=terrainPoint(x+step,z+step),d=terrainPoint(x,z+step);joinedTerrain.tri(a,d,c,N(a),N(d),N(c));joinedTerrain.tri(a,c,b,N(a),N(c),N(b));};
+ for(let ix=0;ix<165;ix++)for(let iz=0;iz<135;iz++){
+  const x=-62+ix*.65,z=-49+iz*.65;
+  if(ix>=80&&ix<108&&iz>=60&&iz<87){for(let a=0;a<10;a++)for(let b=0;b<10;b++)terrainQuad(x+a*.065,z+b*.065,.065);}
+  else terrainQuad(x,z,.65);
+ }
+ I(joinedTerrain,[0,0,0],[1,1,1],'#9cab76',undefined,0);
+ scene.kiyomizuPlacement={sourceWay:kiyomizuSource.sourceWay,source:kiyomizuSource,uniformScale:ks,cos:kc,sin:kn,rearCentre:[kcx,kcz],baseY:ky,localRearZ:-8.85,
+  roofCentre:kiyomizuToWorld([0,14.26,-3.15]),stageCentre:kiyomizuToWorld([0,7.7,3.04]),
+  method:'Uniform scale from provisional north roof edge; reflected front axis; all inherited geometry transformed together.',
+  terrain:'Synthetic local slope joined to illustrative district ground; no surveyed altitude.',surveyed:false};

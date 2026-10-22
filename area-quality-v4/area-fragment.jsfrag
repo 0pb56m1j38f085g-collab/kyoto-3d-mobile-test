@@ -53,7 +53,7 @@
   const a=NT(i,j),b=NT(i+1,j),c=NT(i+1,j+1),d=NT(i,j+1);
   northTerrain.tri(a,d,c,N(a),N(d),N(c));northTerrain.tri(a,c,b,N(a),N(c),N(b));
  }
- I(northTerrain,[0,0,0],[1,1,1],'#9cab76',undefined,0);
+ group='district-terrain';I(northTerrain,[0,0,0],[1,1,1],'#9cab76',undefined,0);group='higashiyama-area';
  // Northern park edge keeps the expanded ground visually connected to the wooded Higashiyama slope.
  for(let j=0;j<72;j++){
   const a=j*2.399,rad=3.0+Math.sqrt((j+.4)/72)*12.0,x=-19+Math.cos(a)*rad,z=51+Math.sin(a)*rad*.55;
@@ -595,4 +595,4 @@
  scene.areaSites.placementAccuracy='Geographic landmark anchors. Landmark silhouettes reference official inventories; selected historic streets follow OSM ways; gardens, remaining streets and intermediate houses remain authored, not measured footprints.';
  scene.areaSites.referenceRevision='official-inventory-review-2026-10-22';
 
- scene.areaQuality='v4.12-coherent-district-and-landmark-detail';
+ scene.areaQuality='v4.13-coherent-district-and-landmark-detail';

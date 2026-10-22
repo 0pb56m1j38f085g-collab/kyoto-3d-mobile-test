@@ -4,6 +4,24 @@
  const inFootprintBlock=(x,z,pad=0)=>x>fb.minX-pad&&x<fb.maxX+pad&&z>fb.minZ-pad&&z<fb.maxZ+pad;
  for(const m of scene.meshes)m.instances=m.instances.filter(i=>!(['legacy-hokanji','legacy-yasaka','legacy-kodaiji'].includes(i.group)||((i.group==='higashiyama-area'||i.group==='landscape')&&inFootprintBlock(i.p[0],i.p[2]))));
  scene.areaBuildings=scene.areaBuildings.filter(b=>!inFootprintBlock(b.x,b.z,1.2));
+ // Remove whole inherited trees, never individual branches, where their anchors
+ // collide with a source building or lane in the newly mapped southern block.
+ const southernBuildings=footprintData.buildings.filter(b=>b.points.some(([x,z])=>x>-10&&x<8&&z>-8&&z<8));
+ const southernRoads=footprintData.roads.filter(r=>r.points.some(([x,z])=>x>-10&&x<8&&z>-8&&z<8));
+ const plantCollisions=new Map();
+ function plantBlocked(p){
+  const key=p.join(',');if(plantCollisions.has(key))return plantCollisions.get(key);
+  const x=p[0],z=p[2];let blocked=false;
+  for(const b of southernBuildings){let inside=false;const poly=b.polygon;
+   for(let j=0,k=poly.length-1;j<poly.length;k=j++){
+    const a=poly[j],c=poly[k];if((a[1]>z)!==(c[1]>z)&&x<(c[0]-a[0])*(z-a[1])/(c[1]-a[1])+a[0])inside=!inside;
+    if(dseg(x,z,a,c)<.10)blocked=true;
+   }if(inside||blocked){blocked=true;break;}
+  }
+  if(!blocked)blocked=southernRoads.some(r=>r.points.some((p,j)=>j&&dseg(x,z,r.points[j-1],p)<.12));
+  plantCollisions.set(key,blocked);return blocked;
+ }
+ for(const m of scene.meshes)m.instances=m.instances.filter(i=>!(i.group==='kiyomizu-landscape'&&i.anchor&&plantBlocked(i.anchor)));
  group='gion-footprint-blocks';
  const blockMaterials={};
  function blockMesh(color,material=1){const key=color+':'+material;if(!blockMaterials[key]){const m=mesh('gion-footprints-'+key);I(m,[0,0,0],[1,1,1],color,undefined,material);blockMaterials[key]=m;}return blockMaterials[key];}
@@ -13,6 +31,8 @@
  // A fine continuous surface avoids large triangular vertex-light stains.
  const blockGround=blockMesh('#9cab76',0),groundStep=.12;
  for(let x=fb.minX;x<fb.maxX-1e-6;x+=groundStep)for(let z=fb.minZ;z<fb.maxZ-1e-6;z+=groundStep){
+  // The compact Kiyomizu terrain already has a finer grid: avoid duplicate ground.
+  if(x>=-10&&x+groundStep<=8.2&&z>=-10&&z+groundStep<=7.55)continue;
   const xx=Math.min(fb.maxX,x+groundStep),zz=Math.min(fb.maxZ,z+groundStep),P=(a,b)=>[a,ground(a,b)+.004,b];
   Q4(blockGround,P(x,z),P(x,zz),P(xx,zz),P(xx,z));
  }
@@ -112,5 +132,5 @@
   }
  }
  scene.footprintBuildings=footprintRecords;
- scene.areaSites.footprintReference={source:footprintData.source,license:footprintData.license,retrievedAt:footprintData.retrievedAt,bounds:fb,count:footprintRecords.length,rejected:footprintData.rejected,metresPerUnit:20,roofAndHeight:'inferred unless tagged; footprint coordinates retained'};
+ scene.areaSites.footprintReference={source:footprintData.source,license:footprintData.license,retrievedAt:footprintData.retrievedAt,bounds:fb,count:footprintRecords.length,rejected:footprintData.rejected,metresPerUnit:20,roofAndHeight:'inferred unless tagged; footprint coordinates retained',separatelyReconstructed:[102164590,102164617]};
  group='higashiyama-area';

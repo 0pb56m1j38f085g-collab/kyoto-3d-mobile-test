@@ -1,0 +1,12 @@
+{
+  "source": "OpenStreetMap contributors / Overpass API",
+  "license": "ODbL 1.0",
+  "retrievedAt": "2026-10-21T23:52:43.766Z",
+  "origin": {"lat":34.995,"lon":135.785},
+  "metresPerUnit":20,
+  "sourceWay":102164590,
+  "points":[[-1.057,-0.209],[0.8,0.087],[1.088,-1.698],[0.555,-1.783],[0.513,-1.532],[-0.264,-1.663],[-0.224,-1.901],[-0.759,-1.986],[-0.826,-1.569],[-1.132,-1.618],[-1.232,-0.999],[-0.937,-0.952],[-1.057,-0.209]],
+  "alignmentEdge":[0,1],
+  "alignmentAssumption":"The northern source edge is treated as the rear eave of the main roof; boundary interpretation is provisional, not surveyed.",
+  "officialContext":"https://www.kiyomizudera.or.jp/map.php"
+}

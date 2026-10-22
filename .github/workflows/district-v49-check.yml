@@ -1,7 +1,7 @@
-name: Higashiyama v4.12 district and iOS regression
+name: Higashiyama v4.13 district and iOS regression
 on:
   push:
-    branches: [area-higashiyama-quality-v4, area-higashiyama-quality-v4.12]
+    branches: [area-higashiyama-quality-v4, area-higashiyama-quality-v4.13]
     paths:
       - 'area-quality-v4/**'
       - 'area-data/**'
