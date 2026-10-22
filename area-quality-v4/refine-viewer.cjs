@@ -5,7 +5,7 @@ module.exports=({renderer,app,html})=>{
  app=replace(app,"lowMemoryIOS?.62:.85","lowMemoryIOS?Math.min(.9,Math.sqrt(420000/Math.max(1,innerWidth*innerHeight))):.85",'bounded iOS resolution');
  // A real overview camera with an axis that fits the long district on a portrait display.
  app=replace(app,'area:{target:[-5,5.7,18],span:42,yaw:.58,pitch:.48}',
- 'area:{target:[-16,5.6,21],span:62,yaw:-.58,pitch:.65}', 'area camera');
+ 'area:{target:[-18,4.7,25],span:66,yaw:-.58,pitch:.65}', 'area camera');
  app=app.replace("const portraitScale=name==='area'?.42:","const portraitScale=name==='area'?.58:");
  app=app.replace("yasaka:{target:[-29.1,4.7,44.6],span:12.8,yaw:1.85,pitch:.38}","yasaka:{target:[-29.4,2.55,46.8],span:7.8,yaw:2.82,pitch:.72}");
  app=app.replace("hokanji:{target:[-26.2,5.2,16.6],span:12.5,yaw:.58,pitch:.39}","hokanji:{target:[-26.22,3.0,19.65],span:5.8,yaw:2.15,pitch:.54}");
