@@ -94,3 +94,32 @@ This pass does not establish parity with the approved concept. Individual
 facades, paving stones, widths and heights are illustrative. Walking routes,
 travel times and the Yamashina/directional extensions are not implemented.
 The previous public version is not changed by a development-branch commit.
+
+## Final v4.24 evidence recovered during v4.25 work
+
+Final runtime: c1fc44241ee9f468da09a70c0eab844ac00a80f1.
+Final validation: https://github.com/0pb56m1j38f085g-collab/kyoto-3d-mobile-test/actions/runs/39869579512
+
+The former local workspace retained the final overview and Ninenzaka screenshots,
+both final browser reports, build-info.json, the publication verification script,
+and uncommitted additions to this status file. They were preserved in local commit
+013e180 before implementation began. The execution host subsequently became
+unavailable. Equivalent final CI artifacts are also recovered on the new evidence
+branch, so the existing remote v4.24 candidate evidence is not confused with the
+final follow-up or v4.25.
+
+The final v4.24 reports recorded 29 successful checks in each of WebKit and
+Chromium. These are prior-version results, not v4.25 validation. Final physical
+iPhone verification was not performed.
+
+Final lighting SHA-256:
+f5a3a31226d0cb95ab686410ccb1f448043c77136f02172a8785686de6fb6d3c
+Final site ZIP SHA-256:
+55fa03e5f100a0eef6f0291d9438b55335f66c69452e41613aba3949f4cfc287
+Final WebKit ZIP SHA-256:
+de732a04808432d6891a5274d4918a5014a5819d5b495f6286366c02e62a15c6
+
+On resuming, both remote development and publication branches pointed to c1fc442.
+Render was still live on v4.21 commit b2ff4f28fb9b5d65ac1966f062f696cc67da1b48,
+deploy dep-dbd7e93ncjis73bcu5b0. Auto-deploy was off. See the v4.25 status record
+for subsequent testing and publication; a version query parameter is not a deploy.

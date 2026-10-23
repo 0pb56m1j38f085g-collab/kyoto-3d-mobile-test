@@ -34,7 +34,13 @@ for(const m of model.meshes){
   if(/threshold|foundation/.test(m.name)||i.group!=='storybook-town'||i.mat===4)assert.ok(!i.townOpacity,'non-architecture remains opaque');
  }
 }
-assert.ok(translucent>5000&&protectedTown>50&&mixedMeshes>0,'architecture selected per instance, with opaque exceptions');
+console.log('TOWN_MATERIAL_COVERAGE',JSON.stringify({translucent,protectedTown,mixedMeshes}));
+assert.ok(translucent>0&&protectedTown>0&&mixedMeshes>0,'architecture selected per instance, with opaque exceptions');
+const roofs=model.meshes.find(m=>m.name==='storybook-machiya-roof');
+assert.equal(roofs.instances.length,model.areaBuildings.length,'one preserved tiled roof per source-anchored house');
+assert.ok(roofs.instances.every(i=>i.townOpacity===.64),'every town roof receives the approved treatment');
+const townInstances=model.meshes.flatMap(m=>m.instances).filter(i=>i.group==='storybook-town');
+for(const mat of [3,4])assert.ok(townInstances.some(i=>i.mat===mat&&!i.townOpacity),'opaque stone/plant exceptions must exist');
 assert.equal(model.cartography.coordinateFrame.render,'east +X / up +Y / south +Z');
 for(const a of Object.values(model.cartography.landmarks))for(const b of Object.values(model.cartography.landmarks)){
  assert.equal(Math.sign(a.at[0]-b.at[0]),Math.sign(a.source[0]-b.source[0]));

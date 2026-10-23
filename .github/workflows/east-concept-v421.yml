@@ -48,6 +48,7 @@ jobs:
           node area-quality-v4/tests/concept-pack.cjs
           node area-quality-v4/tests/uphill-framing.cjs
       - uses: actions/upload-artifact@v5
+        if: always()
         with:
           name: east-concept-v425-site
           path: area-quality-v4/site/
