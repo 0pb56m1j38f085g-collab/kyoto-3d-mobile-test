@@ -2,7 +2,7 @@
 // CI browser evidence. This is not a physical-iPhone certification.
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),assert=require('node:assert/strict');
 const engine=process.env.TEST_BROWSER||'webkit',browserType=require('playwright')[engine];
-const out=path.resolve('concept-v425-artifacts',engine);fs.mkdirSync(out,{recursive:true});
+const out=path.resolve('concept-v426-artifacts',engine);fs.mkdirSync(out,{recursive:true});
 const report={engine,checks:[],screenshots:[],physicalDevice:false};
 function check(name,ok,detail){report.checks.push({name,passed:!!ok,detail});assert.ok(ok,name);}
 (async()=>{let server,browser;try{
@@ -26,6 +26,8 @@ function check(name,ok,detail){report.checks.push({name,passed:!!ok,detail});ass
   check(device+' displaced labels retain geographic leaders',await page.evaluate(()=>[...document.querySelectorAll('.map-spot')].filter(e=>!e.hidden&&e.dataset.offscreen!=='true').every(e=>Math.hypot(Number(e.dataset.labelX)-Number(e.dataset.anchorX),Number(e.dataset.labelY)-Number(e.dataset.anchorY))<=12||!document.querySelector('.pin-leader[data-view='+e.dataset.view+']').hidden)));
   const snap=async name=>{await page.waitForTimeout(400);await page.evaluate(()=>{phoneTest.renderer.gl.finish();phoneTest.request();});await page.waitForTimeout(100);const f=device+'-'+name+'.png';await page.screenshot({path:path.join(out,f),timeout:120000});report.screenshots.push(f);};
   await snap('area');
+  check(device+' curated tourist roads loaded',await page.evaluate(()=>phoneTest.model.cartography.streetCraft.version===2&&phoneTest.model.areaStreets.length<=36&&!phoneTest.model.areaStreets.some(r=>!r.tier)));
+  check(device+' detail alleys hidden in overview',await page.evaluate(()=>phoneTest.renderer.streetDetailsVisible===false&&phoneTest.renderer.batches.some(b=>b.name.startsWith('storybook-detail-'))));
   check(device+' semantic town metadata loaded',await page.evaluate(()=>phoneTest.model.cartography.townMaterial.opacity===.64&&phoneTest.renderer.batches.some(b=>b.hasTown&&b.hasOpaque)));
   const composite=await require('./town-compositing.cjs')(page);
   check(device+' real alpha blend with visible background',composite.baked&&composite.msaa>1&&composite.alphaError<=2&&composite.front.some((v,i)=>Math.abs(v-composite.background[i])>5),composite);
@@ -42,6 +44,10 @@ function check(name,ok,detail){report.checks.push({name,passed:!!ok,detail});ass
    for(const id of ['temple','street','sannenzaka','hokanji','kodaiji','yasaka']){
     await page.evaluate(v=>phoneTest.view(v,false),id);await snap(id);check('view '+id+' draws',await page.evaluate(v=>phoneTest.selectedView===v&&phoneTest.renderer.gl.getError()===0,id));
    }
+   for(const [name,roadName,span] of [['kiyomizu-approach','清水坂',11],['gojo','五条坂',16],['nene','ねねの道',14],['tower-connection','八坂の塔・産寧坂の接続',10],['ishibe','石塀小路（接続区間）',9]]){
+    await page.evaluate(({roadName,span})=>{const r=phoneTest.model.areaStreets.find(r=>r.name===roadName),p=r.points[Math.floor((r.points.length-1)/2)],c=phoneTest.model.cartography.streetCraft.construction.find(r=>r.name===roadName),y=c.samples.length?c.samples[Math.floor(c.samples.length/2)].at[1]:3;Object.assign(phoneTest.camera,{target:[p[0],y+.6,p[1]],span,yaw:-1.15,pitch:.58});phoneTest.request();},{roadName,span});
+    await snap(name);check('crafted street '+name+' draws',await page.evaluate(()=>phoneTest.renderer.gl.getError()===0&&phoneTest.renderer.streetDetailsVisible));
+   }
    await page.evaluate(()=>phoneTest.view('street',false));
    const before=await page.evaluate(()=>({...phoneTest.camera}));
    const canvas=page.locator('canvas').first(),box=await canvas.boundingBox();
@@ -55,7 +61,7 @@ function check(name,ok,detail){report.checks.push({name,passed:!!ok,detail});ass
    await page.evaluate(()=>phoneTest.setQuality('high'));check('iPhone high quality available',await page.evaluate(()=>phoneTest.quality==='high'&&phoneTest.renderer.dpr===1.8));
    await page.reload();await page.waitForFunction(()=>window.__ready,null,{timeout:180000});check('reload keeps baked quality',await page.evaluate(()=>phoneTest.renderer.bakedEnabled&&phoneTest.quality==='standard'));
    const restore=await page.evaluate(()=>{const e=phoneTest.renderer.gl.getExtension('WEBGL_lose_context');if(!e)return false;e.loseContext();setTimeout(()=>e.restoreContext(),400);return true;});
-   if(restore){await page.waitForTimeout(700);await page.waitForFunction(()=>window.__ready&&phoneTest.ready,null,{timeout:180000});const restored=await page.evaluate(()=>{const r=phoneTest.renderer;return {baked:r.bakedEnabled,gl:r.gl.getError(),width:r.w,height:r.h,msaa:r.msSamples,framebuffer:!!r.fb,uploaded:r.scene.mobileMemory.uploadedChunks};});check('context restoration keeps baked quality',restored.baked&&restored.gl===0&&restored.framebuffer&&restored.msaa>1&&restored.width>0&&restored.height>0&&restored.uploaded===6,restored);await snap('restored');}
+   if(restore){await page.waitForTimeout(700);await page.waitForFunction(()=>window.__ready&&phoneTest.ready,null,{timeout:180000});const restored=await page.evaluate(()=>{const r=phoneTest.renderer;return {baked:r.bakedEnabled,gl:r.gl.getError(),width:r.w,height:r.h,msaa:r.msSamples,framebuffer:!!r.fb,uploaded:r.scene.mobileMemory.uploadedChunks,chunkCount:r.scene.mobileMemory.chunkCount};});check('context restoration keeps baked quality',restored.baked&&restored.gl===0&&restored.framebuffer&&restored.msaa>1&&restored.width>0&&restored.height>0&&restored.uploaded===restored.chunkCount,restored);await snap('restored');}
   }
   check(device+' no runtime errors',errors.length===0&&await page.evaluate(()=>phoneTest.errors.length===0),errors);await ctx.close();
  }

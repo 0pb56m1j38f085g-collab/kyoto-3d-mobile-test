@@ -1,5 +1,5 @@
 'use strict';
-// v4.25: one visual quality path on every device, with bounded model transport.
+// v4.26: one visual quality path on every device, with bounded model transport.
 module.exports=({renderer,app,html})=>{
  const exact=(s,a,b)=>{if(!s.includes(a))throw Error('Concept viewer input missing: '+a.slice(0,110));return s.replace(a,b);};
  const cameras={
@@ -35,7 +35,7 @@ module.exports=({renderer,app,html})=>{
  renderer=exact(renderer,'if(c.width===w&&c.height===h)return;','if(this.fb&&this.w===w&&this.h===h&&c.width===w&&c.height===h)return;');
  renderer=exact(renderer,'name:m.name,lightOffset:0,lightStride:0,vertices:m.vertices','name:m.name,lightOffset:m.lightOffset,lightStride:m.lightStride,vertices:m.vertices');
  // Packed models carry the same baker indices and lighting on iPhone and desktop.
- html=exact(html,"if(!isLowMemoryIOS())await script('src/scene.js?v=area-higashiyama-quality-v4.25');",'');
+ html=exact(html,"if(!isLowMemoryIOS())await script('src/scene.js?v=area-higashiyama-quality-v4.26');",'');
  html=html.replace('<option value="light">軽量</option>','');
  html=html.replaceAll('重い・熱くなる場合は「軽量」を選んでください。','');
  html=html.replaceAll('iPhoneでは軽量表示を使用します。','iPhoneも他の端末と同じ照明・素材で表示します。');

@@ -18,7 +18,7 @@
    const x=-.6+k*.05,xx=x+.05,t=j/6,tt=(j+1)/6;
    roofQuad(shopEave,P(x,t),P(xx,t),P(xx,tt),P(x,tt));
   }
-  const nearestLane=(x,z,heroOnly=false)=>{let best=null;for(const s of segments){if(heroOnly&&!s.hero)continue;const dx=s.b[0]-s.a[0],dz=s.b[1]-s.a[1],t=clamp(((x-s.a[0])*dx+(z-s.a[1])*dz)/(dx*dx+dz*dz),0,1),p=[s.a[0]+dx*t,s.a[1]+dz*t],d=Math.hypot(x-p[0],z-p[1]);if(!best||d<best.d)best={p,d,segment:s};}return best;};
+  const nearestLane=(x,z,heroOnly=false)=>{let best=null;for(const s of placementSegments){if(heroOnly&&!s.hero)continue;const dx=s.b[0]-s.a[0],dz=s.b[1]-s.a[1],t=clamp(((x-s.a[0])*dx+(z-s.a[1])*dz)/(dx*dx+dz*dz),0,1),p=[s.a[0]+dx*t,s.a[1]+dz*t],d=Math.hypot(x-p[0],z-p[1]);if(!best||d<best.d)best={p,d,segment:s};}return best;};
   const houses=[],used=[],houseBoxes=[],shopThresholds=mesh('storybook-shop-thresholds'),houseFootings=mesh('storybook-fitted-stone-foundations');
   const historicDistance=b=>nearestLane(...display(b.center),true).d;
   const originalHouses=footprintData.buildings.map(b=>{const near=nearestLane(...display(b.center),true);return{b,d:near.d,priority:near.segment.name==='二寧坂'&&near.d<2?0:1};}).sort((a,b)=>a.priority-b.priority||a.d-b.d).map(v=>v.b);
@@ -26,7 +26,7 @@
   const seenSources=new Set();
   // Reserve the whole street corridor, including at bends and intersections.
   // Testing only the centre's distance allowed oversized roofs to cover lanes.
-  const crossesStreet=(x,z,yaw,w,d)=>segments.some(s=>{
+  const crossesStreet=(x,z,yaw,w,d)=>placementSegments.some(s=>{
    if(Math.min(s.a[0],s.b[0])>x+3||Math.max(s.a[0],s.b[0])<x-3||Math.min(s.a[1],s.b[1])>z+3||Math.max(s.a[1],s.b[1])<z-3)return false;
    const co=Math.cos(yaw),si=Math.sin(yaw),P=p=>[(p[0]-x)*co-(p[1]-z)*si,(p[0]-x)*si+(p[1]-z)*co],a=P(s.a),b=P(s.b),half=s.width/2+.03,hx=w*.62+half,hz=d*.63+half;
    let lo=0,hi=1;for(const axis of[0,1]){const delta=b[axis]-a[axis],h=axis?hz:hx;if(Math.abs(delta)<1e-8){if(Math.abs(a[axis])>h)return false;continue;}const aa=(-h-a[axis])/delta,bb=(h-a[axis])/delta;lo=Math.max(lo,Math.min(aa,bb));hi=Math.min(hi,Math.max(aa,bb));if(lo>hi)return false;}return true;

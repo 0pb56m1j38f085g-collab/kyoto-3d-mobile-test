@@ -1,14 +1,14 @@
   // Grade the illustrated street corridor around the unchanged source centre
   // lines. These heights are art-directed, never survey or routing elevations.
-  const streetWidth=name=>name==='二寧坂'?.94:name==='清水坂'?1.28:name==='産寧坂'?1.06:1.16;
-  const streetProfiles=historicalStreets.map(r=>{
+  const streetWidth=name=>touristSelection.roads.find(r=>r.name===name)?.width||.76;
+  const streetProfiles=touristSelection.roads.map(r=>{
    const points=r.points.map(display),lengths=[0];
    for(let j=1;j<points.length;j++)lengths.push(lengths.at(-1)+Math.hypot(points[j][0]-points[j-1][0],points[j][1]-points[j-1][1]));
    const heights=points.map(p=>naturalStoryGround(...p));
    // The exaggerated Kiyomizu hill formerly made a short cliff halfway along
    // this approach. Distribute that rise along its real existing polyline.
    if(r.name==='清水坂')for(let j=1;j<heights.length-1;j++)heights[j]=heights[0]+(heights.at(-1)-heights[0])*lengths[j]/lengths.at(-1);
-   return{id:r.id,name:r.name,steps:r.highway==='steps',points,heights,width:streetWidth(r.name),length:lengths.at(-1)};
+   return{id:r.id,name:r.name,tier:r.tier,steps:r.highway==='steps',points,heights,width:r.width,length:lengths.at(-1)};
   });
   const gradeSegments=streetProfiles.flatMap(r=>r.points.slice(1).map((b,j)=>({r,a:r.points[j],b,ya:r.heights[j],yb:r.heights[j+1]})));
   function nearestStreetGrade(x,z){let best=null;

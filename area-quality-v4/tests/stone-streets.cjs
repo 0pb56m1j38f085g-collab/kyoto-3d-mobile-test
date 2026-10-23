@@ -4,12 +4,17 @@ const root=path.resolve(__dirname,'..'),ctx=vm.createContext({console,performanc
 for(const f of['renderer','scene'])vm.runInContext(fs.readFileSync(path.join(root,'site/src',f+'.js'),'utf8'),ctx);
 const model=vm.runInContext('makeStudy()',ctx,{timeout:240000}),craft=model.cartography.streetCraft,source=JSON.parse(fs.readFileSync(path.join(root,'../area-data/historic-streets.json')));
 const dist=(a,b)=>Math.hypot(...a.map((v,j)=>v-b[j]));
-assert.ok(craft&&craft.construction.length===source.roads.length);
+const east=JSON.parse(fs.readFileSync(path.join(root,'../area-data/gion-footprints.json'))),west=JSON.parse(fs.readFileSync(path.join(root,'../area-data/west-gion-reference.json')));
+const selection=require('../tourist-roads.cjs')(source,east,west),sourceWays=new Map([...west.roads,...east.roads,...source.roads].map(r=>[r.id,r]));
+assert.ok(craft&&craft.construction.length===selection.roads.length);
+assert.ok(selection.roads.length<=36&&craft.omittedMinorWays.length>1000,'a selective tourist network replaces broad road-type inclusion');
+for(const name of ['清水坂','産寧坂','二寧坂','一念坂','八坂通','五条坂','ねねの道'])assert.ok(selection.roads.some(r=>r.name===name&&r.tier==='main'));
+assert.ok(!model.meshes.some(m=>m.name==='storybook-cream-lanes'),'all selected roads use crafted paving');
 let faces=0,treads=0;
 for(const road of craft.construction){
- const original=source.roads.find(r=>r.id===road.sourceWay),display=model.areaStreets.find(r=>r.id===road.sourceWay);
+ const original=sourceWays.get(road.sourceWay),display=model.areaStreets.find(r=>r.id===road.sourceWay),selected=selection.roads.find(r=>r.id===road.sourceWay);
  assert.ok(original&&display,'every improved street belongs to an existing source way');
- original.points.forEach((p,j)=>assert.ok(dist([p[0]*.56,-p[1]*1.02],display.points[j])<1e-8,'source centre line has not moved'));
+ original.points.slice(selected.sourcePointRange[0],selected.sourcePointRange[1]+1).forEach((p,j)=>assert.ok(dist([p[0]*.56,-p[1]*1.02],display.points[j])<1e-8,'source centre line has not moved'));
  assert.equal(road.steps,original.highway==='steps','stairs are only built on source-tagged stairways');
  for(const tread of road.treads){
   assert.ok(Math.max(...['a','b','c','d'].map(k=>tread[k][1]))-Math.min(...['a','b','c','d'].map(k=>tread[k][1]))<1e-8,'stair treads must be horizontal');
@@ -18,6 +23,13 @@ for(const road of craft.construction){
  for(const s of road.samples)assert.ok(s.at[1]>=s.ground-.005,'paving cannot be hidden under the graded ground');
  faces+=road.stoneFaces;
 }
+// A whitelist must retain the real unnamed links as well as named streets.
+const pointDistance=(p,a,b)=>{const dx=b[0]-a[0],dy=b[1]-a[1],t=Math.max(0,Math.min(1,((p[0]-a[0])*dx+(p[1]-a[1])*dy)/(dx*dx+dy*dy)));return Math.hypot(p[0]-a[0]-t*dx,p[1]-a[1]-t*dy);};
+const roads=model.areaStreets,connected=new Set([roads.find(r=>r.name==='清水坂').id]);
+for(let n=0;n<roads.length;n++)for(const a of roads)if(connected.has(a.id))for(const b of roads){
+ if(a.points.some(p=>b.points.slice(1).some((q,j)=>pointDistance(p,b.points[j],q)<.13))||b.points.some(p=>a.points.slice(1).some((q,j)=>pointDistance(p,a.points[j],q)<.13)))connected.add(b.id);
+}
+for(const name of ['清水坂','産寧坂','二寧坂','一念坂','八坂通','五条坂','ねねの道','下河原通','台所坂','八坂神社南参道','石塀小路'])assert.ok(roads.filter(r=>r.name===name).every(r=>connected.has(r.id)),name+' has source-based continuity');
 // Compare the actual two road edges across touching OSM way boundaries. The
 // former independent rectangles left gaps at Ninenzaka's stair/landing joins.
 const ninen=craft.construction.filter(r=>r.name==='二寧坂');let joins=0;
@@ -32,6 +44,8 @@ const row=model.areaBuildings.filter(b=>b.streetName==='二寧坂');
 assert.ok(row.filter(b=>b.x<-11).length>=2&&row.filter(b=>b.x>-10.3).length>=2,'Ninenzaka needs a run of shopfronts on both sides');
 for(const h of row){assert.ok(h.depth>=.55&&h.height/h.depth<=1.851,'shop parcels must retain credible depth, not cardboard-thin walls');assert.ok(h.entranceRise>=0&&h.entranceRise<.25,'doorstep connects to the paving');assert.ok(h.foundationHeight<.55,'no tall shop pedestal in Ninenzaka');}
 for(const name of['storybook-paving-mortar','storybook-stair-faces','storybook-shop-thresholds','storybook-fitted-stone-foundations'])assert.ok(model.meshes.some(m=>m.name===name&&m.p.length&&m.instances.length));
+for(const name of ['清水坂','産寧坂','二寧坂','一念坂','八坂通','五条坂','ねねの道'])assert.ok(craft.construction.filter(r=>r.name===name).reduce((n,r)=>n+r.stoneFaces,0)>40,name+' receives individual stone faces');
+assert.ok(model.meshes.some(m=>m.name.startsWith('storybook-detail-')&&m.p.length),'close-view alleys have their own paving batches');
 const triangles=model.meshes.reduce((n,m)=>n+m.p.length/9*m.instances.length,0),instances=model.meshes.reduce((n,m)=>n+m.instances.length,0);
 assert.ok(triangles<3000000&&instances<42000,'retain the shared full-quality scene budget');
 console.log(JSON.stringify({ok:true,revision:model.revision,faces,treads,continuousNinenJoins:joins,ninenShopfronts:row.length,triangles,instances,limitations:craft.positionPolicy}));

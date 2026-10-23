@@ -27,7 +27,7 @@ jobs:
         with:
           name: east-concept-v425-site
           path: .light-cache/
-          run-id: '39876204610'
+          run-id: '39877985638'
           github-token: ${{ github.token }}
       - name: Build shared geometry and full lighting
         run: node area-quality-v4/build.cjs
@@ -50,7 +50,7 @@ jobs:
       - uses: actions/upload-artifact@v5
         if: always()
         with:
-          name: east-concept-v425-site
+          name: east-concept-v426-site
           path: area-quality-v4/site/
           retention-days: 14
   browser:
@@ -73,7 +73,7 @@ jobs:
           node-version: '24'
       - uses: actions/download-artifact@v5
         with:
-          name: east-concept-v425-site
+          name: east-concept-v426-site
           path: area-quality-v4/site/
       - run: npm install --prefix "$RUNNER_TEMP/concept-browser" --no-audit --no-fund playwright@1.55.0
       - name: Render actual full-quality 3D and test interactions
@@ -84,8 +84,8 @@ jobs:
       - uses: actions/upload-artifact@v5
         if: always()
         with:
-          name: east-concept-v425-${{ matrix.engine }}
-          path: concept-v425-artifacts/
+          name: east-concept-v426-${{ matrix.engine }}
+          path: concept-v426-artifacts/
           retention-days: 14
 
   evidence:
@@ -96,7 +96,7 @@ jobs:
       - uses: actions/download-artifact@v5
         continue-on-error: true
         with:
-          pattern: east-concept-v425-*
+          pattern: east-concept-v426-*
           path: evidence/current/
       - name: Record the exact source of these artifacts
         env:
@@ -107,6 +107,6 @@ jobs:
           node -e "require('fs').writeFileSync('evidence/run.json',JSON.stringify({source:process.env.SOURCE_SHA,run:process.env.SOURCE_RUN,physicalDevice:false}))"
       - uses: actions/upload-artifact@v5
         with:
-          name: east-concept-v425-review
+          name: east-concept-v426-review
           path: evidence/
           retention-days: 30

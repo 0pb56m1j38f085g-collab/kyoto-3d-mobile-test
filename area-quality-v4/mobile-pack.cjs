@@ -1,6 +1,6 @@
 'use strict';
 // Shared full-quality transport. Geometry AND baker vertex indices are compiled
-// once, so Safari never needs to reconstruct floating-point light keys. No LOD.
+// once, so Safari never needs to reconstruct floating-point light keys. No device-specific simplification.
 const fs=require('node:fs'),path=require('node:path'),zlib=require('node:zlib'),crypto=require('node:crypto');
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 const MAX_BYTES=2*1024*1024, PAYLOAD_LIMIT=MAX_BYTES-65536;
@@ -63,6 +63,6 @@ module.exports=function packMobile(model,site,sourceModelHash){
  const sha256=hash(manifest),file=sha256.slice(0,24)+'.json';fs.writeFileSync(path.join(dir,file),manifest);
  const info={url:'./mobile/'+file,manifestBytes:manifest.length,sha256,revision:model.revision,sourceModelHash,bytes,compressedBytes,
   maxChunkBytes:Math.max(...chunks.map(c=>c.bytes)),maxCompressedChunkBytes:Math.max(...chunks.map(c=>c.compressedBytes)),chunkCount:chunks.length,triangles,instances,meshes:sourceMeshes,batches,
-  lightSampleCount:lightOffset,packedLighting:true,geometry:'identical Float32 positions, normals, triangle order/winding and instance transforms; compiled baker light indices; no LOD; unused UV omitted'};
+  lightSampleCount:lightOffset,packedLighting:true,geometry:'identical Float32 positions, normals, triangle order/winding and instance transforms; compiled baker light indices; same geometry on all devices; unused UV omitted'};
  console.log('MOBILE_PACK_VALIDATED',JSON.stringify(info));return info;
 };
