@@ -1,0 +1,82 @@
+{
+  "release": "v4.26",
+  "sourceCommit": "0f35af70097fbb8cd0ff3d16deeb63ad7fdeba3f",
+  "sourceTree": "f72551d03f10c989c3172cbe3032c2f643fa65c9",
+  "releaseCommit": "e7365b44ea109429e01b23b35865285cf87483f4",
+  "releaseTreeMatchesTestedSource": true,
+  "ciRun": 39938945986,
+  "ciUrl": "https://github.com/0pb56m1j38f085g-collab/kyoto-3d-mobile-test/actions/runs/39938945986",
+  "ciStatus": "success",
+  "browsers": {
+    "webkit": {
+      "passed": 50,
+      "screenshots": 17
+    },
+    "chromium": {
+      "passed": 50,
+      "screenshots": 17
+    }
+  },
+  "artifacts": [
+    {
+      "id": 12495153961,
+      "name": "east-concept-v426-site",
+      "zipSha256": "1a66cf63d0a27a6a3aafce590c80c6a84d1e17d1a07b120b34edc96944dd3f9c"
+    },
+    {
+      "id": 12495821381,
+      "name": "east-concept-v426-webkit",
+      "zipSha256": "42713e8fd8e9ed4a6ab83cefb16718a50e0d1fc71dcc0b0a5293b4552f92d81b"
+    },
+    {
+      "id": 12495738151,
+      "name": "east-concept-v426-chromium",
+      "zipSha256": "3a31d4858f970d42ee795c109103d3e1bc8de0469c77a66f0870630a49ca62a6"
+    }
+  ],
+  "render": {
+    "workspace": "tea-dbbs370473hc73cb8gog",
+    "service": "srv-dbcf79mktt5c73f8l7cg",
+    "deploy": "dep-dbdjkjlg1s2s73bnurv0",
+    "autoDeploy": false,
+    "status": "live",
+    "finishedAt": "2026-10-23T10:49:18.080332Z"
+  },
+  "url": "https://higashiyama-quality-v4.onrender.com/",
+  "publicVerification": {
+    "assetChecks": 13,
+    "checkedAt": "2026-10-23T10:50:21.572Z",
+    "browserCheckAt": "2026-10-23T10:50:26.918Z",
+    "runtimeErrors": 0,
+    "exactCIArtifactBytes": true
+  },
+  "physicalDevice": false,
+  "visualReview": {
+    "webkit": [
+      "iphone-area",
+      "iphone-street",
+      "iphone-gojo"
+    ],
+    "chromium": [
+      "iphone-area",
+      "iphone-street",
+      "iphone-kiyomizu-approach",
+      "iphone-gojo",
+      "iphone-nene",
+      "iphone-ishibe",
+      "iphone-street-rotated"
+    ],
+    "public": [
+      "public-area.jpg",
+      "public-street.jpg",
+      "public-gojo.jpg"
+    ]
+  },
+  "limitations": [
+    "Illustrated proportions and terrain; not a surveyed reconstruction.",
+    "Some minor street junctions and stair edges still have strong shadows and grade changes.",
+    "Shirakawa riverbank/bridges and Yamashina expansion are not completed.",
+    "Real routing and walking-time calculations are not implemented.",
+    "No physical iPhone test."
+  ]
+}

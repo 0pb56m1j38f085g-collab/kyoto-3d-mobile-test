@@ -1,0 +1,14 @@
+{
+  "commit": {
+    "createdAt": "2026-10-23T10:39:56Z",
+    "id": "e7365b44ea109429e01b23b35865285cf87483f4",
+    "message": "Release v4.26 curated tourist streets from the tested source tree [skip ci]"
+  },
+  "createdAt": "2026-10-23T10:43:26.773635Z",
+  "finishedAt": "2026-10-23T10:49:18.080332Z",
+  "id": "dep-dbdjkjlg1s2s73bnurv0",
+  "startedAt": "2026-10-23T10:43:26.771826Z",
+  "status": "live",
+  "trigger": "api",
+  "updatedAt": "2026-10-23T10:49:18.080597Z"
+}
