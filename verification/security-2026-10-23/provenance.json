@@ -1,0 +1,31 @@
+{
+  "sourceCommit": "f5b03db08eac71e1228a1efa95e80a325879ef79",
+  "sourceTree": "f609962ec6b3effd13df78f35c76b948e9f24219",
+  "ciRun": 40007348608,
+  "node": "24.22.1",
+  "openssl": "3.5.9",
+  "officialBinarySha256": "6c172a9ab6718f7b801fb5a7bd486af2ee5e32758086a04b84fcce2aa77095e6",
+  "officialRelease": "https://nodejs.org/en/blog/release/v24.22.1",
+  "renderAdvisory": "https://render.com/docs/advisory-emudhra",
+  "scope": "Current Higashiyama/Gion static service srv-dbcf79mktt5c73f8l7cg",
+  "status": "implemented, verified and publicly deployed",
+  "physicalDevice": false,
+  "releaseCommit": "f4adbde8bfb165ca159feb3f0d617448bba3e9c2",
+  "deploy": "dep-dbdr340n74is73ek9no0",
+  "liveAt": "2026-10-23T19:14:10.960172Z",
+  "publicUrl": "https://higashiyama-quality-v4.onrender.com/",
+  "freshBrowserChecks": {
+    "webkit": 50,
+    "chromium": 50
+  },
+  "publicAssetChecks": 13,
+  "visualAssetsUnchanged": true,
+  "publicScreenshotsInspected": [
+    "public-area.jpg",
+    "public-street.jpg",
+    "public-gojo.jpg"
+  ],
+  "systemCertificates": "Native Render clear-cache rebuild completed; per Render advisory this refreshes the system trust store. No independent revoked-certificate probe performed.",
+  "public-verificationAt": "2026-10-23T19:14:53.034Z",
+  "public-browserAt": "2026-10-23T19:15:50.729Z"
+}

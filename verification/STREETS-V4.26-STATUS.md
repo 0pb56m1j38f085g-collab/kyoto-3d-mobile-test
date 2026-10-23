@@ -43,3 +43,7 @@ Base: b20f3d5f834448b8891786145c786294cb845225 (v4.25).
 ## Remaining scope
 
 Riverbank/bridge treatment for Shirakawa, Yamashina expansion, measured routing/travel times, and further street-edge/parcel refinement remain separate work. Road widths, terrain grades, building dimensions and stone patterns are illustrative; original geographic points and real road connections are retained. Previous v4.24 and v4.25 evidence has been preserved.
+
+## Subsequent security rebuild
+
+On 2026-10-23 the same v4.26 visual assets were rebuilt and redeployed with Node.js 24.22.1 / OpenSSL 3.5.9. Fresh WebKit and Chromium checks passed (50 each), and the public bytes and runtime were verified. The current live release is `f4adbde8bfb165ca159feb3f0d617448bba3e9c2`, Render deploy `dep-dbdr340n74is73ek9no0`. See [SECURITY-2026-10-23.md](SECURITY-2026-10-23.md) for this later deployment and its separate evidence; the original publication record above is retained as history.

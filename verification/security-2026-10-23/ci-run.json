@@ -1,0 +1,69 @@
+{
+  "run": 40007348608,
+  "head": "f5b03db08eac71e1228a1efa95e80a325879ef79",
+  "status": "completed",
+  "conclusion": "success",
+  "url": "https://github.com/0pb56m1j38f085g-collab/kyoto-3d-mobile-test/actions/runs/40007348608",
+  "jobs": [
+    {
+      "id": 120598517504,
+      "name": "build",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 120602700728,
+      "name": "browser (webkit)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 120602700762,
+      "name": "browser (chromium)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 120605586841,
+      "name": "evidence",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 12526115453,
+      "name": "east-concept-v426-chromium",
+      "bytes": 22615611,
+      "digest": "sha256:ca5bc761f4fd3c2b4cf51c2d94e96ad83ef60d0a59037843d8c48261e84d84b6"
+    },
+    {
+      "id": 12524783157,
+      "name": "east-concept-v426-site",
+      "bytes": 7198976,
+      "digest": "sha256:5fcf244cbd459e4952ccad095a7d9bac772b7eb08521ef19f6d8b3296259bda6"
+    },
+    {
+      "id": 12524554973,
+      "name": "east-concept-v426-review",
+      "bytes": 54985325,
+      "digest": "sha256:ba63482f5575d296aa5c867870ae40b8b33ceb9f3ff31e9d705b057cebd8cd5b"
+    },
+    {
+      "id": 12524399535,
+      "name": "east-concept-v426-webkit",
+      "bytes": 25167207,
+      "digest": "sha256:2eb608e63d7f18754224d77ba8cbadff0c8ec6cb368a80240886503f69358c0c"
+    }
+  ],
+  "browserChecks": {
+    "webkit": 50,
+    "chromium": 50
+  },
+  "screenshotsPerEngine": 17,
+  "visuallyInspected": [
+    "webkit/iphone-street.png",
+    "chromium/iphone-area.png"
+  ],
+  "physicalDevice": false
+}

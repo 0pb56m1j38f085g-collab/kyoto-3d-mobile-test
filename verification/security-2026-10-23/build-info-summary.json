@@ -1,0 +1,43 @@
+{
+  "revision": "area-higashiyama-quality-v4.26",
+  "viewerRevision": "area-higashiyama-quality-v4.26-deterministic",
+  "viewerHashes": {
+    "src/renderer.js": "84568a6a3d277fa768faad42b6225369e202e7cd218158f3cb36fa406241d8b0",
+    "src/scene.js": "76c59c096db00c1803a4eef4a4c7e09631d7a3847eaff1e63b73ea3579bf473c",
+    "src/app.js": "836b78771e48eb9113be0992454ea38e6121237997c99e3aa37e1fe6371df75a",
+    "index.html": "a43014f719f4c4bd03625c8043fa4f29580f2a79fe10fc486ec84db64e8d22c8"
+  },
+  "modelHash": "b0a3b50512b224074da7795c1ae146d6795d3d8232f407864465f52988befbd9",
+  "lightingHash": "d569da312d5b50b6939130fd5a0c56054bb86cd6d08d5e0545f115ba6874b01a",
+  "bakerHash": "6030fe648b3462e8500059545dc08370839114fb4b3cfef8646a7d8042c1048b",
+  "rays": 24,
+  "assetToken": "b0a3b50512b2-d569da312d5b-766722e51a14",
+  "mobileAsset": {
+    "url": "./mobile/2c09d2a2cbc04698fbfa1a94.json",
+    "manifestBytes": 217596,
+    "sha256": "2c09d2a2cbc04698fbfa1a946a6efa43773c562e87c975e97126db529d82e68e",
+    "revision": "area-higashiyama-quality-v4.26",
+    "sourceModelHash": "b0a3b50512b224074da7795c1ae146d6795d3d8232f407864465f52988befbd9",
+    "bytes": 10928864,
+    "compressedBytes": 3453979,
+    "maxChunkBytes": 2029776,
+    "maxCompressedChunkBytes": 853504,
+    "chunkCount": 7,
+    "triangles": 2485399,
+    "instances": 27172,
+    "meshes": 173,
+    "batches": 173,
+    "lightSampleCount": 1862007,
+    "packedLighting": true,
+    "geometry": "identical Float32 positions, normals, triangle order/winding and instance transforms; compiled baker light indices; same geometry on all devices; unused UV omitted"
+  },
+  "meshes": 173,
+  "instances": 27172,
+  "triangles": 2485399,
+  "lightSamples": 1862007,
+  "buildRuntime": {
+    "node": "24.22.1",
+    "openssl": "3.5.9"
+  },
+  "matchesPreviousV426Assets": true
+}

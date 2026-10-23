@@ -1,0 +1,7 @@
+{
+  "ok": true,
+  "scope": "Mismatched runtime is rejected before the build starts HTTPS downloads",
+  "attemptedNode": "24.19.0",
+  "requiredNode": "24.22.1",
+  "message": "Build requires Node.js 24.22.1; got 24.19.0"
+}

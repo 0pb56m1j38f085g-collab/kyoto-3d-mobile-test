@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "checkedAt": "2026-10-23T19:15:50.729Z",
+  "url": "https://higashiyama-quality-v4.onrender.com/",
+  "state": {
+    "ready": true,
+    "revision": "area-higashiyama-quality-v4.26",
+    "opacity": 0.64,
+    "roads": 27,
+    "streetCraft": 2,
+    "baked": true,
+    "gl": 0
+  },
+  "errors": [],
+  "physicalDevice": false,
+  "proxyCertificateBypass": true,
+  "scope": "Published page startup, actual Ninenzaka pin tap and Gojozaka paving in Chromium mobile viewport. TLS checked separately by the byte verifier."
+}

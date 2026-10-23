@@ -1,0 +1,76 @@
+{
+  "service": "srv-dbcf79mktt5c73f8l7cg",
+  "workspace": "tea-dbbs370473hc73cb8gog",
+  "clearBuildCache": true,
+  "autoDeploy": false,
+  "commit": {
+    "createdAt": "2026-10-23T18:58:35Z",
+    "id": "f4adbde8bfb165ca159feb3f0d617448bba3e9c2",
+    "message": "Release Node.js 24.22.1 security update [skip ci]"
+  },
+  "createdAt": "2026-10-23T19:12:16.667953Z",
+  "finishedAt": "2026-10-23T19:14:10.960172Z",
+  "id": "dep-dbdr340n74is73ek9no0",
+  "startedAt": "2026-10-23T19:12:16.666645Z",
+  "status": "live",
+  "trigger": "api",
+  "updatedAt": "2026-10-23T19:14:10.960453Z",
+  "buildRuntime": {
+    "node": "24.22.1",
+    "openssl": "3.5.9"
+  },
+  "logs": [
+    {
+      "timestamp": "2026-10-23T19:12:19.079034812Z",
+      "message": "==> Cloning from https://github.com/0pb56m1j38f085g-collab/kyoto-3d-mobile-test"
+    },
+    {
+      "timestamp": "2026-10-23T19:12:25.551402345Z",
+      "message": "==> Checking out commit f4adbde8bfb165ca159feb3f0d617448bba3e9c2 in branch area-higashiyama-quality-v4"
+    },
+    {
+      "timestamp": "2026-10-23T19:12:27.761742165Z",
+      "message": "==> Running build command 'LIGHT_SAMPLES=24 node area-quality-v4/build.cjs'..."
+    },
+    {
+      "timestamp": "2026-10-23T19:12:27.830727281Z",
+      "message": "==> Using Node.js version 24.22.1 via environment variable NODE_VERSION"
+    },
+    {
+      "timestamp": "2026-10-23T19:12:27.830739218Z",
+      "message": "==> Docs on specifying a Node.js version: https://render.com/docs/node-version"
+    },
+    {
+      "timestamp": "2026-10-23T19:12:27.871933262Z",
+      "message": "AREA_BUILD_RUNTIME {\"node\":\"24.22.1\",\"openssl\":\"3.5.9\"}"
+    },
+    {
+      "timestamp": "2026-10-23T19:14:08.953318395Z",
+      "message": "MOBILE_PACK_VALIDATED {\"url\":\"./mobile/2c09d2a2cbc04698fbfa1a94.json\",\"manifestBytes\":217596,\"sha256\":\"2c09d2a2cbc04698fbfa1a946a6efa43773c562e87c975e97126db529d82e68e\",\"revision\":\"area-higashiyama-quality-v4.26\",\"sourceModelHash\":\"b0a3b50512b224074da7795c1ae146d6795d3d8232f407864465f52988befbd9\",\"bytes\":10928864,\"compressedBytes\":3453979,\"maxChunkBytes\":2029776,\"maxCompressedChunkBytes\":853504,\"chunkCount\":7,\"triangles\":2485399,\"instances\":27172,\"meshes\":173,\"batches\":173,\"lightSampleCount\":1862007,\"packedLighting\":true,\"geometry\":\"identical Float32 positions, normals, triangle order/winding and instance transforms; compiled baker light indices; same geometry on all devices; unused UV omitted\"}"
+    },
+    {
+      "timestamp": "2026-10-23T19:14:09.470873651Z",
+      "message": "AREA_LIGHT_CACHE_VALIDATED d569da312d5b50b6939130fd5a0c56054bb86cd6d08d5e0545f115ba6874b01a"
+    },
+    {
+      "timestamp": "2026-10-23T19:14:09.500843073Z",
+      "message": "AREA_BUILD_VALIDATED {\"modelHash\":\"b0a3b50512b224074da7795c1ae146d6795d3d8232f407864465f52988befbd9\",\"meshes\":173,\"instances\":27172,\"triangles\":2485399,\"lightSamples\":1862007,\"lightingBytes\":7448036}"
+    },
+    {
+      "timestamp": "2026-10-23T19:14:09.605665846Z",
+      "message": "==> Using Node.js version 24.22.1 via environment variable NODE_VERSION"
+    },
+    {
+      "timestamp": "2026-10-23T19:14:09.605675291Z",
+      "message": "==> Docs on specifying a Node.js version: https://render.com/docs/node-version"
+    },
+    {
+      "timestamp": "2026-10-23T19:14:10.138838728Z",
+      "message": "==> Uploading build..."
+    },
+    {
+      "timestamp": "2026-10-23T19:14:10.460736069Z",
+      "message": "==> Your site is live 🎉"
+    }
+  ]
+}
