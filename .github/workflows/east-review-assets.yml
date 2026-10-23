@@ -1,0 +1,79 @@
+name: Preserve compact 3D review evidence and verify publication
+on:
+  push:
+    branches: [area-higashiyama-scene-v4.22]
+    paths: ['verification/review-request.json']
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  review:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Resolve exact validation run
+        id: request
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const request=JSON.parse(require('fs').readFileSync('verification/review-request.json'));
+            let complete=false;
+            for(let n=0;n<100;n++){
+              const r=await github.rest.actions.getWorkflowRun({...context.repo,run_id:request.sourceRun});
+              if(r.data.head_sha!==request.sourceCommit)throw Error('Validation commit mismatch');
+              if(r.data.status==='completed'){complete=true;break;}
+              await new Promise(resolve=>setTimeout(resolve,15000));
+            }
+            if(!complete)throw Error('Validation did not finish in the review window');
+            core.setOutput('run',request.sourceRun);
+            core.setOutput('public',String(request.verifyPublic));
+      - uses: actions/download-artifact@v5
+        with:
+          pattern: east-concept-v425-*
+          path: evidence/
+          run-id: ${{ steps.request.outputs.run }}
+          github-token: ${{ github.token }}
+      - name: Make compact review copies
+        run: |
+          python -m pip install --quiet Pillow==11.3.0
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          for p in Path('evidence').rglob('*.png'):
+              with Image.open(p) as image:
+                  image.convert('RGB').save(p.with_suffix('.jpg'),quality=85)
+          PY
+      - name: Verify public CDN against tested assets
+        if: steps.request.outputs.public == 'true'
+        run: node verification/verify-published.cjs evidence/east-concept-v425-site https://higashiyama-quality-v4.onrender.com/ evidence/public-verification.json
+      - name: Save compact images, reports and hashes
+        if: always()
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs=require('fs'),path=require('path'),entries=[];
+            async function walk(dir){
+              if(!fs.existsSync(dir))return;
+              for(const name of fs.readdirSync(dir)){
+                const full=path.join(dir,name);
+                if(fs.statSync(full).isDirectory())await walk(full);
+                else if(/\.jpg$|report\.json$|build-info\.json$|public-verification\.json$/.test(name)){
+                  const blob=await github.rest.git.createBlob({...context.repo,content:fs.readFileSync(full).toString('base64'),encoding:'base64'});
+                  entries.push({path:'verification/compact-review/'+full,mode:'100644',type:'blob',sha:blob.data.sha});
+                }
+              }
+            }
+            await walk('evidence');
+            const source=await github.rest.git.getCommit({...context.repo,commit_sha:context.sha});
+            const tree=await github.rest.git.createTree({...context.repo,base_tree:source.data.tree.sha,tree:entries});
+            const commit=await github.rest.git.createCommit({...context.repo,message:'Save compact 3D evidence for review '+context.runId,tree:tree.data.sha,parents:[context.sha]});
+            const branch='evidence/east-review-'+context.runId;
+            await github.rest.git.createRef({...context.repo,ref:'refs/heads/'+branch,sha:commit.data.sha});
+            core.notice('Review branch: '+branch+' @ '+commit.data.sha);
