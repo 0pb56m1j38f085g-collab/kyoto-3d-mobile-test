@@ -81,7 +81,7 @@
     for(let j=0;j<rowCount;j++){
      const z0=d*.5+(apron-d*.5)*j/rowCount,z1=d*.5+(apron-d*.5)*(j+1)/rowCount;
      const A=P(-w*.49,0,z0),B=P(w*.49,0,z0),C=P(w*.49,0,z1),D=P(-w*.49,0,z1);
-     for(const p of[A,B,C,D])p[1]=storyGround(p[0],p[2])+.034;
+     for(const p of[A,B,C,D])p[1]=pavingTerrainHeight(p[0],p[2])+.034;
      upQuad(shopThresholds,A,B,C,D);
     }
     smallBox(P(0,.025,d*.52),[w*.96,.05,.12],'#989080',yaw,3);
@@ -167,7 +167,7 @@
    const dx=s.b[0]-s.a[0],dz=s.b[1]-s.a[1],len=Math.hypot(dx,dz);
    for(let t=.25;t<len;t+=.88){const side=people%2?1:-1,x=s.a[0]+dx*t/len-dz/len*.20*side,z=s.a[1]+dz*t/len+dx/len*.20*side;
     if(!islandInside(x,z,1)||waterKeepout(x,z,.5)||inClearing(x,z,.15)||gardenKeepout(x,z,.1))continue;
-    const g=nearestStreetGrade(x,z),y=(g&&g.d<s.width/2?g.y+.04:storyGround(x,z)),h=.30+(people%3)*.035;
+    const g=nearestStreetGrade(x,z),y=(g?.profile.steps&&g.d<s.width/2?g.y+.04:pavingTerrainHeight(x,z)+.045),h=.30+(people%3)*.035;
     smallBox([x,y+h*.48,z],[.105,h*.64,.09],['#8c4644','#334e5b','#b5a180','#536044','#8a6d83'][people%5],0,0);
     ball([x,y+h*.92,z],[.055,.061,.055],'#bd9473',tiny,0);
     for(const q of[-1,1])smallBox([x+q*.028,y+.05,z],[.035,.10,.04],'#473f36',0,1);

@@ -46,6 +46,30 @@ for(const h of row){assert.ok(h.depth>=.55&&h.height/h.depth<=1.851,'shop parcel
 for(const name of['storybook-paving-mortar','storybook-stair-faces','storybook-shop-thresholds','storybook-fitted-stone-foundations'])assert.ok(model.meshes.some(m=>m.name===name&&m.p.length&&m.instances.length));
 for(const name of ['清水坂','産寧坂','二寧坂','一念坂','八坂通','五条坂','ねねの道'])assert.ok(craft.construction.filter(r=>r.name===name).reduce((n,r)=>n+r.stoneFaces,0)>40,name+' receives individual stone faces');
 assert.ok(model.meshes.some(m=>m.name.startsWith('storybook-detail-')&&m.p.length),'close-view alleys have their own paving batches');
+// Probe actual stored paving triangles against actual stored terrain triangles.
+// Centre-line heights alone missed green terrain cutting through sloped pavers.
+const terrainBins=new Map(),bin=p=>Math.floor(p[0]*2)+','+Math.floor(p[2]*2);
+for(const mesh of model.meshes.filter(m=>['storybook-soft-ground','storybook-wooded-ridge'].includes(m.name)))for(let k=0;k<mesh.p.length;k+=9){
+ const tri=[0,3,6].map(j=>mesh.p.slice(k+j,k+j+3)),xs=tri.map(p=>p[0]),zs=tri.map(p=>p[2]);
+ for(let x=Math.floor(Math.min(...xs)*2);x<=Math.floor(Math.max(...xs)*2);x++)for(let z=Math.floor(Math.min(...zs)*2);z<=Math.floor(Math.max(...zs)*2);z++){
+  const key=x+','+z;if(!terrainBins.has(key))terrainBins.set(key,[]);terrainBins.get(key).push(tri);
+ }
+}
+function terrainAt(p){
+ for(const [a,b,c]of terrainBins.get(bin(p))||[]){
+  const den=(b[2]-c[2])*(a[0]-c[0])+(c[0]-b[0])*(a[2]-c[2]);if(Math.abs(den)<1e-12)continue;
+  const u=((b[2]-c[2])*(p[0]-c[0])+(c[0]-b[0])*(p[2]-c[2]))/den,v=((c[2]-a[2])*(p[0]-c[0])+(a[0]-c[0])*(p[2]-c[2]))/den,w=1-u-v;
+  if(Math.min(u,v,w)>=-1e-5)return u*a[1]+v*b[1]+w*c[1];
+ }throw Error('No rendered terrain under stone');
+}
+let pavingProbes=0,minPavingClearance=Infinity;
+for(const mesh of model.meshes.filter(m=>/paving-stone-/.test(m.name)))for(let k=0;k<mesh.p.length;k+=9){
+ const tri=[0,3,6].map(j=>mesh.p.slice(k+j,k+j+3));
+ for(const weights of [[1/3,1/3,1/3],[.5,.5,0],[0,.5,.5],[.5,0,.5]]){
+  const p=[0,1,2].map(j=>tri.reduce((n,v,i)=>n+v[j]*weights[i],0)),clearance=p[1]-terrainAt(p);minPavingClearance=Math.min(minPavingClearance,clearance);pavingProbes++;
+  assert.ok(clearance>=-.002,'stored terrain must not pierce a stone face: '+clearance+' at '+p);
+ }
+}
 const triangles=model.meshes.reduce((n,m)=>n+m.p.length/9*m.instances.length,0),instances=model.meshes.reduce((n,m)=>n+m.instances.length,0);
 assert.ok(triangles<3000000&&instances<42000,'retain the shared full-quality scene budget');
-console.log(JSON.stringify({ok:true,revision:model.revision,faces,treads,continuousNinenJoins:joins,ninenShopfronts:row.length,triangles,instances,limitations:craft.positionPolicy}));
+console.log(JSON.stringify({ok:true,revision:model.revision,faces,treads,pavingProbes,minPavingClearance,continuousNinenJoins:joins,ninenShopfronts:row.length,triangles,instances,limitations:craft.positionPolicy}));

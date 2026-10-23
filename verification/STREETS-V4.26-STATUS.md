@@ -13,6 +13,7 @@ Base: b20f3d5f834448b8891786145c786294cb845225 (v4.25).
 - Original geographic files are unchanged. Every selected point, including the truncated branch section, is an original source vertex.
 - Omitted local streets still guide parcel frontages; hiding a road must not orient distant houses toward a famous street.
 - Main street corridors reserve full crown clearance; the Kiyomizu approach continues to its original source endpoint and its steep junction has a blended grade.
+- Sloped paving is subdivided at the actual rendered terrain triangles; validation probes stored stone faces against stored terrain, not just road centre-line heights.
 - Paving uses individually separated stone faces, colour variation, segmented curbs, source-tagged stair treads and risers, plus clipped junction overlaps.
 - B's gray translucent machiya, opaque landmarks/stone/plants, initial uphill camera and shared iPhone/desktop quality remain.
 

@@ -40,6 +40,21 @@
    const poly=[[a[0]-na[0]*h,a[1]-na[1]*h],[b[0]-nb[0]*h,b[1]-nb[1]*h],[b[0]+nb[0]*h,b[1]+nb[1]*h],[a[0]+na[0]*h,a[1]+na[1]*h]];
    return {r,ri,poly,x0:Math.min(...poly.map(p=>p[0])),x1:Math.max(...poly.map(p=>p[0])),z0:Math.min(...poly.map(p=>p[1])),z1:Math.max(...poly.map(p=>p[1]))};
   }));
+  // Follow the rendered terrain triangles, not only the analytic height field.
+  // On steep bends those two interpolations differ enough to expose green slivers.
+  function pavingTerrainHeight(x,z){
+   const ix=Math.floor((x-bounds.x0)/step),iz=Math.floor((z-bounds.z0)/step),x0=bounds.x0+ix*step,z0=bounds.z0+iz*step,tx=(x-x0)/step,tz=(z-z0)/step;
+   const a=storyGround(x0,z0),b=storyGround(x0+step,z0),c=storyGround(x0+step,z0+step),d=storyGround(x0,z0+step);
+   return tz<=tx?a*(1-tx)+b*(tx-tz)+c*tz:a*(1-tz)+c*tx+d*(tz-tx);
+  }
+  function terrainPieces(poly){
+   const xs=poly.map(p=>p[0]),zs=poly.map(p=>p[2]),out=[];
+   const ix0=Math.floor((Math.min(...xs)-bounds.x0)/step),ix1=Math.floor((Math.max(...xs)-bounds.x0)/step),iz0=Math.floor((Math.min(...zs)-bounds.z0)/step),iz1=Math.floor((Math.max(...zs)-bounds.z0)/step);
+   for(let ix=ix0;ix<=ix1;ix++)for(let iz=iz0;iz<=iz1;iz++){
+    const x=bounds.x0+ix*step,z=bounds.z0+iz*step,A=[x,z],B=[x+step,z],C=[x+step,z+step],D=[x,z+step];
+    for(const tri of [[A,B,C],[A,C,D]]){let part=poly;for(let k=0;k<3&&part.length>=3;k++)part=cutHalf(part,tri[k],tri[(k+1)%3],true);if(part.length>=3)out.push(part);}
+   }return out;
+  }
   function pavedPolygon(m,poly,r,ri,edge=false,lift=.025){
    const x0=Math.min(...poly.map(p=>p[0])),x1=Math.max(...poly.map(p=>p[0])),z0=Math.min(...poly.map(p=>p[2])),z1=Math.max(...poly.map(p=>p[2]));
    let pieces=[poly];
@@ -50,8 +65,9 @@
     pieces=pieces.flatMap(p=>difference(p,f.poly));if(!pieces.length)break;
    }
    let count=0;
+   if(!r.steps)pieces=pieces.flatMap(terrainPieces);
    for(const piece of pieces){
-    if(!r.steps)for(const v of piece)v[1]=storyGround(v[0],v[2])+lift;
+    if(!r.steps)for(const v of piece)v[1]=pavingTerrainHeight(v[0],v[2])+lift;
     for(let j=1;j<piece.length-1;j++){const a=piece[0],b=piece[j],c=piece[j+1];let n=V.cross(V.sub(b,a),V.sub(c,a));if(Math.hypot(...n)<1e-9)continue;n=V.unit(n);if(n[1]<0)n=V.mul(n,-1);m.tri(a,b,c,n);count++;}
    }return count;
   }
@@ -80,6 +96,7 @@
       pavedPolygon(stoneEdge,[P(e0,inner,Y(e0)+.008),P(e0,outer,Y(e0)+.008),P(e1,outer,Y(e1)+.008),P(e1,inner,Y(e1)+.008)],r,ri,true,.033);
       // Close the side down to the graded terrain, including each stair wedge.
       const aa=P(t0,outer,Y(t0)+.008),bb=P(t1,outer,Y(t1)+.008),cc=[bb[0],storyGround(bb[0],bb[2])-.04,bb[2]],dd=[aa[0],storyGround(aa[0],aa[2])-.04,aa[2]];
+      if(!r.steps){aa[1]=pavingTerrainHeight(aa[0],aa[2])+.033;bb[1]=pavingTerrainHeight(bb[0],bb[2])+.033;}
       const edgeMid=[(aa[0]+bb[0])/2,(aa[2]+bb[2])/2];
       if(!streetProfiles.some(other=>other!==r&&other.name!==r.name&&other.points.slice(1).some((b,j)=>dseg(...edgeMid,other.points[j],b)<other.width/2)))stoneEdge.quad(aa,bb,cc,dd);
      }
@@ -88,7 +105,7 @@
       stoneRisers.quad(aa,bb,cc,dd,[dx/len*(rise>=0?-1:1),0,dz/len*(rise>=0?-1:1)]);
       record.treads.push({a:P(t0,-r.width/2,level),b:P(t0,r.width/2,level),c:P(t1,r.width/2,level),d:P(t1,-r.width/2,level),rise:Math.abs(rise)});
      }
-     record.samples.push({at:P((t0+t1)/2,0,r.steps?Y((t0+t1)/2):storyGround(mid[0],mid[2])+.025),ground:storyGround(mid[0],mid[2])});
+     record.samples.push({at:P((t0+t1)/2,0,r.steps?Y((t0+t1)/2):pavingTerrainHeight(mid[0],mid[2])+.025),ground:pavingTerrainHeight(mid[0],mid[2])});
     }
    }streetConstruction.push(record);
   }
