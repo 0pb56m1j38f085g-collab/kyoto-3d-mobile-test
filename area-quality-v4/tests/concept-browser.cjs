@@ -48,7 +48,8 @@ function check(name,ok,detail){report.checks.push({name,passed:!!ok,detail});ass
    await page.mouse.move(box.x+box.width*.5,box.y+box.height*.55);await page.mouse.down();await page.mouse.move(box.x+box.width*.72,box.y+box.height*.59,{steps:6});await page.mouse.up();await snap('street-rotated');
    check('rotation updates camera with transparent town',await page.evaluate(b=>Math.abs(phoneTest.camera.yaw-b.yaw)>.05&&phoneTest.renderer.gl.getError()===0,before));
    const span=await page.evaluate(()=>phoneTest.camera.span);
-   await page.mouse.wheel(0,-220);await snap('street-zoomed');
+   // Mobile WebKit has no wheel input; exercise the visible touch control.
+   await page.locator('#zoom-in').tap();await snap('street-zoomed');
    check('zoom updates camera with transparent town',await page.evaluate(s=>phoneTest.camera.span<s&&phoneTest.renderer.gl.getError()===0,span));
    await page.evaluate(()=>phoneTest.view('area',false));await page.setViewportSize({width:390,height:660});await snap('short');
    await page.evaluate(()=>phoneTest.setQuality('high'));check('iPhone high quality available',await page.evaluate(()=>phoneTest.quality==='high'&&phoneTest.renderer.dpr===1.8));

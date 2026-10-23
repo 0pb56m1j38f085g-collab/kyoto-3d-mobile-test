@@ -35,6 +35,7 @@ module.exports=({renderer,app,html})=>{
  // Packed models carry the same baker indices and lighting on iPhone and desktop.
  html=exact(html,"if(!isLowMemoryIOS())await script('src/scene.js?v=area-higashiyama-quality-v4.25');",'');
  html=html.replace('<option value="light">軽量</option>','');
+ html=html.replaceAll('重い・熱くなる場合は「軽量」を選んでください。','');
  html=html.replaceAll('iPhoneでは軽量表示を使用します。','iPhoneも他の端末と同じ照明・素材で表示します。');
  html=html.replaceAll('京さんぽ · 東山と祇園','京さんぽ · 東山・祇園・山科');
  html=html.replaceAll('KYOTO · A LITTLE JOURNEY','KYOTO · HIGASHIYAMA');
