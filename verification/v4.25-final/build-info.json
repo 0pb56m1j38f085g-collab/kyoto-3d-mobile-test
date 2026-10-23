@@ -1,0 +1,4104 @@
+{
+  "revision": "area-higashiyama-quality-v4.25",
+  "viewerRevision": "area-higashiyama-quality-v4.25-deterministic",
+  "viewerHashes": {
+    "src/renderer.js": "13bba1ff35da3ed9efa62f94b938fa548afec98167c54791e07d3e7f1852423e",
+    "src/scene.js": "2bc59be76fa52af0d1ecc6d18994654de27ab1f82621a0f0f13e1afd3698ed93",
+    "src/app.js": "e58183ae8b85c04e840a2e1375c32594f9b5c45129a8963e8febcbcac6d8a581",
+    "index.html": "8c2be8d9187799c67862aa2f1365309fac47742c272e138a6f0aeeda80c7dee4"
+  },
+  "modelHash": "8994474ef570666774067e663e2c83c5c45fe33765bbc8be7f6cb833105448eb",
+  "bakerHash": "6030fe648b3462e8500059545dc08370839114fb4b3cfef8646a7d8042c1048b",
+  "meshes": 168,
+  "instances": 27299,
+  "triangles": 2475930,
+  "lightSamples": 1862726,
+  "rays": 24,
+  "lightingBytes": 7450912,
+  "lightingHash": "e50eef334f7e773dc82435a39cb32fc437fec011ad6588b6ade5a91c50f3ea21",
+  "architecture": {
+    "mainHallInstances": 2158,
+    "trees": 1650,
+    "stageSupportCount": 18,
+    "mainBays": [
+      9,
+      7
+    ],
+    "surveyed": false,
+    "illustrativeHouses": 182
+  },
+  "areaSites": {
+    "scaleMetresPerUnit": 20,
+    "geographicAnchors": {
+      "kiyomizu": {
+        "local": [
+          -0.023049999999999973,
+          -0.7225562499999998
+        ],
+        "sourceWay": 102164590,
+        "positionSource": "Provisional roof centre aligned to northern OSM edge; not entrance"
+      },
+      "hokanji": {
+        "local": [
+          -26.223499999999998,
+          19.656500000000005
+        ],
+        "previousRepresentativePoint": {
+          "lat": 34.99855,
+          "lon": 135.77925,
+          "local": [
+            -26.22,
+            16.62
+          ]
+        },
+        "sourceWay": 371717416,
+        "positionSource": "OSM footprint envelope centre, not entrance"
+      },
+      "kodaiji": {
+        "local": [
+          -17.112873721670677,
+          31.862298116702135
+        ],
+        "previousRepresentativePoint": {
+          "lat": 35.0007611,
+          "lon": 135.7811139,
+          "local": [
+            -17.72,
+            28.84
+          ]
+        },
+        "sourceWay": 522959943,
+        "positionSource": "OSM footprint envelope centre, not entrance"
+      },
+      "yasaka": {
+        "local": [
+          -29.35619256939882,
+          47.78699067591103
+        ],
+        "previousRepresentativePoint": {
+          "lat": 35.00361,
+          "lon": 135.77861,
+          "local": [
+            -29.14,
+            44.59
+          ]
+        },
+        "sourceWay": 88108397,
+        "positionSource": "OSM footprint envelope centre, not entrance"
+      }
+    },
+    "placementAccuracy": "Illustrated display, deliberately not to scale. Original geographic source retained separately; no route-time calculation from display coordinates.",
+    "roadReference": {
+      "source": "OpenStreetMap contributors",
+      "license": "ODbL 1.0",
+      "wayIds": [
+        24516359,
+        28514434,
+        30882783,
+        30913263,
+        157527438,
+        179116810,
+        371739384,
+        371739385,
+        526198271,
+        526198278,
+        550360170,
+        747033984,
+        747033985,
+        1251544286,
+        1491152444,
+        1569088146,
+        1569088147,
+        1569088149
+      ]
+    },
+    "referenceRevision": "official-inventory-review-2026-10-22",
+    "footprintReference": {
+      "source": "OpenStreetMap contributors / Overpass API",
+      "license": "ODbL 1.0",
+      "displayedIndividualFootprints": false
+    },
+    "kodaijiReference": {
+      "source": "https://www.kodaiji.com/haikan.html",
+      "plan": "https://www.kodaiji.com/img/keidaizu.png",
+      "architecture": [
+        "https://online.bunka.go.jp/db/heritages/detail/189623",
+        "https://online.bunka.go.jp/db/heritages/detail/122594"
+      ],
+      "placement": "nine individual OSM footprints; 20 metres per unit",
+      "confirmed": "Kaisando east/northeast of Hojo; Otamaya east of Kaisando; two ponds on either side of Kaisando; Kasatei north of Shiguretei",
+      "inferred": "all nine heights; eave/wall boundaries; roof profiles; pavilion within the Kange-tsudai corridor footprint; garden shorelines, planting, terrain and corridor rise",
+      "ponds": [
+        {
+          "name": "Engetsu",
+          "polygon": [
+            [
+              -16.82,
+              34.1
+            ],
+            [
+              -16.35,
+              34.22
+            ],
+            [
+              -16.02,
+              34.06
+            ],
+            [
+              -16,
+              33.72
+            ],
+            [
+              -16.23,
+              33.42
+            ],
+            [
+              -16.02,
+              33.12
+            ],
+            [
+              -15.91,
+              32.72
+            ],
+            [
+              -16.02,
+              32.3
+            ],
+            [
+              -16.36,
+              32.48
+            ],
+            [
+              -16.5,
+              32.83
+            ],
+            [
+              -16.78,
+              32.96
+            ],
+            [
+              -16.67,
+              33.35
+            ],
+            [
+              -16.85,
+              33.72
+            ]
+          ]
+        },
+        {
+          "name": "Garyo",
+          "polygon": [
+            [
+              -14.61,
+              34.2
+            ],
+            [
+              -14.19,
+              34.4
+            ],
+            [
+              -13.97,
+              34.17
+            ],
+            [
+              -14.18,
+              33.75
+            ],
+            [
+              -14.09,
+              33.25
+            ],
+            [
+              -13.88,
+              32.75
+            ],
+            [
+              -13.96,
+              32.13
+            ],
+            [
+              -14.28,
+              31.67
+            ],
+            [
+              -14.58,
+              31.64
+            ],
+            [
+              -14.78,
+              32.07
+            ],
+            [
+              -14.7,
+              32.7
+            ],
+            [
+              -14.68,
+              33.3
+            ]
+          ]
+        }
+      ],
+      "surveyComplete": false
+    },
+    "metricLandmarks": [
+      {
+        "key": "hokanji",
+        "sourceWay": 371717416,
+        "center": [
+          -26.223499999999998,
+          19.656500000000005
+        ],
+        "baseY": 2.1692633598829474,
+        "yaw": -0.036237905730631466,
+        "heightMetres": 46,
+        "heightSource": "Kyoto Tourism Federation published overall height",
+        "group": "metric-hokanji",
+        "metresPerUnit": 20,
+        "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+        "details": "reconstructed proportions, not surveyed"
+      },
+      {
+        "key": "yasaka-honden",
+        "sourceWay": 88108397,
+        "center": [
+          -29.35619256939882,
+          47.78699067591103
+        ],
+        "baseY": 2.175021666923515,
+        "yaw": 0.08437336532110574,
+        "heightMetres": 15.53,
+        "heightSource": "Yasaka Shrine official architecture page published height",
+        "group": "metric-yasaka-honden",
+        "metresPerUnit": 20,
+        "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+        "details": "reconstructed proportions, not surveyed"
+      },
+      {
+        "key": "yasaka-maiden",
+        "sourceWay": 105449709,
+        "center": [
+          -29.46649999999999,
+          46.38199999999999
+        ],
+        "baseY": 2.1770675877680783,
+        "yaw": 0.08001037173638305,
+        "heightMetres": 8.1,
+        "heightSource": "estimated from reference photographs; not a measured height",
+        "group": "metric-yasaka-maiden",
+        "metresPerUnit": 20,
+        "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+        "details": "reconstructed proportions, not surveyed"
+      },
+      {
+        "key": "yasaka-south-gate",
+        "sourceWay": 88108386,
+        "center": [
+          -29.54400887066486,
+          44.730316630885035
+        ],
+        "baseY": 2.1779061804493867,
+        "yaw": 0.08058520127715077,
+        "heightMetres": 10.4,
+        "heightSource": "estimated from reference photographs; not a measured height",
+        "group": "metric-yasaka-south-gate",
+        "metresPerUnit": 20,
+        "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+        "details": "reconstructed proportions, not surveyed"
+      },
+      {
+        "key": "kodaiji-hojo",
+        "sourceWay": 522959943,
+        "center": [
+          -17.112873721670677,
+          31.862298116702135
+        ],
+        "baseY": 2.1681781556876505,
+        "yaw": 0.11420204858047181,
+        "heightMetres": 8.8,
+        "heightSource": "estimated from architectural references; not a measured height",
+        "group": "metric-kodaiji-hojo",
+        "metresPerUnit": 20,
+        "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+        "details": "reconstructed proportions, not surveyed"
+      },
+      {
+        "key": "kodaiji-kuri",
+        "sourceWay": 191037928,
+        "center": [
+          -18.6965,
+          32.1985
+        ],
+        "baseY": 2.167739706318955,
+        "yaw": 0.11507785315014689,
+        "heightMetres": 10.8,
+        "heightSource": "estimated from architectural references; not a measured height",
+        "group": "metric-kodaiji-kuri",
+        "metresPerUnit": 20,
+        "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+        "details": "reconstructed proportions, not surveyed"
+      },
+      {
+        "key": "kodaiji-kaisando",
+        "sourceWay": 541086536,
+        "center": [
+          -15.098499999999996,
+          32.95349999999999
+        ],
+        "baseY": 2.16514949174161,
+        "yaw": 0.1153881143236936,
+        "heightMetres": 9.4,
+        "heightSource": "estimated from architectural references; not a measured height",
+        "group": "metric-kodaiji-kaisando",
+        "metresPerUnit": 20,
+        "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+        "details": "reconstructed proportions, not surveyed"
+      },
+      {
+        "key": "kodaiji-otamaya",
+        "sourceWay": 541086532,
+        "center": [
+          -12.959551214812304,
+          32.74080180898577
+        ],
+        "baseY": 2.1692562691983737,
+        "yaw": 0.28468689968609073,
+        "heightMetres": 8.1,
+        "heightSource": "estimated from architectural references; not a measured height",
+        "group": "metric-kodaiji-otamaya",
+        "metresPerUnit": 20,
+        "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+        "details": "reconstructed proportions, not surveyed"
+      },
+      {
+        "key": "kodaiji-kangetsudai",
+        "sourceWay": 653725971,
+        "center": [
+          -16.08943860554811,
+          32.75408237693378
+        ],
+        "baseY": 2.1640458582200326,
+        "yaw": 0.11385064097536081,
+        "heightMetres": 4.85,
+        "heightSource": "estimated from architectural references; not a measured height",
+        "group": "metric-kodaiji-kangetsudai",
+        "metresPerUnit": 20,
+        "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+        "details": "reconstructed proportions, not surveyed"
+      },
+      {
+        "key": "kodaiji-garyoro",
+        "sourceWay": 541086534,
+        "center": [
+          -14.019651877567473,
+          32.97245520140279
+        ],
+        "baseY": 2.167573903432634,
+        "yaw": 0.1279829469673252,
+        "heightMetres": 5,
+        "heightSource": "estimated from architectural references; not a measured height",
+        "group": "metric-kodaiji-garyoro",
+        "metresPerUnit": 20,
+        "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+        "details": "reconstructed proportions, not surveyed"
+      },
+      {
+        "key": "kodaiji-kasatei",
+        "sourceWay": 522959927,
+        "center": [
+          -10.667000216968152,
+          31.34656161895434
+        ],
+        "baseY": 2.1682403780713595,
+        "yaw": -0.003521112208634833,
+        "heightMetres": 4.5,
+        "heightSource": "estimated from architectural references; not a measured height",
+        "group": "metric-kodaiji-kasatei",
+        "metresPerUnit": 20,
+        "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+        "details": "reconstructed proportions, not surveyed"
+      },
+      {
+        "key": "kodaiji-shiguretei",
+        "sourceWay": 542345560,
+        "center": [
+          -10.715615383605414,
+          30.743499658628384
+        ],
+        "baseY": 2.166353764161847,
+        "yaw": -0.0029585712493531264,
+        "heightMetres": 7.4,
+        "heightSource": "estimated from architectural references; not a measured height",
+        "group": "metric-kodaiji-shiguretei",
+        "metresPerUnit": 20,
+        "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+        "details": "reconstructed proportions, not surveyed"
+      },
+      {
+        "key": "kodaiji-chokushimon",
+        "sourceWay": 541086527,
+        "center": [
+          -17.285499999999995,
+          30.441999999999993
+        ],
+        "baseY": 2.1716426814575676,
+        "yaw": 0.11430321098432765,
+        "heightMetres": 5,
+        "heightSource": "estimated from architectural references; not a measured height",
+        "group": "metric-kodaiji-chokushimon",
+        "metresPerUnit": 20,
+        "planSource": "OSM oriented envelope; roof/eave boundary interpretation remains uncertain",
+        "details": "reconstructed proportions, not surveyed"
+      }
+    ],
+    "scaleStatus": "Display has no uniform geographic scale.",
+    "kiyomizuPlacement": {
+      "sourceWay": 102164590,
+      "source": {
+        "source": "OpenStreetMap contributors / Overpass API",
+        "license": "ODbL 1.0",
+        "retrievedAt": "2026-10-21T23:52:43.766Z",
+        "origin": {
+          "lat": 34.995,
+          "lon": 135.785
+        },
+        "metresPerUnit": 20,
+        "sourceWay": 102164590,
+        "points": [
+          [
+            -1.057,
+            -0.209
+          ],
+          [
+            0.8,
+            0.087
+          ],
+          [
+            1.088,
+            -1.698
+          ],
+          [
+            0.555,
+            -1.783
+          ],
+          [
+            0.513,
+            -1.532
+          ],
+          [
+            -0.264,
+            -1.663
+          ],
+          [
+            -0.224,
+            -1.901
+          ],
+          [
+            -0.759,
+            -1.986
+          ],
+          [
+            -0.826,
+            -1.569
+          ],
+          [
+            -1.132,
+            -1.618
+          ],
+          [
+            -1.232,
+            -0.999
+          ],
+          [
+            -0.937,
+            -0.952
+          ],
+          [
+            -1.057,
+            -0.209
+          ]
+        ],
+        "alignmentEdge": [
+          0,
+          1
+        ],
+        "alignmentAssumption": "The northern source edge is treated as the rear eave of the main roof; boundary interpretation is provisional, not surveyed.",
+        "officialContext": "https://www.kiyomizudera.or.jp/map.php"
+      },
+      "uniformScale": 0.11752767293812125,
+      "cos": 0.9875333791481375,
+      "sin": 0.15740973625624594,
+      "rearCentre": [
+        -0.12849999999999995,
+        -0.061
+      ],
+      "baseY": 2.15,
+      "localRearZ": -8.85,
+      "roofCentre": [
+        -0.023049999999999973,
+        3.825944616097609,
+        -0.7225562499999998
+      ],
+      "stageCentre": [
+        0.09146500000000005,
+        3.0549630816235336,
+        -1.440983125
+      ],
+      "method": "Uniform scale from provisional north roof edge; reflected front axis; all inherited geometry transformed together.",
+      "terrain": "Synthetic local slope joined to illustrative district ground; no surveyed altitude.",
+      "surveyed": false
+    },
+    "contextPolicy": {
+      "authoredMiniature": true,
+      "vegetation": "Decorative, including pink blossom accents; not live seasonal conditions.",
+      "houses": "Source-side parcels with six illustrative machiya types; historic street frontages shift at most 0.65 display units. Not individual shop identification."
+    },
+    "frontageReference": {
+      "method": "outward-facing road visibility with adjacent-building exclusion",
+      "count": 0,
+      "joinery": "illustrative; not an individual facade survey"
+    }
+  },
+  "surveyed": false,
+  "assetToken": "8994474ef570-e50eef334f7e-112f8565704d",
+  "description": "Illustrated Higashiyama / Gion miniature: enlarged landmark silhouettes, selected illustrative machiya and low-cost decorative groves. Display scale and spacing are deliberately non-metric. Original geographic inputs remain separate; route and walking-time guidance is not yet implemented. Not a surveyed model or live flowering report.",
+  "mobileAsset": {
+    "url": "./mobile/cd035c73d11e910e925f510a.json",
+    "manifestBytes": 177961,
+    "sha256": "cd035c73d11e910e925f510a5c5a53d5014d29d5eba7e2cefde641ac302c8f39",
+    "revision": "area-higashiyama-quality-v4.25",
+    "sourceModelHash": "8994474ef570666774067e663e2c83c5c45fe33765bbc8be7f6cb833105448eb",
+    "bytes": 9681192,
+    "compressedBytes": 2956982,
+    "maxChunkBytes": 2018896,
+    "maxCompressedChunkBytes": 730638,
+    "chunkCount": 6,
+    "triangles": 2475930,
+    "instances": 27299,
+    "meshes": 168,
+    "batches": 168,
+    "lightSampleCount": 1862726,
+    "packedLighting": true,
+    "geometry": "identical Float32 positions, normals, triangle order/winding and instance transforms; compiled baker light indices; no LOD; unused UV omitted"
+  },
+  "cartography": {
+    "mode": "illustrated-miniature",
+    "metric": false,
+    "displayScale": 1.02,
+    "displayScaleEast": 0.56,
+    "landmarks": {
+      "temple": {
+        "source": [
+          -0.023049999999999973,
+          -0.7225562499999998
+        ],
+        "at": [
+          -0.012907999999999985,
+          0.7370073749999998
+        ],
+        "scale": 5.8,
+        "lift": 2.8
+      },
+      "hokanji": {
+        "source": [
+          -26.223499999999998,
+          19.656500000000005
+        ],
+        "at": [
+          -14.68516,
+          -20.049630000000004
+        ],
+        "scale": 2.8
+      },
+      "yasaka": {
+        "source": [
+          -29.35619256939882,
+          47.78699067591103
+        ],
+        "at": [
+          -16.43946783886334,
+          -48.74273048942925
+        ],
+        "scale": 2.5,
+        "heightEmphasis": 1.8
+      },
+      "kodaiji": {
+        "source": [
+          -17.112873721670677,
+          31.862298116702135
+        ],
+        "at": [
+          -9.583209284135581,
+          -32.49954407903618
+        ],
+        "scale": 2.2,
+        "heightEmphasis": 2.6,
+        "lift": 0.65
+      }
+    },
+    "clearings": [
+      {
+        "group": "metric-hokanji",
+        "x0": -15.647696822555082,
+        "x1": -13.722623177444918,
+        "y0": 2.20393,
+        "y1": 8.643930000000001,
+        "z0": -21.01216682255508,
+        "z1": -19.087093177444917
+      },
+      {
+        "group": "metric-yasaka-honden",
+        "x0": -18.69651721859822,
+        "x1": -14.167682781401778,
+        "y0": 2.2625900000000003,
+        "y1": 5.756835000000001,
+        "z0": -50.58054038872149,
+        "z1": -47.02465830361053
+      },
+      {
+        "group": "metric-yasaka-maiden",
+        "x0": -17.60148392147707,
+        "x1": -15.828996078522934,
+        "y0": 2.3280700000000003,
+        "y1": 4.094315,
+        "z0": -46.0328968783741,
+        "z1": -44.42760312162589
+      },
+      {
+        "group": "metric-yasaka-south-gate",
+        "x0": -18.171485753358578,
+        "x1": -15.646534246641421,
+        "y0": 2.2756,
+        "y1": 4.615595,
+        "z0": -42.00028466662056,
+        "z1": -40.20181533337944
+      },
+      {
+        "group": "metric-kodaiji-hojo",
+        "x0": -11.995966710099404,
+        "x1": -6.584693289900596,
+        "y0": 2.90399,
+        "y1": 5.42079,
+        "z0": -33.53509367593911,
+        "z1": -31.404224104559788
+      },
+      {
+        "group": "metric-kodaiji-kuri",
+        "x0": -15.12663864698472,
+        "x1": -11.00774135301528,
+        "y0": 2.90147,
+        "y1": 5.99027,
+        "z0": -34.39246548733907,
+        "z1": -32.085914512660935
+      },
+      {
+        "group": "metric-kodaiji-kaisando",
+        "x0": -6.601180823952051,
+        "x1": -3.704328828044346,
+        "y0": 2.88666,
+        "y1": 5.575060000000001,
+        "z0": -35.798856167139576,
+        "z1": -34.00152383286043
+      },
+      {
+        "group": "metric-kodaiji-otamaya",
+        "x0": -1.19277948746165,
+        "x1": 0.43590948746165,
+        "y0": 2.91017,
+        "y1": 5.22677,
+        "z0": -35.22468457237154,
+        "z1": -33.535130512538345
+      },
+      {
+        "group": "metric-kodaiji-kangetsudai",
+        "x0": -9.391281465091254,
+        "x1": -4.813012531179647,
+        "y0": 2.88037,
+        "y1": 4.2577543014277826,
+        "z0": -34.93178258633186,
+        "z1": -34.07051602015235
+      },
+      {
+        "group": "metric-kodaiji-garyoro",
+        "x0": -4.449318516594381,
+        "x1": -1.1069214834056185,
+        "y0": 2.9005,
+        "y1": 4.3305,
+        "z0": -35.353236356888864,
+        "z1": -34.53054364311113
+      },
+      {
+        "group": "metric-kodaiji-kasatei",
+        "x0": 4.290005024593663,
+        "x1": 4.905424975406337,
+        "y0": 2.90433,
+        "y1": 4.191330000000001,
+        "z0": -31.715188689644506,
+        "z1": -31.014671310355492
+      },
+      {
+        "group": "metric-kodaiji-shiguretei",
+        "x0": 3.7167268261244035,
+        "x1": 5.2647731738755965,
+        "y0": 2.89352,
+        "y1": 5.00992,
+        "z0": -30.559562135547033,
+        "z1": -29.516807864452968
+      },
+      {
+        "group": "metric-kodaiji-chokushimon",
+        "x0": -10.366689569889418,
+        "x1": -9.55929043011058,
+        "y0": 2.92378,
+        "y1": 4.35378,
+        "z0": -29.759889778335978,
+        "z1": -28.992090263811956
+      },
+      {
+        "group": "main-hall",
+        "x0": -8.879331575586118,
+        "x1": 6.315333051414625,
+        "y0": 6.170142243654319,
+        "y1": 14.730141706286961,
+        "z0": -3.9677094926607963,
+        "z1": 6.6934776224564505
+      }
+    ],
+    "trees": 1650,
+    "houses": 182,
+    "routeGeometry": false,
+    "notice": "名所・街路・川の位置は同じ地理座標変換。建物の大きさ・山の高さ・川幅は誇張。経路・所要時間はこの表示形状から算出しません。",
+    "geographicSource": {
+      "roads": "area-data/historic-streets.json",
+      "buildings": "area-data/gion-footprints.json",
+      "west": "area-data/west-gion-reference.json",
+      "metresPerUnit": 20,
+      "anchors": {
+        "kiyomizu": {
+          "local": [
+            -0.023049999999999973,
+            -0.7225562499999998
+          ],
+          "sourceWay": 102164590,
+          "positionSource": "Provisional roof centre aligned to northern OSM edge; not entrance"
+        },
+        "hokanji": {
+          "local": [
+            -26.223499999999998,
+            19.656500000000005
+          ],
+          "previousRepresentativePoint": {
+            "lat": 34.99855,
+            "lon": 135.77925,
+            "local": [
+              -26.22,
+              16.62
+            ]
+          },
+          "sourceWay": 371717416,
+          "positionSource": "OSM footprint envelope centre, not entrance"
+        },
+        "kodaiji": {
+          "local": [
+            -17.112873721670677,
+            31.862298116702135
+          ],
+          "previousRepresentativePoint": {
+            "lat": 35.0007611,
+            "lon": 135.7811139,
+            "local": [
+              -17.72,
+              28.84
+            ]
+          },
+          "sourceWay": 522959943,
+          "positionSource": "OSM footprint envelope centre, not entrance"
+        },
+        "yasaka": {
+          "local": [
+            -29.35619256939882,
+            47.78699067591103
+          ],
+          "previousRepresentativePoint": {
+            "lat": 35.00361,
+            "lon": 135.77861,
+            "local": [
+              -29.14,
+              44.59
+            ]
+          },
+          "sourceWay": 88108397,
+          "positionSource": "OSM footprint envelope centre, not entrance"
+        }
+      }
+    },
+    "routeStatus": "Not implemented: no verified route or walking-time claim.",
+    "waterways": {
+      "channels": [
+        {
+          "name": "鴨川",
+          "sourceWay": 254080497,
+          "width": 2.2,
+          "points": [
+            [
+              -33.62998783912854,
+              -64
+            ],
+            [
+              -33.6183288,
+              -61.1616684
+            ],
+            [
+              -33.820304,
+              -58.3220394
+            ],
+            [
+              -34.0202408,
+              -56.500554
+            ],
+            [
+              -34.40299520000001,
+              -48.773737800000006
+            ],
+            [
+              -34.7890704,
+              -46.112823
+            ],
+            [
+              -35.77112,
+              -40.8682176
+            ],
+            [
+              -36.564976,
+              -38.3296314
+            ],
+            [
+              -37,
+              -36.659030695665706
+            ]
+          ]
+        },
+        {
+          "name": "白川",
+          "sourceWay": 550582581,
+          "width": 0.5,
+          "points": [
+            [
+              -26.06697006007227,
+              -64
+            ],
+            [
+              -26.0704192,
+              -63.9375984
+            ],
+            [
+              -26.089571200000005,
+              -63.6613518
+            ],
+            [
+              -26.12302,
+              -63.2357262
+            ],
+            [
+              -26.286181600000003,
+              -60.9542106
+            ],
+            [
+              -26.3673816,
+              -60.220769399999995
+            ],
+            [
+              -26.422793600000002,
+              -60.0358536
+            ],
+            [
+              -26.552506400000006,
+              -59.8075368
+            ],
+            [
+              -26.765715200000002,
+              -59.657015400000006
+            ],
+            [
+              -29.6577176,
+              -58.339522200000005
+            ],
+            [
+              -31.089934400000004,
+              -57.847362
+            ],
+            [
+              -32.3630664,
+              -57.3106686
+            ]
+          ]
+        },
+        {
+          "name": "白川",
+          "sourceWay": 623354044,
+          "width": 0.5,
+          "points": [
+            [
+              -33.319322400000004,
+              -56.794834200000004
+            ],
+            [
+              -34.0202408,
+              -56.500554
+            ]
+          ]
+        }
+      ],
+      "crossings": [
+        {
+          "name": "四条大橋",
+          "sourceWay": 28322073,
+          "points": [
+            [
+              -35.377378400000005,
+              -49.7129538
+            ],
+            [
+              -33.653312,
+              -49.7411466
+            ],
+            [
+              -33.563684,
+              -49.7439618
+            ]
+          ]
+        }
+      ],
+      "omittedCulverts": [
+        623354040
+      ],
+      "policy": "OSM centre lines projected with the same transform as landmark anchors. Open water excludes culverts. Width and bank profiles illustrative, not surveyed shorelines or routes.",
+      "source": "https://www.openstreetmap.org/api/0.6/map?bbox=135.770,34.993,135.776,35.006",
+      "inputSha256": "fb009a4167786b87ec3ab7dfbfab4b81776ab8e481dab74db75c0c2cdf425d29",
+      "sources": [
+        "https://www.city.kyoto.lg.jp/kensetu/page/0000070773.html",
+        "https://shugakuryoko.kyoto.travel/article/wp-content/uploads/2018/08/kiyomizudera2.pdf"
+      ]
+    },
+    "townMaterial": {
+      "version": 1,
+      "opacity": 0.64,
+      "color": "pale neutral gray",
+      "scope": "explicit architectural parts of storybook-town instances only",
+      "compositing": "nearest surface alpha blend over opaque scenery; rear architectural layers suppressed",
+      "opaque": [
+        "landmarks",
+        "paving",
+        "steps",
+        "foundations",
+        "thresholds",
+        "plants",
+        "people"
+      ]
+    },
+    "relief": {
+      "surveyed": false,
+      "plainHeight": 2.15,
+      "eastRidgeHeight": 16.84237948671346,
+      "templeLift": 2.8,
+      "houseHeightRange": [
+        0.88,
+        1.61
+      ]
+    },
+    "streetCraft": {
+      "version": 1,
+      "reference": "https://plus.kyoto.travel/entry/higashiyamaeki",
+      "positionPolicy": "Unchanged OSM centre lines for depicted streets; illustrative widths, paving, grades and shopfronts. Not a survey of individual stones or shops.",
+      "omittedMinorWays": [
+        550360175,
+        550360176,
+        550360177
+      ],
+      "omissionReason": "Three unnamed rear-access ways are retained in source data but omitted at the compressed illustration scale. This is not a complete navigable street map.",
+      "construction": [
+        {
+          "sourceWay": 24516359,
+          "name": "八坂通",
+          "width": 1.16,
+          "steps": false,
+          "stoneFaces": 63,
+          "treads": [],
+          "joins": [
+            {
+              "a": [
+                -19.94216,
+                -20.88858,
+                2.175
+              ],
+              "b": [
+                -15.257760000000001,
+                -19.988940000000003,
+                2.302735521284771
+              ],
+              "leftA": [
+                -20.05155005528951,
+                2.175,
+                -20.31898908030082
+              ],
+              "rightA": [
+                -19.832769944710492,
+                2.175,
+                -21.45817091969918
+              ],
+              "leftB": [
+                -15.367150055289509,
+                2.302735521284771,
+                -19.419349080300822
+              ],
+              "rightB": [
+                -15.148369944710494,
+                2.302735521284771,
+                -20.558530919699184
+              ]
+            },
+            {
+              "a": [
+                -15.257760000000001,
+                -19.988940000000003,
+                2.302735521284771
+              ],
+              "b": [
+                -15.295840000000002,
+                -19.36674,
+                2.305174914416464
+              ],
+              "leftA": [
+                -15.836676786913214,
+                2.302735521284771,
+                -20.024370972750976
+              ],
+              "rightA": [
+                -14.678843213086788,
+                2.302735521284771,
+                -19.95350902724903
+              ],
+              "leftB": [
+                -15.874756786913215,
+                2.305174914416464,
+                -19.402170972750973
+              ],
+              "rightB": [
+                -14.716923213086789,
+                2.305174914416464,
+                -19.331309027249027
+              ]
+            }
+          ],
+          "samples": [
+            {
+              "at": [
+                -19.82505,
+                2.178193388032119,
+                -20.866089000000002
+              ],
+              "ground": 2.1351933880321194
+            },
+            {
+              "at": [
+                -19.59083,
+                2.184580164096358,
+                -20.821107
+              ],
+              "ground": 2.141580164096358
+            },
+            {
+              "at": [
+                -19.35661,
+                2.190966940160596,
+                -20.776125
+              ],
+              "ground": 2.1479669401605967
+            },
+            {
+              "at": [
+                -19.122390000000003,
+                2.1973537162248347,
+                -20.731143000000003
+              ],
+              "ground": 2.154353716224835
+            },
+            {
+              "at": [
+                -18.888170000000002,
+                2.2037404922890733,
+                -20.686161000000002
+              ],
+              "ground": 2.1607404922890736
+            },
+            {
+              "at": [
+                -18.653950000000002,
+                2.210127268353312,
+                -20.641179
+              ],
+              "ground": 2.1671272683533123
+            },
+            {
+              "at": [
+                -18.41973,
+                2.2165140444175506,
+                -20.596197
+              ],
+              "ground": 2.173514044417551
+            },
+            {
+              "at": [
+                -18.18551,
+                2.2229008204817893,
+                -20.551215000000003
+              ],
+              "ground": 2.1799008204817896
+            },
+            {
+              "at": [
+                -17.95129,
+                2.2292875965460275,
+                -20.506233
+              ],
+              "ground": 2.186287596546028
+            },
+            {
+              "at": [
+                -17.71707,
+                2.235674372610266,
+                -20.461251
+              ],
+              "ground": 2.1926743726102664
+            },
+            {
+              "at": [
+                -17.48285,
+                2.242061148674505,
+                -20.416269000000003
+              ],
+              "ground": 2.199061148674505
+            },
+            {
+              "at": [
+                -17.248630000000002,
+                2.2484479247387434,
+                -20.371287000000002
+              ],
+              "ground": 2.2054479247387437
+            },
+            {
+              "at": [
+                -17.01441,
+                2.2548347008029817,
+                -20.326305
+              ],
+              "ground": 2.211834700802982
+            },
+            {
+              "at": [
+                -16.78019,
+                2.2612214768672203,
+                -20.281323000000004
+              ],
+              "ground": 2.2182214768672206
+            },
+            {
+              "at": [
+                -16.54597,
+                2.267608252931459,
+                -20.236341000000003
+              ],
+              "ground": 2.2246082529314593
+            },
+            {
+              "at": [
+                -16.31175,
+                2.2739950289956976,
+                -20.191359000000002
+              ],
+              "ground": 2.230995028995698
+            },
+            {
+              "at": [
+                -16.077530000000003,
+                2.2803818050599363,
+                -20.146377
+              ],
+              "ground": 2.2373818050599366
+            },
+            {
+              "at": [
+                -15.84331,
+                2.286768581124175,
+                -20.101395000000004
+              ],
+              "ground": 2.243768581124175
+            }
+          ]
+        },
+        {
+          "sourceWay": 28514434,
+          "name": "清水坂",
+          "width": 1.28,
+          "steps": false,
+          "stoneFaces": 76,
+          "treads": [],
+          "joins": [
+            {
+              "a": [
+                -10.9144,
+                -6.771780000000001,
+                3.1858594590581477
+              ],
+              "b": [
+                -9.441040000000003,
+                -5.60592,
+                4.90823328994851
+              ],
+              "leftA": [
+                -11.311534704552985,
+                3.1858594590581477,
+                -6.269899509803765
+              ],
+              "rightA": [
+                -10.517265295447016,
+                3.1858594590581477,
+                -7.273660490196236
+              ],
+              "leftB": [
+                -9.883069152890238,
+                4.90823328994851,
+                -5.139564189134321
+              ],
+              "rightB": [
+                -8.999010847109767,
+                4.90823328994851,
+                -6.07227581086568
+              ]
+            },
+            {
+              "a": [
+                -9.441040000000003,
+                -5.60592,
+                4.90823328994851
+              ],
+              "b": [
+                -8.1172,
+                -4.1055,
+                6.742556027902945
+              ],
+              "leftA": [
+                -9.883069152890238,
+                4.90823328994851,
+                -5.139564189134321
+              ],
+              "rightA": [
+                -8.999010847109767,
+                4.90823328994851,
+                -6.07227581086568
+              ],
+              "leftB": [
+                -8.6187754331009,
+                6.742556027902945,
+                -3.706633032010866
+              ],
+              "rightB": [
+                -7.6156245668991,
+                6.742556027902945,
+                -4.504366967989134
+              ]
+            },
+            {
+              "a": [
+                -8.1172,
+                -4.1055,
+                6.742556027902945
+              ],
+              "b": [
+                -7.335440000000001,
+                -3.01206,
+                7.974778384407379
+              ],
+              "leftA": [
+                -8.6187754331009,
+                6.742556027902945,
+                -3.706633032010866
+              ],
+              "rightA": [
+                -7.6156245668991,
+                6.742556027902945,
+                -4.504366967989134
+              ],
+              "leftB": [
+                -7.742094329804309,
+                7.974778384407379,
+                -2.4804278212190285
+              ],
+              "rightB": [
+                -6.928785670195693,
+                7.974778384407379,
+                -3.5436921787809714
+              ]
+            },
+            {
+              "a": [
+                -7.335440000000001,
+                -3.01206,
+                7.974778384407379
+              ],
+              "b": [
+                -6.83872,
+                -2.8274399999999997,
+                8.4605691646123
+              ],
+              "leftA": [
+                -7.742094329804309,
+                7.974778384407379,
+                -2.4804278212190285
+              ],
+              "rightA": [
+                -6.928785670195693,
+                7.974778384407379,
+                -3.5436921787809714
+              ],
+              "leftB": [
+                -6.940046949609892,
+                8.4605691646123,
+                -2.1823242873740187
+              ],
+              "rightB": [
+                -6.737393050390109,
+                8.4605691646123,
+                -3.4725557126259807
+              ]
+            },
+            {
+              "a": [
+                -6.83872,
+                -2.8274399999999997,
+                8.4605691646123
+              ],
+              "b": [
+                -5.31888,
+                -2.89476,
+                9.855209983670417
+              ],
+              "leftA": [
+                -6.940046949609892,
+                8.4605691646123,
+                -2.1823242873740187
+              ],
+              "rightA": [
+                -6.737393050390109,
+                8.4605691646123,
+                -3.4725557126259807
+              ],
+              "leftB": [
+                -5.29055952117464,
+                9.855209983670417,
+                -2.2553869082303337
+              ],
+              "rightB": [
+                -5.34720047882536,
+                9.855209983670417,
+                -3.5341330917696667
+              ]
+            }
+          ],
+          "samples": [
+            {
+              "at": [
+                -10.822315000000001,
+                3.2935078234887953,
+                -6.698913750000001
+              ],
+              "ground": 3.2505078234887947
+            },
+            {
+              "at": [
+                -10.638145000000002,
+                3.5088045523500906,
+                -6.553181250000001
+              ],
+              "ground": 3.4658045523500904
+            },
+            {
+              "at": [
+                -10.453975000000002,
+                3.724101281211386,
+                -6.40744875
+              ],
+              "ground": 3.6811012812113857
+            },
+            {
+              "at": [
+                -10.269805000000002,
+                3.939398010072681,
+                -6.26171625
+              ],
+              "ground": 3.896398010072681
+            },
+            {
+              "at": [
+                -10.085635000000002,
+                4.154694738933976,
+                -6.115983750000001
+              ],
+              "ground": 4.111694738933976
+            },
+            {
+              "at": [
+                -9.901465000000002,
+                4.369991467795272,
+                -5.9702512500000005
+              ],
+              "ground": 4.326991467795271
+            },
+            {
+              "at": [
+                -9.717295000000002,
+                4.585288196656567,
+                -5.82451875
+              ],
+              "ground": 4.542288196656568
+            },
+            {
+              "at": [
+                -9.533125000000002,
+                4.800584925517862,
+                -5.67878625
+              ],
+              "ground": 4.757584925517863
+            },
+            {
+              "at": [
+                -9.367493333333336,
+                5.010140108723756,
+                -5.522563333333333
+              ],
+              "ground": 4.967140108723757
+            },
+            {
+              "at": [
+                -9.220400000000001,
+                5.213953746274249,
+                -5.35585
+              ],
+              "ground": 5.170953746274249
+            },
+            {
+              "at": [
+                -9.073306666666669,
+                5.417767383824742,
+                -5.189136666666667
+              ],
+              "ground": 5.374767383824741
+            },
+            {
+              "at": [
+                -8.926213333333335,
+                5.621581021375235,
+                -5.022423333333333
+              ],
+              "ground": 5.578581021375235
+            },
+            {
+              "at": [
+                -8.779120000000002,
+                5.8253946589257275,
+                -4.85571
+              ],
+              "ground": 5.7823946589257265
+            },
+            {
+              "at": [
+                -8.632026666666668,
+                6.02920829647622,
+                -4.688996666666667
+              ],
+              "ground": 5.98620829647622
+            },
+            {
+              "at": [
+                -8.484933333333334,
+                6.233021934026713,
+                -4.522283333333333
+              ],
+              "ground": 6.1900219340267135
+            },
+            {
+              "at": [
+                -8.33784,
+                6.436835571577205,
+                -4.35557
+              ],
+              "ground": 6.393835571577206
+            },
+            {
+              "at": [
+                -8.190746666666668,
+                6.640649209127699,
+                -4.188856666666667
+              ],
+              "ground": 6.597649209127698
+            }
+          ]
+        },
+        {
+          "sourceWay": 30882783,
+          "name": "二寧坂",
+          "width": 0.94,
+          "steps": true,
+          "stoneFaces": 24,
+          "treads": [
+            {
+              "a": [
+                -11.06211845541582,
+                2.9884557047520524,
+                -17.846989763253557
+              ],
+              "b": [
+                -10.120441544584182,
+                2.9884557047520524,
+                -17.802010236746444
+              ],
+              "c": [
+                -10.135255145199295,
+                2.9884557047520524,
+                -17.6832898089596
+              ],
+              "d": [
+                -11.075304854800706,
+                2.9884557047520524,
+                -17.741310191040398
+              ],
+              "rise": 0.06590039363936213
+            },
+            {
+              "a": [
+                -11.075304854800706,
+                3.0543560983914144,
+                -17.741310191040398
+              ],
+              "b": [
+                -10.135255145199295,
+                3.0543560983914144,
+                -17.6832898089596
+              ],
+              "c": [
+                -10.15006874581441,
+                3.0543560983914144,
+                -17.56456938117276
+              ],
+              "d": [
+                -11.088491254185593,
+                3.0543560983914144,
+                -17.635630618827243
+              ],
+              "rise": 0.06590039363936213
+            },
+            {
+              "a": [
+                -11.088491254185593,
+                3.1202564920307765,
+                -17.635630618827243
+              ],
+              "b": [
+                -10.15006874581441,
+                3.1202564920307765,
+                -17.56456938117276
+              ],
+              "c": [
+                -10.164882346429524,
+                3.1202564920307765,
+                -17.445848953385916
+              ],
+              "d": [
+                -11.101677653570478,
+                3.1202564920307765,
+                -17.529951046614084
+              ],
+              "rise": 0.06590039363936213
+            },
+            {
+              "a": [
+                -11.101677653570478,
+                3.1861568856701385,
+                -17.529951046614084
+              ],
+              "b": [
+                -10.164882346429524,
+                3.1861568856701385,
+                -17.445848953385916
+              ],
+              "c": [
+                -10.179695947044639,
+                3.1861568856701385,
+                -17.32712852559907
+              ],
+              "d": [
+                -11.114864052955365,
+                3.1861568856701385,
+                -17.42427147440093
+              ],
+              "rise": 0.06590039363936213
+            },
+            {
+              "a": [
+                -11.114864052955365,
+                3.252057279309501,
+                -17.42427147440093
+              ],
+              "b": [
+                -10.179695947044639,
+                3.252057279309501,
+                -17.32712852559907
+              ],
+              "c": [
+                -10.194509547659752,
+                3.252057279309501,
+                -17.208408097812224
+              ],
+              "d": [
+                -11.12805045234025,
+                3.252057279309501,
+                -17.31859190218777
+              ],
+              "rise": 0.06590039363936213
+            },
+            {
+              "a": [
+                -11.12805045234025,
+                3.317957672948863,
+                -17.31859190218777
+              ],
+              "b": [
+                -10.194509547659752,
+                3.317957672948863,
+                -17.208408097812224
+              ],
+              "c": [
+                -10.209323148274867,
+                3.317957672948863,
+                -17.089687670025384
+              ],
+              "d": [
+                -11.141236851725138,
+                3.317957672948863,
+                -17.212912329974614
+              ],
+              "rise": 0.06590039363936213
+            },
+            {
+              "a": [
+                -11.141236851725138,
+                3.383858066588225,
+                -17.212912329974614
+              ],
+              "b": [
+                -10.209323148274867,
+                3.383858066588225,
+                -17.089687670025384
+              ],
+              "c": [
+                -10.224136748889983,
+                3.383858066588225,
+                -16.97096724223854
+              ],
+              "d": [
+                -11.154423251110021,
+                3.383858066588225,
+                -17.107232757761455
+              ],
+              "rise": 0.06590039363936213
+            }
+          ],
+          "joins": [
+            {
+              "a": [
+                -10.591280000000001,
+                -17.8245,
+                2.9225553111126903
+              ],
+              "b": [
+                -10.689280000000002,
+                -17.039099999999998,
+                3.383858066588225
+              ],
+              "leftA": [
+                -11.06211845541582,
+                2.9225553111126903,
+                -17.846989763253557
+              ],
+              "rightA": [
+                -10.120441544584182,
+                2.9225553111126903,
+                -17.802010236746444
+              ],
+              "leftB": [
+                -11.154423251110021,
+                3.383858066588225,
+                -17.107232757761455
+              ],
+              "rightB": [
+                -10.224136748889983,
+                3.383858066588225,
+                -16.97096724223854
+              ]
+            }
+          ],
+          "samples": [
+            {
+              "at": [
+                -10.59828,
+                2.9884557047520524,
+                -17.7684
+              ],
+              "ground": 2.912505507932372
+            },
+            {
+              "at": [
+                -10.612280000000002,
+                3.0543560983914144,
+                -17.6562
+              ],
+              "ground": 2.9784059015717346
+            },
+            {
+              "at": [
+                -10.626280000000001,
+                3.1202564920307765,
+                -17.544
+              ],
+              "ground": 3.0443062952110953
+            },
+            {
+              "at": [
+                -10.64028,
+                3.1861568856701385,
+                -17.4318
+              ],
+              "ground": 3.110206688850458
+            },
+            {
+              "at": [
+                -10.654280000000002,
+                3.252057279309501,
+                -17.319599999999998
+              ],
+              "ground": 3.1761070824898208
+            },
+            {
+              "at": [
+                -10.668280000000001,
+                3.317957672948863,
+                -17.2074
+              ],
+              "ground": 3.2420074761291815
+            },
+            {
+              "at": [
+                -10.682280000000002,
+                3.383858066588225,
+                -17.0952
+              ],
+              "ground": 3.307907869768544
+            }
+          ]
+        },
+        {
+          "sourceWay": 30913263,
+          "name": "二寧坂",
+          "width": 0.94,
+          "steps": false,
+          "stoneFaces": 49,
+          "treads": [],
+          "joins": [
+            {
+              "a": [
+                -10.68368,
+                -21.045659999999998,
+                2.7619475214271803
+              ],
+              "b": [
+                -10.591280000000001,
+                -17.8245,
+                2.9225553111126903
+              ],
+              "leftA": [
+                -11.152773711397401,
+                2.7619475214271803,
+                -21.00732617405046
+              ],
+              "rightA": [
+                -10.2145862886026,
+                2.7619475214271803,
+                -21.083993825949538
+              ],
+              "leftB": [
+                -11.06211845541582,
+                2.9225553111126903,
+                -17.846989763253557
+              ],
+              "rightB": [
+                -10.120441544584182,
+                2.9225553111126903,
+                -17.802010236746444
+              ]
+            }
+          ],
+          "samples": [
+            {
+              "at": [
+                -10.680380000000001,
+                2.7676835139159484,
+                -20.93061857142857
+              ],
+              "ground": 2.7246835139159487
+            },
+            {
+              "at": [
+                -10.67378,
+                2.779155498893485,
+                -20.700535714285714
+              ],
+              "ground": 2.7361554988934853
+            },
+            {
+              "at": [
+                -10.66718,
+                2.790627483871021,
+                -20.470452857142856
+              ],
+              "ground": 2.7476274838710215
+            },
+            {
+              "at": [
+                -10.660580000000001,
+                2.802099468848558,
+                -20.24037
+              ],
+              "ground": 2.759099468848558
+            },
+            {
+              "at": [
+                -10.65398,
+                2.813571453826094,
+                -20.01028714285714
+              ],
+              "ground": 2.7705714538260944
+            },
+            {
+              "at": [
+                -10.64738,
+                2.8250434388036307,
+                -19.780204285714284
+              ],
+              "ground": 2.782043438803631
+            },
+            {
+              "at": [
+                -10.640780000000001,
+                2.836515423781167,
+                -19.550121428571426
+              ],
+              "ground": 2.7935154237811672
+            },
+            {
+              "at": [
+                -10.63418,
+                2.8479874087587036,
+                -19.320038571428572
+              ],
+              "ground": 2.804987408758704
+            },
+            {
+              "at": [
+                -10.627580000000002,
+                2.85945939373624,
+                -19.089955714285715
+              ],
+              "ground": 2.81645939373624
+            },
+            {
+              "at": [
+                -10.620980000000001,
+                2.8709313787137765,
+                -18.859872857142857
+              ],
+              "ground": 2.8279313787137768
+            },
+            {
+              "at": [
+                -10.61438,
+                2.8824033636913127,
+                -18.62979
+              ],
+              "ground": 2.839403363691313
+            },
+            {
+              "at": [
+                -10.607780000000002,
+                2.8938753486688493,
+                -18.399707142857142
+              ],
+              "ground": 2.8508753486688496
+            },
+            {
+              "at": [
+                -10.601180000000001,
+                2.9053473336463855,
+                -18.169624285714285
+              ],
+              "ground": 2.862347333646386
+            },
+            {
+              "at": [
+                -10.59458,
+                2.916819318623922,
+                -17.939541428571427
+              ],
+              "ground": 2.8738193186239225
+            }
+          ]
+        },
+        {
+          "sourceWay": 157527438,
+          "name": "一念坂",
+          "width": 1.16,
+          "steps": false,
+          "stoneFaces": 55,
+          "treads": [],
+          "joins": [
+            {
+              "a": [
+                -10.934000000000001,
+                -22.89696,
+                2.6513098335391927
+              ],
+              "b": [
+                -12.602240000000002,
+                -22.61034,
+                2.504109090446871
+              ],
+              "leftA": [
+                -11.032210710734587,
+                2.6513098335391927,
+                -23.468584576358477
+              ],
+              "rightA": [
+                -10.835789289265415,
+                2.6513098335391927,
+                -22.325335423641523
+              ],
+              "leftB": [
+                -12.237495346580967,
+                2.504109090446871,
+                -23.261504850224174
+              ],
+              "rightB": [
+                -12.966984653419036,
+                2.504109090446871,
+                -21.959175149775827
+              ]
+            },
+            {
+              "a": [
+                -12.602240000000002,
+                -22.61034,
+                2.504109090446871
+              ],
+              "b": [
+                -12.843040000000002,
+                -23.214180000000002,
+                2.4641462865585844
+              ],
+              "leftA": [
+                -12.237495346580967,
+                2.504109090446871,
+                -23.261504850224174
+              ],
+              "rightA": [
+                -12.966984653419036,
+                2.504109090446871,
+                -21.959175149775827
+              ],
+              "leftB": [
+                -12.357355623302716,
+                2.4641462865585844,
+                -23.562071417897187
+              ],
+              "rightB": [
+                -13.328724376697288,
+                2.4641462865585844,
+                -22.86628858210282
+              ]
+            },
+            {
+              "a": [
+                -12.843040000000002,
+                -23.214180000000002,
+                2.4641462865585844
+              ],
+              "b": [
+                -13.115200000000002,
+                -23.44674,
+                2.4384649608620963
+              ],
+              "leftA": [
+                -12.357355623302716,
+                2.4641462865585844,
+                -23.562071417897187
+              ],
+              "rightA": [
+                -13.328724376697288,
+                2.4641462865585844,
+                -22.86628858210282
+              ],
+              "leftB": [
+                -12.5572146497569,
+                2.4384649608620963,
+                -23.7328504272747
+              ],
+              "rightB": [
+                -13.673185350243102,
+                2.4384649608620963,
+                -23.1606295727253
+              ]
+            },
+            {
+              "a": [
+                -13.115200000000002,
+                -23.44674,
+                2.4384649608620963
+              ],
+              "b": [
+                -13.165040000000001,
+                -24.039360000000002,
+                2.4496739266979386
+              ],
+              "leftA": [
+                -12.5572146497569,
+                2.4384649608620963,
+                -23.7328504272747
+              ],
+              "rightA": [
+                -13.673185350243102,
+                2.4384649608620963,
+                -23.1606295727253
+              ],
+              "leftB": [
+                -12.587080351865247,
+                2.4496739266979386,
+                -24.0879670481304
+              ],
+              "rightB": [
+                -13.742999648134756,
+                2.4496739266979386,
+                -23.990752951869606
+              ]
+            }
+          ],
+          "samples": [
+            {
+              "at": [
+                -11.038265,
+                2.6421097870959227,
+                -22.879046250000002
+              ],
+              "ground": 2.599109787095923
+            },
+            {
+              "at": [
+                -11.246795,
+                2.6237096942093823,
+                -22.84321875
+              ],
+              "ground": 2.5807096942093826
+            },
+            {
+              "at": [
+                -11.455325000000002,
+                2.6053096013228423,
+                -22.807391250000002
+              ],
+              "ground": 2.5623096013228426
+            },
+            {
+              "at": [
+                -11.663855000000002,
+                2.586909508436302,
+                -22.77156375
+              ],
+              "ground": 2.543909508436302
+            },
+            {
+              "at": [
+                -11.872385000000001,
+                2.568509415549762,
+                -22.735736250000002
+              ],
+              "ground": 2.525509415549762
+            },
+            {
+              "at": [
+                -12.080915000000001,
+                2.5501093226632214,
+                -22.69990875
+              ],
+              "ground": 2.5071093226632217
+            },
+            {
+              "at": [
+                -12.289445000000002,
+                2.5317092297766814,
+                -22.664081250000002
+              ],
+              "ground": 2.4887092297766817
+            },
+            {
+              "at": [
+                -12.497975000000002,
+                2.513309136890141,
+                -22.62825375
+              ],
+              "ground": 2.4703091368901413
+            },
+            {
+              "at": [
+                -12.642373333333335,
+                2.4974486231321564,
+                -22.71098
+              ],
+              "ground": 2.454448623132157
+            },
+            {
+              "at": [
+                -12.722640000000002,
+                2.4841276885027277,
+                -22.912260000000003
+              ],
+              "ground": 2.441127688502728
+            },
+            {
+              "at": [
+                -12.802906666666669,
+                2.470806753873299,
+                -23.11354
+              ],
+              "ground": 2.4278067538732993
+            },
+            {
+              "at": [
+                -12.911080000000002,
+                2.457725955134462,
+                -23.27232
+              ],
+              "ground": 2.414725955134463
+            },
+            {
+              "at": [
+                -13.047160000000002,
+                2.4448852922862185,
+                -23.3886
+              ],
+              "ground": 2.4018852922862184
+            },
+            {
+              "at": [
+                -13.123506666666668,
+                2.440333121834737,
+                -23.54551
+              ],
+              "ground": 2.397333121834737
+            },
+            {
+              "at": [
+                -13.140120000000001,
+                2.4440694437800174,
+                -23.74305
+              ],
+              "ground": 2.4010694437800177
+            },
+            {
+              "at": [
+                -13.156733333333335,
+                2.447805765725298,
+                -23.94059
+              ],
+              "ground": 2.4048057657252984
+            }
+          ]
+        },
+        {
+          "sourceWay": 179116810,
+          "name": "産寧坂",
+          "width": 1.06,
+          "steps": true,
+          "stoneFaces": 49,
+          "treads": [
+            {
+              "a": [
+                -10.188912552373443,
+                3.229210143356258,
+                -6.693457013651516
+              ],
+              "b": [
+                -11.219887447626556,
+                3.229210143356258,
+                -6.9398629863484835
+              ],
+              "c": [
+                -11.195176029830662,
+                3.229210143356258,
+                -7.04546356431968
+              ],
+              "d": [
+                -10.163703970169337,
+                3.229210143356258,
+                -6.801182149966034
+              ],
+              "rise": 0.003465638226598828
+            },
+            {
+              "a": [
+                -10.163703970169337,
+                3.2326757815828566,
+                -6.801182149966034
+              ],
+              "b": [
+                -11.195176029830662,
+                3.2326757815828566,
+                -7.04546356431968
+              ],
+              "c": [
+                -11.170464612034767,
+                3.2326757815828566,
+                -7.151064142290876
+              ],
+              "d": [
+                -10.138495387965232,
+                3.2326757815828566,
+                -6.908907286280552
+              ],
+              "rise": 0.003465638226598828
+            },
+            {
+              "a": [
+                -10.138495387965232,
+                3.2361414198094556,
+                -6.908907286280552
+              ],
+              "b": [
+                -11.170464612034767,
+                3.2361414198094556,
+                -7.151064142290876
+              ],
+              "c": [
+                -11.145753194238871,
+                3.2361414198094556,
+                -7.256664720262071
+              ],
+              "d": [
+                -10.113286805761128,
+                3.2361414198094556,
+                -7.016632422595071
+              ],
+              "rise": 0.003465638226598828
+            },
+            {
+              "a": [
+                -10.113286805761128,
+                3.2396070580360545,
+                -7.016632422595071
+              ],
+              "b": [
+                -11.145753194238871,
+                3.2396070580360545,
+                -7.256664720262071
+              ],
+              "c": [
+                -11.121041776442976,
+                3.2396070580360545,
+                -7.362265298233267
+              ],
+              "d": [
+                -10.088078223557023,
+                3.2396070580360545,
+                -7.1243575589095895
+              ],
+              "rise": 0.003465638226598828
+            },
+            {
+              "a": [
+                -10.088078223557023,
+                3.2430726962626535,
+                -7.1243575589095895
+              ],
+              "b": [
+                -11.121041776442976,
+                3.2430726962626535,
+                -7.362265298233267
+              ],
+              "c": [
+                -11.09633035864708,
+                3.2430726962626535,
+                -7.4678658762044625
+              ],
+              "d": [
+                -10.062869641352918,
+                3.2430726962626535,
+                -7.232082695224109
+              ],
+              "rise": 0.003465638226598828
+            },
+            {
+              "a": [
+                -10.062869641352918,
+                3.246538334489252,
+                -7.232082695224109
+              ],
+              "b": [
+                -11.09633035864708,
+                3.246538334489252,
+                -7.4678658762044625
+              ],
+              "c": [
+                -11.071618940851184,
+                3.246538334489252,
+                -7.573466454175659
+              ],
+              "d": [
+                -10.037661059148814,
+                3.246538334489252,
+                -7.339807831538627
+              ],
+              "rise": 0.003465638226598828
+            },
+            {
+              "a": [
+                -10.037661059148814,
+                3.250003972715851,
+                -7.339807831538627
+              ],
+              "b": [
+                -11.071618940851184,
+                3.250003972715851,
+                -7.573466454175659
+              ],
+              "c": [
+                -11.046907523055289,
+                3.250003972715851,
+                -7.679067032146854
+              ],
+              "d": [
+                -10.01245247694471,
+                3.250003972715851,
+                -7.447532967853146
+              ],
+              "rise": 0.003465638226598828
+            },
+            {
+              "a": [
+                -10.01245247694471,
+                3.25346961094245,
+                -7.447532967853146
+              ],
+              "b": [
+                -11.046907523055289,
+                3.25346961094245,
+                -7.679067032146854
+              ],
+              "c": [
+                -11.022196105259395,
+                3.25346961094245,
+                -7.784667610118051
+              ],
+              "d": [
+                -9.987243894740606,
+                3.25346961094245,
+                -7.555258104167665
+              ],
+              "rise": 0.003465638226598828
+            },
+            {
+              "a": [
+                -9.987243894740606,
+                3.2569352491690484,
+                -7.555258104167665
+              ],
+              "b": [
+                -11.022196105259395,
+                3.2569352491690484,
+                -7.784667610118051
+              ],
+              "c": [
+                -10.9974846874635,
+                3.2569352491690484,
+                -7.890268188089246
+              ],
+              "d": [
+                -9.962035312536502,
+                3.2569352491690484,
+                -7.662983240482184
+              ],
+              "rise": 0.003465638226598828
+            },
+            {
+              "a": [
+                -9.962035312536502,
+                3.2604008873956474,
+                -7.662983240482184
+              ],
+              "b": [
+                -10.9974846874635,
+                3.2604008873956474,
+                -7.890268188089246
+              ],
+              "c": [
+                -10.972773269667604,
+                3.2604008873956474,
+                -7.995868766060442
+              ],
+              "d": [
+                -9.936826730332397,
+                3.2604008873956474,
+                -7.770708376796702
+              ],
+              "rise": 0.003465638226598828
+            },
+            {
+              "a": [
+                -9.936826730332397,
+                3.2638665256222463,
+                -7.770708376796702
+              ],
+              "b": [
+                -10.972773269667604,
+                3.2638665256222463,
+                -7.995868766060442
+              ],
+              "c": [
+                -10.948061851871708,
+                3.2638665256222463,
+                -8.101469344031639
+              ],
+              "d": [
+                -9.911618148128293,
+                3.2638665256222463,
+                -7.87843351311122
+              ],
+              "rise": 0.003465638226598828
+            },
+            {
+              "a": [
+                -9.911618148128293,
+                3.2673321638488453,
+                -7.87843351311122
+              ],
+              "b": [
+                -10.948061851871708,
+                3.2673321638488453,
+                -8.101469344031639
+              ],
+              "c": [
+                -10.923350434075813,
+                3.2673321638488453,
+                -8.207069922002834
+              ],
+              "d": [
+                -9.886409565924188,
+                3.2673321638488453,
+                -7.9861586494257395
+              ],
+              "rise": 0.003465638226598828
+            },
+            {
+              "a": [
+                -9.886409565924188,
+                3.270797802075444,
+                -7.9861586494257395
+              ],
+              "b": [
+                -10.923350434075813,
+                3.270797802075444,
+                -8.207069922002834
+              ],
+              "c": [
+                -10.898639016279917,
+                3.270797802075444,
+                -8.312670499974029
+              ],
+              "d": [
+                -9.861200983720083,
+                3.270797802075444,
+                -8.093883785740257
+              ],
+              "rise": 0.003465638226598828
+            },
+            {
+              "a": [
+                -9.861200983720083,
+                3.2742634403020427,
+                -8.093883785740257
+              ],
+              "b": [
+                -10.898639016279917,
+                3.2742634403020427,
+                -8.312670499974029
+              ],
+              "c": [
+                -10.873927598484022,
+                3.2742634403020427,
+                -8.418271077945226
+              ],
+              "d": [
+                -9.835992401515979,
+                3.2742634403020427,
+                -8.201608922054776
+              ],
+              "rise": 0.003465638226598828
+            }
+          ],
+          "joins": [
+            {
+              "a": [
+                -10.7044,
+                -6.81666,
+                3.225744505129659
+              ],
+              "b": [
+                -10.35496,
+                -8.309940000000001,
+                3.2742634403020427
+              ],
+              "leftA": [
+                -10.188912552373443,
+                3.225744505129659,
+                -6.693457013651516
+              ],
+              "rightA": [
+                -11.219887447626556,
+                3.225744505129659,
+                -6.9398629863484835
+              ],
+              "leftB": [
+                -9.835992401515979,
+                3.2742634403020427,
+                -8.201608922054776
+              ],
+              "rightB": [
+                -10.873927598484022,
+                3.2742634403020427,
+                -8.418271077945226
+              ]
+            }
+          ],
+          "samples": [
+            {
+              "at": [
+                -10.69192,
+                3.229210143356258,
+                -6.869991428571429
+              ],
+              "ground": 3.184477324242959
+            },
+            {
+              "at": [
+                -10.66696,
+                3.2326757815828566,
+                -6.976654285714286
+              ],
+              "ground": 3.187942962469558
+            },
+            {
+              "at": [
+                -10.642,
+                3.2361414198094556,
+                -7.083317142857143
+              ],
+              "ground": 3.1914086006961564
+            },
+            {
+              "at": [
+                -10.61704,
+                3.2396070580360545,
+                -7.18998
+              ],
+              "ground": 3.1948742389227553
+            },
+            {
+              "at": [
+                -10.59208,
+                3.2430726962626535,
+                -7.296642857142857
+              ],
+              "ground": 3.1983398771493543
+            },
+            {
+              "at": [
+                -10.56712,
+                3.246538334489252,
+                -7.403305714285715
+              ],
+              "ground": 3.201805515375953
+            },
+            {
+              "at": [
+                -10.542159999999999,
+                3.250003972715851,
+                -7.509968571428572
+              ],
+              "ground": 3.2052711536025518
+            },
+            {
+              "at": [
+                -10.5172,
+                3.25346961094245,
+                -7.616631428571429
+              ],
+              "ground": 3.2087367918291507
+            },
+            {
+              "at": [
+                -10.49224,
+                3.2569352491690484,
+                -7.723294285714286
+              ],
+              "ground": 3.2122024300557497
+            },
+            {
+              "at": [
+                -10.46728,
+                3.2604008873956474,
+                -7.829957142857143
+              ],
+              "ground": 3.215668068282348
+            },
+            {
+              "at": [
+                -10.44232,
+                3.2638665256222463,
+                -7.9366200000000005
+              ],
+              "ground": 3.219133706508947
+            },
+            {
+              "at": [
+                -10.41736,
+                3.2673321638488453,
+                -8.043282857142858
+              ],
+              "ground": 3.222599344735546
+            },
+            {
+              "at": [
+                -10.3924,
+                3.270797802075444,
+                -8.149945714285716
+              ],
+              "ground": 3.2260649829621446
+            },
+            {
+              "at": [
+                -10.36744,
+                3.2742634403020427,
+                -8.256608571428572
+              ],
+              "ground": 3.2295306211887436
+            }
+          ]
+        },
+        {
+          "sourceWay": 371739384,
+          "name": "ねねの小径",
+          "width": 1.16,
+          "steps": false,
+          "stoneFaces": 0,
+          "treads": [],
+          "joins": [
+            {
+              "a": [
+                -13.997760000000001,
+                -32.336040000000004,
+                2.2173857509046453
+              ],
+              "b": [
+                -14.59584,
+                -32.30952,
+                2.2072119661510827
+              ],
+              "leftA": [
+                -13.979608582736699,
+                2.2173857509046453,
+                -32.9174147872497
+              ],
+              "rightA": [
+                -14.015911417263304,
+                2.2173857509046453,
+                -31.754665212750307
+              ],
+              "leftB": [
+                -14.621533052073877,
+                2.2072119661510827,
+                -32.88895064043518
+              ],
+              "rightB": [
+                -14.570146947926125,
+                2.2072119661510827,
+                -31.730089359564815
+              ]
+            }
+          ],
+          "samples": []
+        },
+        {
+          "sourceWay": 371739385,
+          "name": "ねねの小径",
+          "width": 1.16,
+          "steps": false,
+          "stoneFaces": 3,
+          "treads": [],
+          "joins": [
+            {
+              "a": [
+                -13.375600000000002,
+                -31.94742,
+                2.290802889968257
+              ],
+              "b": [
+                -13.931680000000002,
+                -32.03004,
+                2.2223839005819057
+              ],
+              "leftA": [
+                -13.290361739425796,
+                2.290802889968257,
+                -32.52112239578921
+              ],
+              "rightA": [
+                -13.460838260574208,
+                2.290802889968257,
+                -31.373717604210785
+              ],
+              "leftB": [
+                -13.846441739425796,
+                2.2223839005819057,
+                -32.60374239578921
+              ],
+              "rightB": [
+                -14.016918260574208,
+                2.2223839005819057,
+                -31.456337604210784
+              ]
+            }
+          ],
+          "samples": [
+            {
+              "at": [
+                -13.468280000000002,
+                2.279399725070532,
+                -31.961190000000002
+              ],
+              "ground": 2.236399725070532
+            }
+          ]
+        },
+        {
+          "sourceWay": 526198271,
+          "name": "産寧坂",
+          "width": 1.06,
+          "steps": false,
+          "stoneFaces": 93,
+          "treads": [],
+          "joins": [
+            {
+              "a": [
+                -10.14216,
+                -10.97826,
+                3.5806799684974386
+              ],
+              "b": [
+                -10.052560000000001,
+                -14.06376,
+                3.6009237851967337
+              ],
+              "leftA": [
+                -9.612270448742278,
+                3.5806799684974386,
+                -10.966762817116631
+              ],
+              "rightA": [
+                -10.672049551257723,
+                3.5806799684974386,
+                -10.98975718288337
+              ],
+              "leftB": [
+                -9.522341080438748,
+                3.6009237851967337,
+                -14.06360507047087
+              ],
+              "rightB": [
+                -10.582778919561255,
+                3.6009237851967337,
+                -14.06391492952913
+              ]
+            },
+            {
+              "a": [
+                -10.052560000000001,
+                -14.06376,
+                3.6009237851967337
+              ],
+              "b": [
+                -10.096240000000002,
+                -15.59886,
+                3.529779937095148
+              ],
+              "leftA": [
+                -9.522341080438748,
+                3.6009237851967337,
+                -14.06360507047087
+              ],
+              "rightA": [
+                -10.582778919561255,
+                3.6009237851967337,
+                -14.06391492952913
+              ],
+              "leftB": [
+                -9.568330514939019,
+                3.529779937095148,
+                -15.679868369494802
+              ],
+              "rightB": [
+                -10.624149485060984,
+                3.529779937095148,
+                -15.517851630505199
+              ]
+            },
+            {
+              "a": [
+                -10.096240000000002,
+                -15.59886,
+                3.529779937095148
+              ],
+              "b": [
+                -10.303440000000002,
+                -16.3302,
+                3.468385698305323
+              ],
+              "leftA": [
+                -9.568330514939019,
+                3.529779937095148,
+                -15.679868369494802
+              ],
+              "rightA": [
+                -10.624149485060984,
+                3.529779937095148,
+                -15.517851630505199
+              ],
+              "leftB": [
+                -9.818863415049483,
+                3.468385698305323,
+                -16.56415761257775
+              ],
+              "rightB": [
+                -10.78801658495052,
+                3.468385698305323,
+                -16.096242387422254
+              ]
+            },
+            {
+              "a": [
+                -10.303440000000002,
+                -16.3302,
+                3.468385698305323
+              ],
+              "b": [
+                -10.7128,
+                -16.89936,
+                3.3865514688952385
+              ],
+              "leftA": [
+                -9.818863415049483,
+                3.468385698305323,
+                -16.56415761257775
+              ],
+              "rightA": [
+                -10.78801658495052,
+                3.468385698305323,
+                -16.096242387422254
+              ],
+              "leftB": [
+                -10.282530847705257,
+                3.3865514688952385,
+                -17.20882479053935
+              ],
+              "rightB": [
+                -11.143069152294743,
+                3.3865514688952385,
+                -16.589895209460654
+              ]
+            }
+          ],
+          "samples": [
+            {
+              "at": [
+                -10.138713846153847,
+                3.581458576832027,
+                -11.096933076923078
+              ],
+              "ground": 3.5384585768320274
+            },
+            {
+              "at": [
+                -10.131821538461539,
+                3.5830157935012035,
+                -11.334279230769232
+              ],
+              "ground": 3.5400157935012038
+            },
+            {
+              "at": [
+                -10.124929230769231,
+                3.58457301017038,
+                -11.571625384615386
+              ],
+              "ground": 3.54157301017038
+            },
+            {
+              "at": [
+                -10.118036923076923,
+                3.5861302268395567,
+                -11.80897153846154
+              ],
+              "ground": 3.543130226839557
+            },
+            {
+              "at": [
+                -10.111144615384616,
+                3.587687443508733,
+                -12.046317692307692
+              ],
+              "ground": 3.5446874435087334
+            },
+            {
+              "at": [
+                -10.104252307692308,
+                3.5892446601779096,
+                -12.283663846153846
+              ],
+              "ground": 3.54624466017791
+            },
+            {
+              "at": [
+                -10.097360000000002,
+                3.5908018768470864,
+                -12.52101
+              ],
+              "ground": 3.5478018768470863
+            },
+            {
+              "at": [
+                -10.090467692307694,
+                3.592359093516263,
+                -12.758356153846155
+              ],
+              "ground": 3.549359093516263
+            },
+            {
+              "at": [
+                -10.083575384615386,
+                3.5939163101854392,
+                -12.995702307692309
+              ],
+              "ground": 3.5509163101854395
+            },
+            {
+              "at": [
+                -10.076683076923079,
+                3.5954735268546156,
+                -13.233048461538463
+              ],
+              "ground": 3.552473526854616
+            },
+            {
+              "at": [
+                -10.06979076923077,
+                3.5970307435237925,
+                -13.470394615384617
+              ],
+              "ground": 3.554030743523793
+            },
+            {
+              "at": [
+                -10.062898461538463,
+                3.598587960192969,
+                -13.70774076923077
+              ],
+              "ground": 3.555587960192969
+            },
+            {
+              "at": [
+                -10.056006153846155,
+                3.6001451768621453,
+                -13.945086923076923
+              ],
+              "ground": 3.5571451768621456
+            },
+            {
+              "at": [
+                -10.055680000000002,
+                3.5958420817609063,
+                -14.17341
+              ],
+              "ground": 3.5528420817609065
+            },
+            {
+              "at": [
+                -10.06192,
+                3.5856786748892513,
+                -14.392710000000001
+              ],
+              "ground": 3.542678674889251
+            },
+            {
+              "at": [
+                -10.06816,
+                3.575515268017596,
+                -14.61201
+              ],
+              "ground": 3.532515268017596
+            },
+            {
+              "at": [
+                -10.0744,
+                3.565351861145941,
+                -14.83131
+              ],
+              "ground": 3.5223518611459412
+            },
+            {
+              "at": [
+                -10.08064,
+                3.555188454274286,
+                -15.05061
+              ],
+              "ground": 3.5121884542742863
+            },
+            {
+              "at": [
+                -10.08688,
+                3.5450250474026306,
+                -15.26991
+              ],
+              "ground": 3.502025047402631
+            },
+            {
+              "at": [
+                -10.093120000000003,
+                3.5348616405309756,
+                -15.48921
+              ],
+              "ground": 3.491861640530976
+            },
+            {
+              "at": [
+                -10.122140000000002,
+                3.5221056572464198,
+                -15.6902775
+              ],
+              "ground": 3.47910565724642
+            },
+            {
+              "at": [
+                -10.173940000000002,
+                3.506757097548964,
+                -15.873112500000001
+              ],
+              "ground": 3.4637570975489638
+            },
+            {
+              "at": [
+                -10.225740000000002,
+                3.491408537851507,
+                -16.055947500000002
+              ],
+              "ground": 3.4484085378515075
+            },
+            {
+              "at": [
+                -10.277540000000002,
+                3.4760599781540513,
+                -16.238782500000003
+              ],
+              "ground": 3.433059978154051
+            },
+            {
+              "at": [
+                -10.371666666666668,
+                3.4547466600703087,
+                -16.425060000000002
+              ],
+              "ground": 3.411746660070309
+            },
+            {
+              "at": [
+                -10.508120000000002,
+                3.4274685836002807,
+                -16.614780000000003
+              ],
+              "ground": 3.3844685836002806
+            },
+            {
+              "at": [
+                -10.644573333333334,
+                3.4001905071302527,
+                -16.8045
+              ],
+              "ground": 3.357190507130253
+            }
+          ]
+        },
+        {
+          "sourceWay": 526198278,
+          "name": "石塀小路",
+          "width": 1.16,
+          "steps": false,
+          "stoneFaces": 17,
+          "treads": [],
+          "joins": [
+            {
+              "a": [
+                -13.074320000000002,
+                -27.81642,
+                2.5083500606517712
+              ],
+              "b": [
+                -14.058240000000001,
+                -27.97248,
+                2.2773859436782566
+              ],
+              "leftA": [
+                -12.983461710135748,
+                2.5083500606517712,
+                -28.389259219295383
+              ],
+              "rightA": [
+                -13.165178289864256,
+                2.5083500606517712,
+                -27.24358078070462
+              ],
+              "leftB": [
+                -13.967381710135747,
+                2.2773859436782566,
+                -28.545319219295383
+              ],
+              "rightB": [
+                -14.149098289864256,
+                2.2773859436782566,
+                -27.39964078070462
+              ]
+            }
+          ],
+          "samples": [
+            {
+              "at": [
+                -13.172712000000002,
+                2.4852536489544197,
+                -27.832026
+              ],
+              "ground": 2.44225364895442
+            },
+            {
+              "at": [
+                -13.369496000000002,
+                2.439060825559717,
+                -27.863238000000003
+              ],
+              "ground": 2.3960608255597173
+            },
+            {
+              "at": [
+                -13.566280000000003,
+                2.392868002165014,
+                -27.89445
+              ],
+              "ground": 2.3498680021650142
+            },
+            {
+              "at": [
+                -13.763064000000002,
+                2.346675178770311,
+                -27.925662000000003
+              ],
+              "ground": 2.303675178770311
+            },
+            {
+              "at": [
+                -13.959848000000001,
+                2.300482355375608,
+                -27.956874
+              ],
+              "ground": 2.2574823553756085
+            }
+          ]
+        },
+        {
+          "sourceWay": 550360170,
+          "name": "二寧坂",
+          "width": 0.94,
+          "steps": false,
+          "stoneFaces": 3,
+          "treads": [],
+          "joins": [
+            {
+              "a": [
+                -10.689280000000002,
+                -17.039099999999998,
+                3.383858066588225
+              ],
+              "b": [
+                -10.7128,
+                -16.89936,
+                3.3865514688952385
+              ],
+              "leftA": [
+                -11.154423251110021,
+                3.383858066588225,
+                -17.107232757761455
+              ],
+              "rightA": [
+                -10.224136748889983,
+                3.383858066588225,
+                -16.97096724223854
+              ],
+              "leftB": [
+                -11.176280844713604,
+                3.3865514688952385,
+                -16.977369656989147
+              ],
+              "rightB": [
+                -10.249319155286395,
+                3.3865514688952385,
+                -16.821350343010856
+              ]
+            }
+          ],
+          "samples": [
+            {
+              "at": [
+                -10.70104,
+                3.385204767741732,
+                -16.96923
+              ],
+              "ground": 3.342204767741732
+            }
+          ]
+        },
+        {
+          "sourceWay": 747033984,
+          "name": "ねねの小径",
+          "width": 1.16,
+          "steps": false,
+          "stoneFaces": 0,
+          "treads": [],
+          "joins": [
+            {
+              "a": [
+                -13.921600000000002,
+                -32.32788,
+                2.2188746865080433
+              ],
+              "b": [
+                -13.997760000000001,
+                -32.336040000000004,
+                2.2173857509046453
+              ],
+              "leftA": [
+                -13.8598107882921,
+                2.2188746865080433,
+                -32.90457930927349
+              ],
+              "rightA": [
+                -13.983389211707903,
+                2.2188746865080433,
+                -31.751180690726514
+              ],
+              "leftB": [
+                -13.979608582736699,
+                2.2173857509046453,
+                -32.9174147872497
+              ],
+              "rightB": [
+                -14.015911417263304,
+                2.2173857509046453,
+                -31.754665212750307
+              ]
+            }
+          ],
+          "samples": []
+        },
+        {
+          "sourceWay": 747033985,
+          "name": "ねねの小径",
+          "width": 1.16,
+          "steps": false,
+          "stoneFaces": 0,
+          "treads": [],
+          "joins": [
+            {
+              "a": [
+                -13.931680000000002,
+                -32.03004,
+                2.2223839005819057
+              ],
+              "b": [
+                -13.921600000000002,
+                -32.32788,
+                2.2188746865080433
+              ],
+              "leftA": [
+                -13.352011879274926,
+                2.2223839005819057,
+                -32.01042190082961
+              ],
+              "rightA": [
+                -14.511348120725078,
+                2.2223839005819057,
+                -32.04965809917039
+              ],
+              "leftB": [
+                -13.341931879274926,
+                2.2188746865080433,
+                -32.30826190082961
+              ],
+              "rightB": [
+                -14.501268120725078,
+                2.2188746865080433,
+                -32.34749809917039
+              ]
+            }
+          ],
+          "samples": []
+        },
+        {
+          "sourceWay": 1251544286,
+          "name": "産寧坂",
+          "width": 1.06,
+          "steps": false,
+          "stoneFaces": 3,
+          "treads": [],
+          "joins": [
+            {
+              "a": [
+                -10.74696,
+                -6.642239999999999,
+                3.2187561652691667
+              ],
+              "b": [
+                -10.7044,
+                -6.81666,
+                3.225744505129659
+              ],
+              "leftA": [
+                -10.232066820133884,
+                3.2187561652691667,
+                -6.516601577026133
+              ],
+              "rightA": [
+                -11.261853179866115,
+                3.2187561652691667,
+                -6.767878422973865
+              ],
+              "leftB": [
+                -10.188912552373443,
+                3.225744505129659,
+                -6.693457013651516
+              ],
+              "rightB": [
+                -11.219887447626556,
+                3.225744505129659,
+                -6.9398629863484835
+              ]
+            }
+          ],
+          "samples": [
+            {
+              "at": [
+                -10.72568,
+                3.222250335199413,
+                -6.72945
+              ],
+              "ground": 3.1792503351994132
+            }
+          ]
+        },
+        {
+          "sourceWay": 1491152444,
+          "name": "二寧坂",
+          "width": 0.94,
+          "steps": false,
+          "stoneFaces": 28,
+          "treads": [],
+          "joins": [
+            {
+              "a": [
+                -10.934000000000001,
+                -22.89696,
+                2.6513098335391927
+              ],
+              "b": [
+                -10.68368,
+                -21.045659999999998,
+                2.7619475214271803
+              ],
+              "leftA": [
+                -11.40305668452543,
+                2.6513098335391927,
+                -22.858352333174444
+              ],
+              "rightA": [
+                -10.464943315474573,
+                2.6513098335391927,
+                -22.935567666825555
+              ],
+              "leftB": [
+                -11.152773711397401,
+                2.7619475214271803,
+                -21.00732617405046
+              ],
+              "rightB": [
+                -10.2145862886026,
+                2.7619475214271803,
+                -21.083993825949538
+              ]
+            }
+          ],
+          "samples": [
+            {
+              "at": [
+                -10.918355000000002,
+                2.658224689032192,
+                -22.78125375
+              ],
+              "ground": 2.615224689032192
+            },
+            {
+              "at": [
+                -10.887065000000002,
+                2.6720544000181903,
+                -22.54984125
+              ],
+              "ground": 2.6290544000181906
+            },
+            {
+              "at": [
+                -10.855775000000001,
+                2.6858841110041887,
+                -22.31842875
+              ],
+              "ground": 2.642884111004189
+            },
+            {
+              "at": [
+                -10.824485000000001,
+                2.699713821990187,
+                -22.087016249999998
+              ],
+              "ground": 2.656713821990188
+            },
+            {
+              "at": [
+                -10.793195,
+                2.713543532976186,
+                -21.85560375
+              ],
+              "ground": 2.6705435329761857
+            },
+            {
+              "at": [
+                -10.761905,
+                2.7273732439621843,
+                -21.62419125
+              ],
+              "ground": 2.6843732439621846
+            },
+            {
+              "at": [
+                -10.730615,
+                2.7412029549481827,
+                -21.392778749999998
+              ],
+              "ground": 2.698202954948183
+            },
+            {
+              "at": [
+                -10.699325,
+                2.755032665934181,
+                -21.161366249999997
+              ],
+              "ground": 2.7120326659341814
+            }
+          ]
+        },
+        {
+          "sourceWay": 1569088146,
+          "name": "産寧坂",
+          "width": 1.06,
+          "steps": false,
+          "stoneFaces": 17,
+          "treads": [],
+          "joins": [
+            {
+              "a": [
+                -10.35496,
+                -8.309940000000001,
+                3.2742634403020427
+              ],
+              "b": [
+                -10.16568,
+                -9.34014,
+                3.3631996418008057
+              ],
+              "leftA": [
+                -9.835992401515979,
+                3.2742634403020427,
+                -8.201608922054776
+              ],
+              "rightA": [
+                -10.873927598484022,
+                3.2742634403020427,
+                -8.418271077945226
+              ],
+              "leftB": [
+                -9.636372779059196,
+                3.3631996418008057,
+                -9.288084698972451
+              ],
+              "rightB": [
+                -10.694987220940805,
+                3.3631996418008057,
+                -9.392195301027549
+              ]
+            }
+          ],
+          "samples": [
+            {
+              "at": [
+                -10.336032,
+                3.283157060451919,
+                -8.412960000000002
+              ],
+              "ground": 3.2401570604519194
+            },
+            {
+              "at": [
+                -10.298176,
+                3.3009443007516714,
+                -8.619000000000002
+              ],
+              "ground": 3.257944300751672
+            },
+            {
+              "at": [
+                -10.26032,
+                3.318731541051424,
+                -8.825040000000001
+              ],
+              "ground": 3.2757315410514245
+            },
+            {
+              "at": [
+                -10.222464,
+                3.336518781351177,
+                -9.03108
+              ],
+              "ground": 3.293518781351177
+            },
+            {
+              "at": [
+                -10.184608,
+                3.3543060216509293,
+                -9.23712
+              ],
+              "ground": 3.3113060216509296
+            }
+          ]
+        },
+        {
+          "sourceWay": 1569088147,
+          "name": "産寧坂",
+          "width": 1.06,
+          "steps": false,
+          "stoneFaces": 24,
+          "treads": [],
+          "joins": [
+            {
+              "a": [
+                -10.14216,
+                -10.97826,
+                3.5806799684974386
+              ],
+              "b": [
+                -10.16568,
+                -9.34014,
+                3.3631996418008057
+              ],
+              "leftA": [
+                -10.672049551257723,
+                3.5806799684974386,
+                -10.98975718288337
+              ],
+              "rightA": [
+                -9.612270448742278,
+                3.5806799684974386,
+                -10.966762817116631
+              ],
+              "leftB": [
+                -10.694987220940805,
+                3.3631996418008057,
+                -9.392195301027549
+              ],
+              "rightB": [
+                -9.636372779059196,
+                3.3631996418008057,
+                -9.288084698972451
+              ]
+            }
+          ],
+          "samples": [
+            {
+              "at": [
+                -10.14384,
+                3.565145659447679,
+                -10.861251428571428
+              ],
+              "ground": 3.522145659447679
+            },
+            {
+              "at": [
+                -10.1472,
+                3.5340770413481604,
+                -10.627234285714286
+              ],
+              "ground": 3.49107704134816
+            },
+            {
+              "at": [
+                -10.15056,
+                3.5030084232486414,
+                -10.393217142857143
+              ],
+              "ground": 3.460008423248641
+            },
+            {
+              "at": [
+                -10.15392,
+                3.4719398051491224,
+                -10.1592
+              ],
+              "ground": 3.428939805149122
+            },
+            {
+              "at": [
+                -10.15728,
+                3.440871187049603,
+                -9.925182857142858
+              ],
+              "ground": 3.3978711870496037
+            },
+            {
+              "at": [
+                -10.16064,
+                3.4098025689500844,
+                -9.691165714285715
+              ],
+              "ground": 3.3668025689500847
+            },
+            {
+              "at": [
+                -10.164,
+                3.378733950850565,
+                -9.457148571428572
+              ],
+              "ground": 3.3357339508505657
+            }
+          ]
+        },
+        {
+          "sourceWay": 1569088149,
+          "name": "二寧坂",
+          "width": 0.94,
+          "steps": false,
+          "stoneFaces": 17,
+          "treads": [],
+          "joins": [
+            {
+              "a": [
+                -10.968720000000001,
+                -24.05976,
+                2.7686723546793135
+              ],
+              "b": [
+                -10.934000000000001,
+                -22.89696,
+                2.6513098335391927
+              ],
+              "leftA": [
+                -11.438510623966172,
+                2.7686723546793135,
+                -24.04573254002055
+              ],
+              "rightA": [
+                -10.49892937603383,
+                2.7686723546793135,
+                -24.073787459979453
+              ],
+              "leftB": [
+                -11.40305668452543,
+                2.6513098335391927,
+                -22.858352333174444
+              ],
+              "rightB": [
+                -10.464943315474573,
+                2.6513098335391927,
+                -22.935567666825555
+              ]
+            }
+          ],
+          "samples": [
+            {
+              "at": [
+                -10.965248,
+                2.7569361025653016,
+                -23.94348
+              ],
+              "ground": 2.713936102565302
+            },
+            {
+              "at": [
+                -10.958304000000002,
+                2.733463598337277,
+                -23.71092
+              ],
+              "ground": 2.6904635983372778
+            },
+            {
+              "at": [
+                -10.951360000000001,
+                2.7099910941092533,
+                -23.478360000000002
+              ],
+              "ground": 2.6669910941092536
+            },
+            {
+              "at": [
+                -10.944416,
+                2.6865185898812287,
+                -23.2458
+              ],
+              "ground": 2.643518589881229
+            },
+            {
+              "at": [
+                -10.937472000000001,
+                2.663046085653205,
+                -23.01324
+              ],
+              "ground": 2.620046085653205
+            }
+          ]
+        }
+      ]
+    },
+    "coordinateFrame": {
+      "source": "east +X / north +Z",
+      "render": "east +X / up +Y / south +Z",
+      "north": [
+        0,
+        0,
+        -1
+      ],
+      "east": [
+        1,
+        0,
+        0
+      ],
+      "reflectionApplied": true,
+      "initialView": "from west-southwest town looking east-northeast uphill; north to upper-left, stage projects toward screen-right"
+    },
+    "composition": {
+      "version": "uphill-entry-2",
+      "hero": "清水寺",
+      "foreground": "二寧坂・産寧坂",
+      "camera": "west-southwest-to-east-northeast",
+      "reference": "approved east-area concept 2026-10-22",
+      "coverage": "Current constructed core is Kiyomizu / Ninenzaka / Gion. Okazaki, Ginkakuji and Yamashina are future directional extensions, not completed 3D districts.",
+      "approach": {
+        "sourceWay": 28514434,
+        "name": "清水坂",
+        "from": [
+          -10.9144,
+          3.242859459058148,
+          -6.771780000000001
+        ],
+        "to": [
+          -5.31888,
+          9.912209983670415,
+          -2.89476
+        ],
+        "purpose": "Composition reference only; not a verified station route."
+      },
+      "buildingRotation": 0
+    },
+    "landmarkPins": {
+      "temple": [
+        -0.012907999999999985,
+        15.480141706286961,
+        0.7370073749999998
+      ],
+      "hokanji": [
+        -14.68516,
+        9.393930000000001,
+        -20.049630000000004
+      ],
+      "yasaka": [
+        -16.43946783886334,
+        6.506835000000001,
+        -48.74273048942925
+      ],
+      "kodaiji": [
+        -9.583209284135581,
+        6.17079,
+        -32.49954407903618
+      ],
+      "street": [
+        -10.747800000000002,
+        3.4280662546037095,
+        -19.857156
+      ],
+      "sannenzaka": [
+        -10.357415384615386,
+        4.1638577705103375,
+        -10.801878461538461
+      ]
+    },
+    "framing": {
+      "bounds": {
+        "temple": {
+          "x0": -8.879331575586118,
+          "x1": 6.315333051414625,
+          "y0": 6.170142243654319,
+          "y1": 14.730141706286961,
+          "z0": -3.9677094926607963,
+          "z1": 6.6934776224564505
+        },
+        "hokanji": {
+          "x0": -15.647696822555082,
+          "x1": -13.722623177444918,
+          "y0": 2.20393,
+          "y1": 8.643930000000001,
+          "z0": -21.01216682255508,
+          "z1": -19.087093177444917
+        },
+        "yasaka": {
+          "x0": -18.69651721859822,
+          "x1": -14.167682781401778,
+          "y0": 2.2625900000000003,
+          "y1": 5.756835000000001,
+          "z0": -50.58054038872149,
+          "z1": -40.20181533337944
+        },
+        "kodaiji": {
+          "x0": -15.12663864698472,
+          "x1": 5.2647731738755965,
+          "y0": 2.88037,
+          "y1": 5.99027,
+          "z0": -35.798856167139576,
+          "z1": -28.992090263811956
+        },
+        "street": {
+          "x0": -12.747800000000002,
+          "x1": -8.747800000000002,
+          "y0": 2.7780662546037096,
+          "y1": 4.77806625460371,
+          "z0": -21.857156,
+          "z1": -17.857156
+        },
+        "sannenzaka": {
+          "x0": -12.357415384615386,
+          "x1": -8.357415384615386,
+          "y0": 3.513857770510337,
+          "y1": 5.513857770510337,
+          "z0": -12.801878461538461,
+          "z1": -8.801878461538461
+        }
+      },
+      "overview": [
+        [
+          -8.879331575586118,
+          6.170142243654319,
+          -3.9677094926607963
+        ],
+        [
+          -8.879331575586118,
+          6.170142243654319,
+          6.6934776224564505
+        ],
+        [
+          -8.879331575586118,
+          15.630141706286961,
+          -3.9677094926607963
+        ],
+        [
+          -8.879331575586118,
+          15.630141706286961,
+          6.6934776224564505
+        ],
+        [
+          6.315333051414625,
+          6.170142243654319,
+          -3.9677094926607963
+        ],
+        [
+          6.315333051414625,
+          6.170142243654319,
+          6.6934776224564505
+        ],
+        [
+          6.315333051414625,
+          15.630141706286961,
+          -3.9677094926607963
+        ],
+        [
+          6.315333051414625,
+          15.630141706286961,
+          6.6934776224564505
+        ],
+        [
+          -15.647696822555082,
+          2.20393,
+          -21.01216682255508
+        ],
+        [
+          -15.647696822555082,
+          2.20393,
+          -19.087093177444917
+        ],
+        [
+          -15.647696822555082,
+          9.543930000000001,
+          -21.01216682255508
+        ],
+        [
+          -15.647696822555082,
+          9.543930000000001,
+          -19.087093177444917
+        ],
+        [
+          -13.722623177444918,
+          2.20393,
+          -21.01216682255508
+        ],
+        [
+          -13.722623177444918,
+          2.20393,
+          -19.087093177444917
+        ],
+        [
+          -13.722623177444918,
+          9.543930000000001,
+          -21.01216682255508
+        ],
+        [
+          -13.722623177444918,
+          9.543930000000001,
+          -19.087093177444917
+        ],
+        [
+          -18.69651721859822,
+          2.2625900000000003,
+          -50.58054038872149
+        ],
+        [
+          -18.69651721859822,
+          2.2625900000000003,
+          -40.20181533337944
+        ],
+        [
+          -18.69651721859822,
+          6.656835000000001,
+          -50.58054038872149
+        ],
+        [
+          -18.69651721859822,
+          6.656835000000001,
+          -40.20181533337944
+        ],
+        [
+          -14.167682781401778,
+          2.2625900000000003,
+          -50.58054038872149
+        ],
+        [
+          -14.167682781401778,
+          2.2625900000000003,
+          -40.20181533337944
+        ],
+        [
+          -14.167682781401778,
+          6.656835000000001,
+          -50.58054038872149
+        ],
+        [
+          -14.167682781401778,
+          6.656835000000001,
+          -40.20181533337944
+        ],
+        [
+          -15.12663864698472,
+          2.88037,
+          -35.798856167139576
+        ],
+        [
+          -15.12663864698472,
+          2.88037,
+          -28.992090263811956
+        ],
+        [
+          -15.12663864698472,
+          6.89027,
+          -35.798856167139576
+        ],
+        [
+          -15.12663864698472,
+          6.89027,
+          -28.992090263811956
+        ],
+        [
+          5.2647731738755965,
+          2.88037,
+          -35.798856167139576
+        ],
+        [
+          5.2647731738755965,
+          2.88037,
+          -28.992090263811956
+        ],
+        [
+          5.2647731738755965,
+          6.89027,
+          -35.798856167139576
+        ],
+        [
+          5.2647731738755965,
+          6.89027,
+          -28.992090263811956
+        ]
+      ]
+    }
+  }
+}
