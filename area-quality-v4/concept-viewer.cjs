@@ -31,6 +31,8 @@ module.exports=({renderer,app,html})=>{
  renderer=exact(renderer,'this.lightSampleCount=0;this.uploadedUniqueVertices=0;return;','this.lightSampleCount=this.scene.lightSampleCount;this.uploadedUniqueVertices=0;return;');
  renderer=exact(renderer,'[[0,3,m.p],[1,3,m.n]]','[[0,3,m.p],[1,3,m.n],[8,1,m.lightIds]]');
  renderer=exact(renderer,'  g.disableVertexAttribArray(8);g.vertexAttrib1f(8,0);','');
+ // A restored context keeps the canvas size, but owns no render targets yet.
+ renderer=exact(renderer,'if(c.width===w&&c.height===h)return;','if(this.fb&&this.w===w&&this.h===h&&c.width===w&&c.height===h)return;');
  renderer=exact(renderer,'name:m.name,lightOffset:0,lightStride:0,vertices:m.vertices','name:m.name,lightOffset:m.lightOffset,lightStride:m.lightStride,vertices:m.vertices');
  // Packed models carry the same baker indices and lighting on iPhone and desktop.
  html=exact(html,"if(!isLowMemoryIOS())await script('src/scene.js?v=area-higashiyama-quality-v4.25');",'');

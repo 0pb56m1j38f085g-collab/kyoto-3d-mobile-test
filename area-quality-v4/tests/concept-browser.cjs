@@ -55,7 +55,7 @@ function check(name,ok,detail){report.checks.push({name,passed:!!ok,detail});ass
    await page.evaluate(()=>phoneTest.setQuality('high'));check('iPhone high quality available',await page.evaluate(()=>phoneTest.quality==='high'&&phoneTest.renderer.dpr===1.8));
    await page.reload();await page.waitForFunction(()=>window.__ready,null,{timeout:180000});check('reload keeps baked quality',await page.evaluate(()=>phoneTest.renderer.bakedEnabled&&phoneTest.quality==='standard'));
    const restore=await page.evaluate(()=>{const e=phoneTest.renderer.gl.getExtension('WEBGL_lose_context');if(!e)return false;e.loseContext();setTimeout(()=>e.restoreContext(),400);return true;});
-   if(restore){await page.waitForTimeout(700);await page.waitForFunction(()=>window.__ready&&phoneTest.ready,null,{timeout:180000});check('context restoration keeps baked quality',await page.evaluate(()=>phoneTest.renderer.bakedEnabled&&phoneTest.renderer.gl.getError()===0));}
+   if(restore){await page.waitForTimeout(700);await page.waitForFunction(()=>window.__ready&&phoneTest.ready,null,{timeout:180000});const restored=await page.evaluate(()=>{const r=phoneTest.renderer;return {baked:r.bakedEnabled,gl:r.gl.getError(),width:r.w,height:r.h,msaa:r.msSamples,framebuffer:!!r.fb,uploaded:r.scene.mobileMemory.uploadedChunks};});check('context restoration keeps baked quality',restored.baked&&restored.gl===0&&restored.framebuffer&&restored.msaa>1&&restored.width>0&&restored.height>0&&restored.uploaded===6,restored);await snap('restored');}
   }
   check(device+' no runtime errors',errors.length===0&&await page.evaluate(()=>phoneTest.errors.length===0),errors);await ctx.close();
  }
