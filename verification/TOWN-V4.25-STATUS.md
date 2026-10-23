@@ -1,66 +1,75 @@
-# v4.25 — neutral translucent machiya
+# v4.25 — translucent machiya: implemented, verified and published
 
-## Scope
+Updated 2026-10-23 UTC.
 
-Approved B treatment: explicit architectural instances within `storybook-town`
-use a pale neutral gray at 0.64 opacity. Roof tiles, eaves, lattice and facade
-geometry remain. Landmarks, people, stone foundations, thresholds, steps,
-paving and plants remain opaque and coloured. Geographic source files,
-road connections, camera composition and full-quality iPhone path are unchanged.
+## Current status
 
-Nearest-surface alpha compositing selects the front architectural surface with
-a depth prepass, then blends once over opaque scenery. Rear wall/lattice layers
-are suppressed intentionally, so the map remains legible under rotation. This
-is an illustrative effect, not physically accurate glass or multilayer optics.
-It reuses existing MSAA attachments, without float buffers or added large textures.
+- Runtime source and publication branch: `45d783be65a789dee3e036bf4c3fcfd78f667c78`.
+- Approved B implemented: pale neutral gray architectural parts at 0.64 opacity.
+- WebKit CI: **41/41 passed**. Chromium CI: **41/41 passed**. Local Chromium also passed 41/41.
+- Build, geographic ordering, street/landmark construction, and every packed baked-light index: passed.
+- Actual 3D area, Ninenzaka, rotated, zoomed and context-restored images inspected.
+- Render deploy `dep-dbdaoelg1s2s73ar12og` became **live at 2026-10-23 00:42:36 UTC**.
+- Public bytes verified at 00:43:39 UTC: all 12 files match the exact tested CI artifact, including geometry chunks, decompressed geometry hashes, renderer and lighting.
+- Public browser startup and actual Ninenzaka pin tap passed at 00:44:11 UTC; no runtime/GL errors.
+- URL: https://higashiyama-quality-v4.onrender.com/
+- Physical iPhone testing: **not performed**. Browser mobile viewports are not physical-device certification.
 
-KMP3 carries opacity per instance alongside the existing geometry and baked-light
-indices. Meshes shared by houses and people are never classified by mesh name.
-Original instance ordering and light offsets are preserved. Gray material colours
-require a fresh matched lighting bake. The baker still treats surfaces as opaque
-for shadow rays; transparency is a camera/compositing treatment.
+CI: https://github.com/0pb56m1j38f085g-collab/kyoto-3d-mobile-test/actions/runs/39877985638
 
-## Verification status
+Reports, public screenshots and exact build metadata are in `verification/v4.25-final/`.
+`provenance.json` records source, CI artifact checksums and deployment identity.
+`public-verification.json` records all 12 public asset hashes.
+`public-browser.json` records the public interaction check. Managed-proxy certificate
+handling is documented there; the separate byte verifier retained TLS validation.
 
-Implementation is saved at 45d783be65a789dee3e036bf4c3fcfd78f667c78. New geometry/material, alpha compositing,
-foreground occlusion, draw-order, rotation, zoom, reload and context-restoration
-checks are included in the workflow. The previous v4.24 29/29 reports are NOT
-validation of this change. Review current run reports and actual images before
-promoting the development branch or triggering Render.
+## Implementation and visual scope
 
-## Recovery and publication
+182 illustrative machiya retain their tiled roofs, eaves, lattice and facade geometry.
+Explicit architectural instances within `storybook-town` are neutral and translucent.
+Landmarks, people, stone foundations, thresholds, steps, paving and plants remain
+opaque and coloured. Coverage: 10,255 translucent architectural instances, 47
+protected instances within the town group, and two meshes shared across classes.
+No global mesh-name material override is used.
 
-Confirmed before editing: both remote branches at c1fc44241ee9f468da09a70c0eab844ac00a80f1.
-Render service srv-dbcf79mktt5c73f8l7cg (workspace tea-dbbs370473hc73cb8gog)
-was live at b2ff4f28fb9b5d65ac1966f062f696cc67da1b48, v4.21; auto-deploy off.
-No v4.25 public deployment has been triggered at this checkpoint.
+Opaque scenery is drawn first. A depth/normal prepass selects the nearest town
+surface per sample, then one alpha blend composites it over the opaque scenery.
+Rear architectural layers are intentionally suppressed to keep overlapping houses
+legible. This illustrative treatment is not physical glass or multilayer optics.
+Existing MSAA attachments are reused; no float targets or large added textures.
+The baker still treats the architecture as opaque for shadow rays.
 
-The previous local workspace was found. Its uncommitted status record, final
-images/reports and verify-published.cjs were committed locally as 013e180 before
-new source edits. The execution environment became unavailable during the local
-build; that commit could not yet be pushed. No local files were deleted.
-The same final v4.24 CI evidence is recovered by the evidence job from run
-39869579512. Current and recovered evidence are kept on a separate
-`evidence/east-town-RUN_ID` branch, without modifying the deployment branch.
+KMP3 stores per-instance opacity alongside the unchanged original instance and
+baked-light ordering. Geometry matches the previous composition: 168 meshes,
+27,299 instances, 2,475,930 triangles, 1,650 decorative trees and six upload chunks.
+Gray material colours have matched baked lighting. iPhone and desktop use the
+same full model and baked-light path. The obsolete light-mode help sentence was removed.
+Geographic source data, road connections, hill approach and initial camera are unchanged.
 
-Physical iPhone verification, approved-concept parity, town density, minor lane
-seams, route/travel time data and Yamashina expansion remain unverified/unfinished.
+The validation exposed a context-restoration bug: the canvas kept its dimensions,
+so resize skipped framebuffer recreation in the new renderer. It now checks for
+valid render targets before skipping allocation. Restored images and targets are
+checked along with lighting, 4x MSAA, dimensions, six uploaded chunks and GL errors.
 
-## Resumption checkpoint — 2026-10-23
+## Verification history and recovery
 
-- Exact previous local records are now on the development branch at fb5213bb0186b7eadaba7dc29cfbffa1778e0ff6, including both original v4.24 WebKit PNGs, build info and browser reports. Local originals and recovery commits remain intact.
-- The initial v4.25 scope test used an arbitrary opaque-instance count; it was replaced with semantic stone/plant/shared-mesh assertions.
-- WebKit reached rotation with actual compositing checks passing, then its test stopped because mobile WebKit does not support mouse wheel input. The final test taps the existing zoom button.
-- Local Chromium exposed a real context-restoration bug: canvas dimensions survived context loss, causing resize to return without allocating the new framebuffer. The final code also requires valid renderer targets before skipping allocation.
-- Corrected local Chromium: 41/41 checks passed, including restored full lighting, 4x MSAA, six uploaded chunks, nonzero target dimensions and no GL errors. Actual area, Ninenzaka, rotated and restored images reviewed.
-- Exact final CI: https://github.com/0pb56m1j38f085g-collab/kyoto-3d-mobile-test/actions/runs/39877985638 ; source 45d783be65a789dee3e036bf4c3fcfd78f667c78. Pending at this checkpoint.
-- Public service and fetched build-info still confirmed v4.21. No new deployment triggered yet.
+- Original v4.24 29/29 browser reports were preserved separately; they were never
+  counted as verification of the new transparency implementation.
+- The first new scope test had an arbitrary protected-instance threshold. It was
+  replaced with semantic checks of every roof, protected stone/plants and mixed meshes.
+- A subsequent WebKit run passed actual transparency checks, but the test stopped
+  at unsupported mobile mouse-wheel input. Final tests tap the visible zoom control.
+- Earlier superseded CI attempts are retained as failed/cancelled history. The final
+  run above passed build, both browsers and artifact preservation.
+- Original uncommitted v4.24 local notes, reports, build info and PNGs were preserved
+  locally before editing and then on the development branch in `fb5213bb0186b7eadaba7dc29cfbffa1778e0ff6`.
+  See `STREETS-V4.24-LOCAL-RECOVERED.md` and `verification/v4.24-final/`.
+- Before this release, Render was still v4.21 at `b2ff4f28fb9b5d65ac1966f062f696cc67da1b48`.
+  The publication branch had already contained v4.24; a URL query was never treated as deployment.
+- Render auto-deploy remains off. This release used an explicit deployment after validation.
 
-### Final artifact checkpoint
+## Remaining limitations
 
-Final-source build/geography/lighting checks succeeded. WebKit CI succeeded with 41/41 checks (job 120169985104), including framebuffer recreation, 4x MSAA and six reuploaded chunks after context restoration. Actual WebKit area, Ninenzaka and rotated screenshots reviewed. Chromium local passed 41/41; its renderer, scene and lighting hashes exactly match the final CI artifact. Chromium CI remains in progress at this checkpoint.
-
-- Site artifact 12469437387: SHA-256 b077f99a16f1b0e7e42e2d33aed882f9a42b7c0232385896b9464b0065a0da96.
-- WebKit artifact 12469517436: SHA-256 5a44824d815c56eace40701c91b2b98c630598dc2b3ab63280ef04fbee8f6989.
-- Material coverage: 10,255 translucent architectural instances, 47 protected town instances, two mixed meshes; all 182 town roofs tagged.
-- Public remains v4.21, deploy not yet triggered.
+Approved-concept parity, town density and minor lane joins still need refinement.
+Architecture and paving are geographically anchored illustration, not measured
+reconstruction. Routing, travel-time data and Yamashina expansion remain unimplemented.

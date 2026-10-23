@@ -6,7 +6,9 @@ const [url,out]=process.argv.slice(2);assert.ok(url&&out);assert.equal(new URL(u
 fs.mkdirSync(out,{recursive:true});
 (async()=>{let browser;const errors=[];try{
  browser=await chromium.launch({headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'],...(process.env.HTTPS_PROXY?{proxy:{server:process.env.HTTPS_PROXY}}:{})});
- const page=await browser.newPage({viewport:{width:390,height:700},deviceScaleFactor:2,isMobile:true,hasTouch:true});
+ // The managed HTTPS proxy CA is trusted by Node/curl but not bundled Chromium.
+ // The separate byte verifier retains normal TLS verification.
+ const page=await browser.newPage({viewport:{width:390,height:700},deviceScaleFactor:2,isMobile:true,hasTouch:true,ignoreHTTPSErrors:!!process.env.HTTPS_PROXY});
  page.on('pageerror',e=>errors.push(String(e)));
  await page.goto(url,{waitUntil:'load',timeout:120000});
  await page.waitForFunction(()=>window.__ready||window.__error,null,{timeout:180000});
@@ -18,6 +20,6 @@ fs.mkdirSync(out,{recursive:true});
  await page.waitForTimeout(1500);await page.evaluate(()=>phoneTest.renderer.gl.finish());
  await page.screenshot({path:path.join(out,'public-street.jpg'),type:'jpeg',quality:88,timeout:120000});
  assert.equal(await page.evaluate(()=>phoneTest.renderer.gl.getError()),0);assert.equal(errors.length,0);
- const report={ok:true,checkedAt:new Date().toISOString(),url,state,errors,physicalDevice:false,scope:'Published page startup and actual Ninenzaka pin tap in Chromium mobile viewport.'};
+ const report={ok:true,checkedAt:new Date().toISOString(),url,state,errors,physicalDevice:false,proxyCertificateBypass:!!process.env.HTTPS_PROXY,scope:'Published page startup and actual Ninenzaka pin tap in Chromium mobile viewport. TLS checked separately by the byte verifier.'};
  fs.writeFileSync(path.join(out,'public-browser.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
 }finally{await browser?.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

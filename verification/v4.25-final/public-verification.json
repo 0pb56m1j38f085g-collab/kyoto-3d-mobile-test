@@ -1,0 +1,72 @@
+{
+  "ok": true,
+  "checkedAt": "2026-10-23T00:43:39.571Z",
+  "url": "https://higashiyama-quality-v4.onrender.com/",
+  "revision": "area-higashiyama-quality-v4.25",
+  "modelHash": "8994474ef570666774067e663e2c83c5c45fe33765bbc8be7f6cb833105448eb",
+  "lightingHash": "e50eef334f7e773dc82435a39cb32fc437fec011ad6588b6ade5a91c50f3ea21",
+  "checks": [
+    {
+      "file": "src/renderer.js",
+      "bytes": 69649,
+      "sha256": "13bba1ff35da3ed9efa62f94b938fa548afec98167c54791e07d3e7f1852423e"
+    },
+    {
+      "file": "src/scene.js",
+      "bytes": 3533400,
+      "sha256": "2bc59be76fa52af0d1ecc6d18994654de27ab1f82621a0f0f13e1afd3698ed93"
+    },
+    {
+      "file": "src/app.js",
+      "bytes": 21404,
+      "sha256": "e58183ae8b85c04e840a2e1375c32594f9b5c45129a8963e8febcbcac6d8a581"
+    },
+    {
+      "file": "index.html",
+      "bytes": 20318,
+      "sha256": "8c2be8d9187799c67862aa2f1365309fac47742c272e138a6f0aeeda80c7dee4"
+    },
+    {
+      "file": "lighting.bin",
+      "bytes": 7450912,
+      "sha256": "e50eef334f7e773dc82435a39cb32fc437fec011ad6588b6ade5a91c50f3ea21"
+    },
+    {
+      "file": "./mobile/cd035c73d11e910e925f510a.json",
+      "bytes": 177961,
+      "sha256": "cd035c73d11e910e925f510a5c5a53d5014d29d5eba7e2cefde641ac302c8f39"
+    },
+    {
+      "file": "./mobile/bd144b8b515bbbacc4e2ebca.bin.gz",
+      "bytes": 566603,
+      "sha256": "d86f07ed6f0954e3bddeb230f1f2c545ac78869f59512ad3f33e39518f1c3a0c"
+    },
+    {
+      "file": "./mobile/94158b41ab412594072ee3b1.bin.gz",
+      "bytes": 526108,
+      "sha256": "93cf1bcc40097fdc515d38197df0d791b91fbd7a6d748f0e8af5c1bbdefaff08"
+    },
+    {
+      "file": "./mobile/7a353b43bc0fc1840a3c7fd0.bin.gz",
+      "bytes": 143946,
+      "sha256": "56348db81fc9843daafaec8da5738e13124174a5e1ed5b2b4e08154be1155ef9"
+    },
+    {
+      "file": "./mobile/024e6e699b237b0aaefe39c9.bin.gz",
+      "bytes": 590872,
+      "sha256": "8f8540e54a40a1a1bddc84eb989a6fff336e068f2dbb08c954b8f5ce53ddd704"
+    },
+    {
+      "file": "./mobile/53504900ca412793d00ed019.bin.gz",
+      "bytes": 730638,
+      "sha256": "af44235493c66650d1c8c4d4896efd71ec079e0acf42dcfd91a963d1296c3a06"
+    },
+    {
+      "file": "./mobile/b5bc13bef9b8fd63b48a72b7.bin.gz",
+      "bytes": 398815,
+      "sha256": "8b5acbbeb7cc5e129651bba9d781eaf98d1f038bea23e84a39494dbecc35f166"
+    }
+  ],
+  "physicalDevice": false,
+  "scope": "Public bytes match the browser-tested artifact."
+}

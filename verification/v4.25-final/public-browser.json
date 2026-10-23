@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "checkedAt": "2026-10-23T00:44:11.281Z",
+  "url": "https://higashiyama-quality-v4.onrender.com/",
+  "state": {
+    "ready": true,
+    "revision": "area-higashiyama-quality-v4.25",
+    "opacity": 0.64,
+    "baked": true,
+    "gl": 0
+  },
+  "errors": [],
+  "physicalDevice": false,
+  "proxyCertificateBypass": true,
+  "scope": "Published page startup and actual Ninenzaka pin tap in Chromium mobile viewport. TLS checked separately by the byte verifier."
+}

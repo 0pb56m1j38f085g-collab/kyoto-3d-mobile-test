@@ -1,0 +1,22 @@
+{
+  "sourceCommit": "45d783be65a789dee3e036bf4c3fcfd78f667c78",
+  "ciRun": 39877985638,
+  "siteArtifact": 12469437387,
+  "siteZipSha256": "b077f99a16f1b0e7e42e2d33aed882f9a42b7c0232385896b9464b0065a0da96",
+  "webkitArtifact": 12469517436,
+  "webkitZipSha256": "5a44824d815c56eace40701c91b2b98c630598dc2b3ab63280ef04fbee8f6989",
+  "modelHash": "8994474ef570666774067e663e2c83c5c45fe33765bbc8be7f6cb833105448eb",
+  "lightingHash": "e50eef334f7e773dc82435a39cb32fc437fec011ad6588b6ade5a91c50f3ea21",
+  "viewerHashes": {
+    "src/renderer.js": "13bba1ff35da3ed9efa62f94b938fa548afec98167c54791e07d3e7f1852423e",
+    "src/scene.js": "2bc59be76fa52af0d1ecc6d18994654de27ab1f82621a0f0f13e1afd3698ed93",
+    "src/app.js": "e58183ae8b85c04e840a2e1375c32594f9b5c45129a8963e8febcbcac6d8a581",
+    "index.html": "8c2be8d9187799c67862aa2f1365309fac47742c272e138a6f0aeeda80c7dee4"
+  },
+  "ciChecks": {
+    "webkit": 41,
+    "chromium": 41
+  },
+  "physicalDevice": false,
+  "renderDeploy": "dep-dbdaoelg1s2s73ar12og"
+}
