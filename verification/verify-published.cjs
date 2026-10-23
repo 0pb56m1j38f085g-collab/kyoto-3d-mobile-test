@@ -18,6 +18,7 @@ async function verify(file,hash){
  const actual=JSON.parse(await read('build-info.json',String(Date.now())));
  for(const key of['revision','modelHash','lightingHash','bakerHash','rays','assetToken','lightSamples'])assert.equal(actual[key],expected[key],'Public '+key);
  assert.deepEqual(actual.viewerHashes,expected.viewerHashes);assert.deepEqual(actual.mobileAsset,expected.mobileAsset);
+ if(expected.buildRuntime)assert.deepEqual(actual.buildRuntime,expected.buildRuntime,'Public build runtime');
  for(const[file,hash]of Object.entries(expected.viewerHashes))await verify(file,hash);
  const light=await verify('lighting.bin',expected.lightingHash);assert.equal(light.toString('ascii',0,4),'KVL1');assert.equal(light.readUInt32LE(4),expected.lightSamples);
  const manifest=JSON.parse(await verify(expected.mobileAsset.url,expected.mobileAsset.sha256));
@@ -26,6 +27,6 @@ async function verify(file,hash){
   const data=await verify(chunk.url,sha(fs.readFileSync(path.join(site,chunk.url)))),raw=zlib.gunzipSync(data);
   assert.equal(data.length,chunk.compressedBytes);assert.equal(raw.length,chunk.bytes);assert.equal(sha(raw),chunk.sha256);
  }
- const report={ok:true,checkedAt:new Date().toISOString(),url:origin.href,revision:expected.revision,modelHash:expected.modelHash,lightingHash:expected.lightingHash,checks,physicalDevice:false,scope:'Public bytes match the browser-tested artifact.'};
+ const report={ok:true,checkedAt:new Date().toISOString(),url:origin.href,revision:expected.revision,modelHash:expected.modelHash,lightingHash:expected.lightingHash,...(expected.buildRuntime?{buildRuntime:expected.buildRuntime}:{}),checks,physicalDevice:false,scope:'Public bytes match the browser-tested artifact.'};
  if(reportPath)fs.writeFileSync(reportPath,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
 })().catch(e=>{console.error(e);process.exitCode=1;});

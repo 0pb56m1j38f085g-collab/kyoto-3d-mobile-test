@@ -1,6 +1,11 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),cp=require('node:child_process'),crypto=require('node:crypto');
 const root=__dirname,site=path.join(root,'site'),out=path.join(root,'.build'),qroot=path.resolve(root,'../quality-v5');
+// Fail before any HTTPS download if a hosting override selects an older runtime.
+const requiredNode=fs.readFileSync(path.resolve(root,'../.node-version'),'utf8').trim();
+if(process.versions.node!==requiredNode)throw Error('Build requires Node.js '+requiredNode+'; got '+process.versions.node);
+const buildRuntime={node:process.versions.node,openssl:process.versions.openssl};
+console.log('AREA_BUILD_RUNTIME',JSON.stringify(buildRuntime));
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 fs.mkdirSync(path.join(site,'src'),{recursive:true});fs.mkdirSync(out,{recursive:true});
 const BASE='https://kiyomizu-quality-v5.onrender.com';
@@ -236,6 +241,7 @@ function exact(source,a,b,label){if(source.split(a).length!==2)throw Error('Unex
  const triangles=model.meshes.reduce((n,m)=>n+m.p.length/9*m.instances.length,0);
  const info={revision:model.revision,viewerRevision:'area-higashiyama-quality-v4.26-deterministic',viewerHashes,modelHash,bakerHash,meshes:model.meshes.length,instances,triangles,lightSamples,rays:Number(rays),lightingBytes:light.length,lightingHash,architecture:model.stats,areaSites:model.areaSites,surveyed:false,assetToken,description:'Higashiyama miniature with geometry-matched baked light. Expanded source block: 2843 polygon buildings, thirteen metric landmark models, and separately reconstructed Kiyomizu hall/approach/stage. Kiyomizu uses provisional north-edge uniform calibration. Heights, roof details, gardens and terrain remain inferred; not a surveyed map.'};
  info.mobileAsset=mobileAsset;
+ info.buildRuntime=buildRuntime;
  info.cartography=model.cartography;
  info.description='Illustrated Higashiyama / Gion miniature: enlarged landmark silhouettes, selected illustrative machiya and low-cost decorative groves. Display scale and spacing are deliberately non-metric. Original geographic inputs remain separate; route and walking-time guidance is not yet implemented. Not a surveyed model or live flowering report.';
  fs.writeFileSync(path.join(site,'build-info.json'),JSON.stringify(info,null,2));

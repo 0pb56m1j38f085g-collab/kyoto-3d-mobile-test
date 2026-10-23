@@ -2,7 +2,7 @@ name: East area actual 3D full-quality validation
 on:
   push:
     branches: [area-higashiyama-scene-v4.22, area-higashiyama-concept-v4.21, area-higashiyama-quality-v4]
-    paths: ['area-quality-v4/**', 'area-data/**', '.github/workflows/east-concept-v421.yml']
+    paths: ['.node-version', 'area-quality-v4/**', 'area-data/**', '.github/workflows/east-concept-v421.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -20,14 +20,14 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v6
         with:
-          node-version: '24'
+          node-version-file: '.node-version'
       - name: Download previously verified lighting (validated against rebuilt geometry)
         uses: actions/download-artifact@v5
         continue-on-error: true
         with:
-          name: east-concept-v425-site
+          name: east-concept-v426-site
           path: .light-cache/
-          run-id: '39877985638'
+          run-id: '39938945986'
           github-token: ${{ github.token }}
       - name: Build shared geometry and full lighting
         run: node area-quality-v4/build.cjs
@@ -70,7 +70,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v6
         with:
-          node-version: '24'
+          node-version-file: '.node-version'
       - uses: actions/download-artifact@v5
         with:
           name: east-concept-v426-site
