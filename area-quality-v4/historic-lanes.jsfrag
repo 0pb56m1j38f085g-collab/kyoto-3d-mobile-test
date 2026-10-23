@@ -42,9 +42,11 @@
   }));
   // Follow the rendered terrain triangles, not only the analytic height field.
   // On steep bends those two interpolations differ enough to expose green slivers.
+  const pavingGridHeights=new Map();
+  const pavingGridHeight=(ix,iz)=>{const key=ix+','+iz;if(!pavingGridHeights.has(key))pavingGridHeights.set(key,storyGround(bounds.x0+ix*step,bounds.z0+iz*step));return pavingGridHeights.get(key);};
   function pavingTerrainHeight(x,z){
    const ix=Math.floor((x-bounds.x0)/step),iz=Math.floor((z-bounds.z0)/step),x0=bounds.x0+ix*step,z0=bounds.z0+iz*step,tx=(x-x0)/step,tz=(z-z0)/step;
-   const a=storyGround(x0,z0),b=storyGround(x0+step,z0),c=storyGround(x0+step,z0+step),d=storyGround(x0,z0+step);
+   const a=pavingGridHeight(ix,iz),b=pavingGridHeight(ix+1,iz),c=pavingGridHeight(ix+1,iz+1),d=pavingGridHeight(ix,iz+1);
    return tz<=tx?a*(1-tx)+b*(tx-tz)+c*tz:a*(1-tz)+c*tx+d*(tz-tx);
   }
   function terrainPieces(poly){
