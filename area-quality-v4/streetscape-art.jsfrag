@@ -144,7 +144,8 @@
    const precinctEdge=clearings.some(c=>x>c.x0-3&&x<c.x1+3&&z>c.z0-3&&z<c.z1+3);
    if(!ridge&&!shoulder&&!precinctEdge&&k%13!==0)continue;
    const r=range(.58,1.10),y=storyGround(x,z);
-   if(!islandInside(x,z,r*.8+.2)||waterKeepout(x,z,r*.65+.4)||inClearing(x,z,r+.25)||gardenKeepout(x,z,r*.3)||laneDistance(x,z)<r*.75+.64||used.some(p=>Math.hypot(x-p[0],z-p[1])<r*.5+p[2]*.53)||trees.some(p=>Math.hypot(x-p.x,z-p.z)<(r+p.radius)*.48))continue;
+   const streetClearance=Math.min(...segments.map(s=>dseg(x,z,s.a,s.b)-s.width/2));
+   if(!islandInside(x,z,r*.8+.2)||waterKeepout(x,z,r*.65+.4)||inClearing(x,z,r+.25)||gardenKeepout(x,z,r*.3)||streetClearance<r*1.15+.28||used.some(p=>Math.hypot(x-p[0],z-p[1])<r*.5+p[2]*.53)||trees.some(p=>Math.hypot(x-p.x,z-p.z)<(r+p.radius)*.48))continue;
    const pink=(ridge?k%9===0:k%4===0),cedar=!pink&&k%5===0,h=cedar?range(2.4,3.8):range(1.65,2.75),c=(pink?blossoms:greens)[k%(pink?blossoms.length:greens.length)];
    pole([x,y,z],[x,y+h*.82,z],.05,'#665138',true);
    if(cedar){

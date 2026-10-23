@@ -11,15 +11,23 @@
    return{id:r.id,name:r.name,tier:r.tier,steps:r.highway==='steps',points,heights,width:r.width,length:lengths.at(-1)};
   });
   const gradeSegments=streetProfiles.flatMap(r=>r.points.slice(1).map((b,j)=>({r,a:r.points[j],b,ya:r.heights[j],yb:r.heights[j+1]})));
-  function nearestStreetGrade(x,z){let best=null;
+  function nearestStreetGrade(x,z){let best=null,other=null;
    for(const s of gradeSegments){
     if(x<Math.min(s.a[0],s.b[0])-2.6||x>Math.max(s.a[0],s.b[0])+2.6||z<Math.min(s.a[1],s.b[1])-2.6||z>Math.max(s.a[1],s.b[1])+2.6)continue;
     const dx=s.b[0]-s.a[0],dz=s.b[1]-s.a[1],t=clamp(((x-s.a[0])*dx+(z-s.a[1])*dz)/(dx*dx+dz*dz),0,1),p=[s.a[0]+dx*t,s.a[1]+dz*t],d=Math.hypot(x-p[0],z-p[1]);
-    if(!best||d<best.d)best={d,y:s.ya+(s.yb-s.ya)*t,profile:s.r,p,t};
-   }return best;
+    const candidate={d,y:s.ya+(s.yb-s.ya)*t,profile:s.r,p,t};
+    if(!best||d<best.d){if(best&&best.profile.name!==s.r.name)other=best;best=candidate;}
+    else if(s.r.name!==best.profile.name&&(!other||d<other.d))other=candidate;
+   }if(best)best.other=other;return best;
   }
   function storyGround(x,z){
    const natural=naturalStoryGround(x,z),g=nearestStreetGrade(x,z);if(!g)return natural;
    const shoulder=g.profile.width/2+.30,blend=1-smooth((g.d-shoulder)/1.35);
-   return natural+(g.y-.018-natural)*blend;
+   // Avoid a nearest-road height discontinuity at the steep Kiyomizu junction.
+   // Source-tagged stair treads retain their exact landing heights.
+   let y=g.y;
+   if(g.other&&!g.profile.steps&&(g.profile.name==='清水坂'||g.other.profile.name==='清水坂')){
+    const mix=.5*(1-smooth((g.other.d-g.d)/.65));y=y*(1-mix)+g.other.y*mix;
+   }
+   return natural+(y-.018-natural)*blend;
   }

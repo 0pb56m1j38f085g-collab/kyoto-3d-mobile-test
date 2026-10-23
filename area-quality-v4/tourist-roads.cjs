@@ -34,7 +34,7 @@ module.exports=function selectTouristRoads(historic,east,west){
  add(854442449,'四条通','main',1.12);
  add(27908626,'花見小路','main',.96);
  return {version:1,roads,omittedWays:[...sources.keys()].filter(id=>!selected.has(id)),
-  detailMaxSpan:32,
+  detailMaxWidth:24,
   policy:'Explicit tourist street selection, with real connecting sections. All retained points are unchanged source vertices; widths and stone patterns are illustrative. Detail lanes appear only when zoomed in. Not a navigation graph.',
   references:['https://souda-kyoto.jp/blog/01072.html','https://www.gion.or.jp/tenkei/情緒漂う石塀小路','https://www.kiyomizudera.or.jp/access/']};
 };

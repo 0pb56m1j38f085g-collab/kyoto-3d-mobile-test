@@ -65,7 +65,7 @@
     record.joins.push({a:[...a,ya],b:[...b,yb],leftA:P(0,-r.width/2,ya),rightA:P(0,r.width/2,ya),leftB:P(1,-r.width/2,yb),rightB:P(1,r.width/2,yb)});
     for(let k=0;k<rows;k++){
      const t0=k/rows,t1=(k+1)/rows,mid=P((t0+t1)/2,0,0);
-     if(!islandInside(mid[0],mid[2],.45)||waterKeepout(mid[0],mid[2],.5)||inClearing(mid[0],mid[2],.12)||gardenKeepout(mid[0],mid[2],.2))continue;
+     if(!islandInside(mid[0],mid[2],.45)||waterKeepout(mid[0],mid[2],.5)||(r.name!=='清水坂'&&inClearing(mid[0],mid[2],.12))||gardenKeepout(mid[0],mid[2],.2))continue;
      const low=ya+(yb-ya)*t0,high=ya+(yb-ya)*t1,level=Math.max(low,high),Y=t=>r.steps?level:ya+(yb-ya)*t;
      pavedPolygon(stoneBed,[P(t0,-r.width/2,Y(t0)),P(t0,r.width/2,Y(t0)),P(t1,r.width/2,Y(t1)),P(t1,-r.width/2,Y(t1))],r,ri);
      const ncols=r.width>=1.1?4:r.width<.65?2:3,cell=r.width/ncols,shift=k%2?.5:0,gap=.012;

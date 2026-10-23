@@ -45,7 +45,7 @@ function check(name,ok,detail){report.checks.push({name,passed:!!ok,detail});ass
     await page.evaluate(v=>phoneTest.view(v,false),id);await snap(id);check('view '+id+' draws',await page.evaluate(v=>phoneTest.selectedView===v&&phoneTest.renderer.gl.getError()===0,id));
    }
    for(const [name,roadName,span] of [['kiyomizu-approach','清水坂',11],['gojo','五条坂',16],['nene','ねねの道',14],['tower-connection','八坂の塔・産寧坂の接続',10],['ishibe','石塀小路（接続区間）',9]]){
-    await page.evaluate(({roadName,span})=>{const r=phoneTest.model.areaStreets.find(r=>r.name===roadName),p=r.points[Math.floor((r.points.length-1)/2)],c=phoneTest.model.cartography.streetCraft.construction.find(r=>r.name===roadName),y=c.samples.length?c.samples[Math.floor(c.samples.length/2)].at[1]:3;Object.assign(phoneTest.camera,{target:[p[0],y+.6,p[1]],span,yaw:-1.15,pitch:.58});phoneTest.request();},{roadName,span});
+    await page.evaluate(({roadName,span})=>{const r=phoneTest.model.areaStreets.find(r=>r.name===roadName),p=r.points.reduce((a,p)=>a.map((v,j)=>v+p[j]/r.points.length),[0,0]),c=phoneTest.model.cartography.streetCraft.construction.find(r=>r.name===roadName),y=c.samples.length?c.samples[Math.floor(c.samples.length/2)].at[1]:3;Object.assign(phoneTest.camera,{target:[p[0],y+.6,p[1]],span,yaw:-1.15,pitch:.58});phoneTest.request();},{roadName,span});
     await snap(name);check('crafted street '+name+' draws',await page.evaluate(()=>phoneTest.renderer.gl.getError()===0&&phoneTest.renderer.streetDetailsVisible));
    }
    await page.evaluate(()=>phoneTest.view('street',false));
