@@ -22,7 +22,7 @@
   const houses=[],used=[],houseBoxes=[],shopThresholds=mesh('storybook-shop-thresholds'),houseFootings=mesh('storybook-fitted-stone-foundations');
   const historicDistance=b=>nearestLane(...display(b.center),true).d;
   const originalHouses=footprintData.buildings.map(b=>{const near=nearestLane(...display(b.center),true);return{b,d:near.d,priority:near.segment.name==='二寧坂'&&near.d<2?0:1};}).sort((a,b)=>a.priority-b.priority||a.d-b.d).map(v=>v.b);
-  const houseCandidates=[...originalHouses,...westReference.buildings];
+  const houseCandidates=[...originalHouses,...gojoReference.buildings,...westReference.buildings];
   const seenSources=new Set();
   // Reserve the whole street corridor, including at bends and intersections.
   // Testing only the centre's distance allowed oversized roofs to cover lanes.
@@ -139,14 +139,14 @@
   group='storybook-groves';
   const trees=[],canopy=sph('storybook-sculpted-canopy',12,8,.14),fineCrown=sph('storybook-small-leaf-clusters',10,6,.16);
   const greens=['#365845','#3d6040','#4e6c49','#3e6155','#6e7951','#536f47'],blossoms=['#d18f9c','#e4a8b5','#ebc0bc','#d89aab'];
-  for(let k=0;k<42000&&trees.length<1650;k++){
+  for(let k=0;k<42000&&trees.length<1250;k++){
    const x=range(-29,17),z=range(-12,62),ridge=x>-2.5,shoulder=x>-11&&z<15;
    const precinctEdge=clearings.some(c=>x>c.x0-3&&x<c.x1+3&&z>c.z0-3&&z<c.z1+3);
    if(!ridge&&!shoulder&&!precinctEdge&&k%13!==0)continue;
-   const r=range(.58,1.10),y=storyGround(x,z);
+   const r=range(.48,.92),y=storyGround(x,z);
    const streetClearance=Math.min(...segments.map(s=>dseg(x,z,s.a,s.b)-s.width/2));
-   if(!islandInside(x,z,r*.8+.2)||waterKeepout(x,z,r*.65+.4)||inClearing(x,z,r+.25)||gardenKeepout(x,z,r*.3)||streetClearance<r*1.15+.28||used.some(p=>Math.hypot(x-p[0],z-p[1])<r*.5+p[2]*.53)||trees.some(p=>Math.hypot(x-p.x,z-p.z)<(r+p.radius)*.48))continue;
-   const pink=(ridge?k%9===0:k%4===0),cedar=!pink&&k%5===0,h=cedar?range(2.4,3.8):range(1.65,2.75),c=(pink?blossoms:greens)[k%(pink?blossoms.length:greens.length)];
+   if(!islandInside(x,z,r*.8+.2)||waterKeepout(x,z,r*.65+.4)||inClearing(x,z,r+1.65)||gardenKeepout(x,z,r*.3)||streetClearance<r*1.15+.40||used.some(p=>Math.hypot(x-p[0],z-p[1])<r*.5+p[2]*.53)||trees.some(p=>Math.hypot(x-p.x,z-p.z)<(r+p.radius)*.60))continue;
+   const pink=(ridge?k%12===0:k%5===0),cedar=!pink&&k%7===0,h=cedar?range(1.35,2.1):range(.95,1.65),c=(pink?blossoms:greens)[k%(pink?blossoms.length:greens.length)];
    pole([x,y,z],[x,y+h*.82,z],.05,'#665138',true);
    if(cedar){
     for(let j=0;j<3;j++)I(pineMesh,[x,y+h*(.35+j*.21),z],[r*(1-j*.20),h*.60,r*(1-j*.20)],c,Q.y(k),4);

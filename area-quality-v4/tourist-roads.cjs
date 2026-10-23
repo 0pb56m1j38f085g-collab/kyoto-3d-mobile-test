@@ -2,7 +2,8 @@
 // Display selection only. Geographic source files and future routing remain intact.
 // Aliases identify verified unnamed OSM sections; they do not replace source names.
 module.exports=function selectTouristRoads(historic,east,west){
- const sources=new Map([...west.roads,...east.roads,...historic.roads].map(r=>[r.id,r]));
+ const arrival=require('../area-data/gojo-entry-reference.json');
+ const sources=new Map([...arrival.roads,...west.roads,...east.roads,...historic.roads].map(r=>[r.id,r]));
  const roads=[],selected=new Set();
  function add(id,label,tier='main',width=1.06,range){
   const r=sources.get(id);if(!r)throw Error('Missing tourist source way '+id);
@@ -33,6 +34,9 @@ module.exports=function selectTouristRoads(historic,east,west){
  // Shirakawa lanes need a separate bank/bridge treatment before that extension.
  add(854442449,'四条通','main',1.12);
  add(27908626,'花見小路','main',.96);
+ // One source carriageway communicates the bridge-to-hill axis. It is not a
+ // pedestrian route and deliberately omits traffic ramps and the parallel lane.
+ for(const r of arrival.roads)add(r.id,'五条通','arrival',1.24);
  return {version:1,roads,omittedWays:[...sources.keys()].filter(id=>!selected.has(id)),
   detailMaxWidth:24,
   policy:'Explicit tourist street selection, with real connecting sections. All retained points are unchanged source vertices; widths and stone patterns are illustrative. Detail lanes appear only when zoomed in. Not a navigation graph.',

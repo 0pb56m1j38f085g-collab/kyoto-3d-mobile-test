@@ -2,7 +2,7 @@
 // CI browser evidence. This is not a physical-iPhone certification.
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),assert=require('node:assert/strict');
 const engine=process.env.TEST_BROWSER||'webkit',browserType=require('playwright')[engine];
-const out=path.resolve('concept-v426-artifacts',engine);fs.mkdirSync(out,{recursive:true});
+const out=path.resolve('concept-v427-artifacts',engine);fs.mkdirSync(out,{recursive:true});
 const report={engine,checks:[],screenshots:[],physicalDevice:false};
 function check(name,ok,detail){report.checks.push({name,passed:!!ok,detail});assert.ok(ok,name);}
 (async()=>{let server,browser;try{
@@ -21,7 +21,9 @@ function check(name,ok,detail){report.checks.push({name,passed:!!ok,detail});ass
   check(device+' shared full resolution',state.quality==='standard'&&state.dpr===1.5&&state.msaa>1,state);
   check(device+' bounded packed upload',!requests.some(u=>u.includes('/scene.js'))&&state.memory.retainedGeometryBytes===0&&state.memory.uploadedChunks===state.memory.chunkCount);
   check(device+' no bottom menu or light option',await page.locator('.bottom,option[value=light]').count()===0);
-  check(device+' uphill west-southwest camera',Math.abs(state.camera.yaw+1.15)<.001);
+  check(device+' bridge-to-temple camera',await page.evaluate(()=>{const c=phoneTest.camera,m=phoneTest.model.cartography,a=m.composition.entry.at,b=m.landmarks.temple.at;return Math.abs(c.yaw-Math.atan2(a[0]-b[0],a[2]-b[1]))<.001;}));
+  check(device+' Gojo bridge visible in overview',await page.locator('.map-spot[data-view=bridge][data-offscreen=false]').isVisible());
+  check(device+' quieter trees around larger landmarks',await page.evaluate(()=>{const c=phoneTest.model.cartography;return c.trees<=1300&&c.vegetation.maxHeight<=2.1&&c.landmarks.hokanji.scale>=4.0;}));
   check(device+' main landmarks reachable as pins or directions',await page.evaluate(()=>['temple','hokanji','kodaiji','yasaka'].every(id=>{const e=document.querySelector('.map-spot[data-view='+id+']');return e&&!e.hidden;})));
   check(device+' displaced labels retain geographic leaders',await page.evaluate(()=>[...document.querySelectorAll('.map-spot')].filter(e=>!e.hidden&&e.dataset.offscreen!=='true').every(e=>Math.hypot(Number(e.dataset.labelX)-Number(e.dataset.anchorX),Number(e.dataset.labelY)-Number(e.dataset.anchorY))<=12||!document.querySelector('.pin-leader[data-view='+e.dataset.view+']').hidden)));
   const snap=async name=>{await page.waitForTimeout(400);await page.evaluate(()=>{phoneTest.renderer.gl.finish();phoneTest.request();});await page.waitForTimeout(100);const f=device+'-'+name+'.png';await page.screenshot({path:path.join(out,f),timeout:120000});report.screenshots.push(f);};
@@ -41,7 +43,7 @@ function check(name,ok,detail){report.checks.push({name,passed:!!ok,detail});ass
    await page.evaluate(()=>phoneTest.view('area',false));
   }
   if(device==='iphone'){
-   for(const id of ['temple','street','sannenzaka','hokanji','kodaiji','yasaka']){
+   for(const id of ['bridge','temple','street','sannenzaka','hokanji','kodaiji','yasaka']){
     await page.evaluate(v=>phoneTest.view(v,false),id);await snap(id);check('view '+id+' draws',await page.evaluate(v=>phoneTest.selectedView===v&&phoneTest.renderer.gl.getError()===0,id));
    }
    for(const [name,roadName,span] of [['kiyomizu-approach','清水坂',11],['gojo','五条坂',16],['nene','ねねの道',14],['tower-connection','八坂の塔・産寧坂の接続',10],['ishibe','石塀小路（接続区間）',9]]){

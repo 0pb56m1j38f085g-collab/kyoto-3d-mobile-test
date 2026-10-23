@@ -1,7 +1,7 @@
   // Continuous, mitered stone ribbons. Stone faces are batched by colour, not
   // thousands of individual objects; treads and risers are actual geometry.
   const stoneTones=['#aaa398','#b3aba0','#b9b2a5','#a59f96','#c0b7a8'];
-  const pavingSets=['storybook-','storybook-detail-'].map(prefix=>({
+  const pavingSets=['storybook-','storybook-detail-','storybook-arrival-'].map(prefix=>({
    faces:stoneTones.map((c,j)=>mesh(prefix+'paving-stone-'+j)),bed:mesh(prefix+'paving-mortar'),edge:mesh(prefix+'paving-edge'),risers:mesh(prefix+'stair-faces')
   }));
   const streetConstruction=[];
@@ -74,8 +74,8 @@
    }return count;
   }
   for(const [ri,r] of streetProfiles.entries()){
-   const kit=pavingSets[r.tier==='detail'?1:0],stoneFaces=kit.faces,stoneBed=kit.bed,stoneEdge=kit.edge,stoneRisers=kit.risers;
-   const record={sourceWay:r.id,name:r.name,tier:r.tier,width:r.width,steps:r.steps,stoneFaces:0,treads:[],joins:[],samples:[]};
+   const kit=pavingSets[r.tier==='arrival'?2:r.tier==='detail'?1:0],stoneFaces=kit.faces,stoneBed=kit.bed,stoneEdge=kit.edge,stoneRisers=kit.risers;
+   const record={sourceWay:r.id,name:r.name,tier:r.tier,width:r.width,steps:r.steps,material:r.tier==='arrival'?'asphalt-with-paved-edges':'illustrative-stone',stoneFaces:0,treads:[],joins:[],samples:[]};
    for(let j=1;j<r.points.length;j++){
     const a=r.points[j-1],b=r.points[j],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz),ya=r.heights[j-1]+.025,yb=r.heights[j]+.025;
     const na=endMiter(r,j-1,dx/len,dz/len),nb=endMiter(r,j,dx/len,dz/len),rows=Math.max(1,Math.ceil(len/(r.steps?.115:.24))),rise=(yb-ya)/rows;
@@ -88,6 +88,7 @@
      pavedPolygon(stoneBed,[P(t0,-r.width/2,Y(t0)),P(t0,r.width/2,Y(t0)),P(t1,r.width/2,Y(t1)),P(t1,-r.width/2,Y(t1))],r,ri);
      const ncols=r.width>=1.1?4:r.width<.65?2:3,cell=r.width/ncols,shift=k%2?.5:0,gap=.012;
      for(let col=-1;col<ncols;col++){
+      if(r.tier==='arrival'&&col>0&&col<ncols-1)continue;
       const s0=Math.max(-r.width/2,-r.width/2+(col+shift)*cell)+gap/2,s1=Math.min(r.width/2,-r.width/2+(col+1+shift)*cell)-gap/2;if(s1-s0<.02)continue;
       const u0=t0+gap/(2*len),u1=t1-gap/(2*len),stone=stoneFaces[(r.id+j*7+k*3+col+11)%stoneFaces.length];
       if(pavedPolygon(stone,[P(u0,s0,Y(u0)+.007),P(u0,s1,Y(u0)+.007),P(u1,s1,Y(u1)+.007),P(u1,s0,Y(u1)+.007)],r,ri,false,.032))record.stoneFaces++;
@@ -111,4 +112,4 @@
     }
    }streetConstruction.push(record);
   }
-  for(const kit of pavingSets){I(kit.bed,[0,0,0],[1,1,1],'#79746a',undefined,3);I(kit.edge,[0,0,0],[1,1,1],'#a29c8e',undefined,3);I(kit.risers,[0,0,0],[1,1,1],'#989084',undefined,3);kit.faces.forEach((m,j)=>I(m,[0,0,0],[1,1,1],stoneTones[j],undefined,3));}
+  for(const [k,kit]of pavingSets.entries()){I(kit.bed,[0,0,0],[1,1,1],k===2?'#97988f':'#79746a',undefined,3);I(kit.edge,[0,0,0],[1,1,1],'#a29c8e',undefined,3);I(kit.risers,[0,0,0],[1,1,1],'#989084',undefined,3);kit.faces.forEach((m,j)=>I(m,[0,0,0],[1,1,1],stoneTones[j],undefined,3));}

@@ -1,9 +1,10 @@
 'use strict';
-// v4.26: one visual quality path on every device, with bounded model transport.
+// v4.27: one visual quality path on every device, with bounded model transport.
 module.exports=({renderer,app,html})=>{
  const exact=(s,a,b)=>{if(!s.includes(a))throw Error('Concept viewer input missing: '+a.slice(0,110));return s.replace(a,b);};
  const cameras={
-  area:{target:[-4.2,5,-7.8],span:70,yaw:-1.15,pitch:.49},
+  area:{target:[-18,5,-6],span:70,yaw:-1.66,pitch:.56},
+  bridge:{target:[-43,3,-4],span:11,yaw:-1.66,pitch:.58},
   temple:{target:[0,8,0],span:24,yaw:-1.05,pitch:.40},
   hokanji:{target:[-15,5,-11],span:10,yaw:-.7,pitch:.48},
   kodaiji:{target:[-10,4,-18],span:16,yaw:-.65,pitch:.55},
@@ -35,20 +36,19 @@ module.exports=({renderer,app,html})=>{
  renderer=exact(renderer,'if(c.width===w&&c.height===h)return;','if(this.fb&&this.w===w&&this.h===h&&c.width===w&&c.height===h)return;');
  renderer=exact(renderer,'name:m.name,lightOffset:0,lightStride:0,vertices:m.vertices','name:m.name,lightOffset:m.lightOffset,lightStride:m.lightStride,vertices:m.vertices');
  // Packed models carry the same baker indices and lighting on iPhone and desktop.
- html=exact(html,"if(!isLowMemoryIOS())await script('src/scene.js?v=area-higashiyama-quality-v4.26');",'');
+ html=exact(html,"if(!isLowMemoryIOS())await script('src/scene.js?v=area-higashiyama-quality-v4.27');",'');
  html=html.replace('<option value="light">軽量</option>','');
  html=html.replaceAll('重い・熱くなる場合は「軽量」を選んでください。','');
  html=html.replaceAll('iPhoneでは軽量表示を使用します。','iPhoneも他の端末と同じ照明・素材で表示します。');
  html=html.replaceAll('京さんぽ · 東山と祇園','京さんぽ · 東山・祇園・山科');
  html=html.replaceAll('KYOTO · A LITTLE JOURNEY','KYOTO · HIGASHIYAMA');
- html=html.replace('初期表示は北側から南を見る向きです（画面上が南、右が西）。','初期表示は西南西の街側から東北東の山側を見る向きです。坂の先に清水寺が見え、舞台は画面の右側へ張り出します。画面外の名所は矢印付きの名前から移動できます。');
+ html=html.replace('初期表示は北側から南を見る向きです（画面上が南、右が西）。','初期表示は鴨川の五条大橋側から清水寺へ向かう向きです。手前の川と橋から、街、坂道、山の上の清水寺へと見渡せます。舞台は画面の右側へ張り出します。画面外の名所は矢印付きの名前から移動できます。');
  html=html.replace('画面上：南 · 右：西','画面上：北 · 右：東');
  html=html.replace('名所をタップで拡大 · 1本指で回転','名所をタップで拡大 · 2本指で移動');
- app=app.replace(/const mapSpots=\[.*?\];/,"const mapSpots=[{id:'temple',name:'清水寺'},{id:'hokanji',name:'八坂の塔'},{id:'kodaiji',name:'高台寺'},{id:'yasaka',name:'八坂神社'},{id:'street',name:'二寧坂'},{id:'sannenzaka',name:'産寧坂'}];");
- app=exact(app,'const points=framing?.overview||[];',"const points=(framing?['temple','hokanji','street','sannenzaka'].flatMap(k=>{const b=framing.bounds[k];return[b.x0,b.x1].flatMap(x=>[b.y0,b.y1+.9].flatMap(y=>[b.z0,b.z1].map(z=>[x,y,z])));}):[]);");
- // Do not move named features to make a composition. Camera framing omits the
- // distant Kamo boundary; the river remains at its real west-side position.
- app=exact(app,'const top=h<500?90:128,bottom=h-42,left=18,right=w-18;','const top=h<500?76:108,bottom=h*.74,left=16,right=w-16;');
+ app=app.replace(/const mapSpots=\[.*?\];/,"const mapSpots=[{id:'temple',name:'清水寺'},{id:'hokanji',name:'八坂の塔'},{id:'bridge',name:'五条大橋'},{id:'street',name:'二寧坂'},{id:'sannenzaka',name:'産寧坂'},{id:'kodaiji',name:'高台寺'},{id:'yasaka',name:'八坂神社'}];");
+ app=exact(app,'const points=framing?.overview||[];',"const entry=model?.cartography?.composition?.entry,hero=model?.cartography?.landmarks?.temple;if(entry&&hero)p.yaw=Math.atan2(entry.at[0]-hero.at[0],entry.at[2]-hero.at[1]);const points=(framing?['temple','hokanji','street','sannenzaka','bridge'].flatMap(k=>{const b=framing.bounds[k];return[b.x0,b.x1].flatMap(x=>[b.y0,b.y1+.9].flatMap(y=>[b.z0,b.z1].map(z=>[x,y,z])));}):[]);");
+ // Both the real bridge and the main-hall silhouette define the opening frame.
+ app=exact(app,'const top=h<500?90:128,bottom=h-42,left=18,right=w-18;','const top=h<500?76:w>h?100:108,bottom=h-(w>h?80:92),left=16,right=w-16;');
  // A displaced badge must keep an explicit leader to the real scene anchor.
  // Prefer suppressing a secondary lane badge to moving it into unrelated sky.
  app=exact(app,'if(show){for(let n=0;n<4&&occupied.some(o=>Math.abs(o.x-x)<half+o.half+7&&Math.abs(o.y-y)<43);n++)y-=44;show=y>92;}',`if(show){

@@ -5,7 +5,8 @@ for(const f of['renderer','scene'])vm.runInContext(fs.readFileSync(path.join(roo
 const model=vm.runInContext('makeStudy()',ctx,{timeout:240000}),craft=model.cartography.streetCraft,source=JSON.parse(fs.readFileSync(path.join(root,'../area-data/historic-streets.json')));
 const dist=(a,b)=>Math.hypot(...a.map((v,j)=>v-b[j]));
 const east=JSON.parse(fs.readFileSync(path.join(root,'../area-data/gion-footprints.json'))),west=JSON.parse(fs.readFileSync(path.join(root,'../area-data/west-gion-reference.json')));
-const selection=require('../tourist-roads.cjs')(source,east,west),sourceWays=new Map([...west.roads,...east.roads,...source.roads].map(r=>[r.id,r]));
+const gojo=require('../../area-data/gojo-entry-reference.json');
+const selection=require('../tourist-roads.cjs')(source,east,west),sourceWays=new Map([...gojo.roads,...west.roads,...east.roads,...source.roads].map(r=>[r.id,r]));
 assert.ok(craft&&craft.construction.length===selection.roads.length);
 assert.ok(selection.roads.length<=36&&craft.omittedMinorWays.length>1000,'a selective tourist network replaces broad road-type inclusion');
 for(const name of ['清水坂','産寧坂','二寧坂','一念坂','八坂通','五条坂','ねねの道'])assert.ok(selection.roads.some(r=>r.name===name&&r.tier==='main'));
@@ -25,11 +26,11 @@ for(const road of craft.construction){
 }
 // A whitelist must retain the real unnamed links as well as named streets.
 const pointDistance=(p,a,b)=>{const dx=b[0]-a[0],dy=b[1]-a[1],t=Math.max(0,Math.min(1,((p[0]-a[0])*dx+(p[1]-a[1])*dy)/(dx*dx+dy*dy)));return Math.hypot(p[0]-a[0]-t*dx,p[1]-a[1]-t*dy);};
-const roads=model.areaStreets,connected=new Set([roads.find(r=>r.name==='清水坂').id]);
+const roads=[...model.areaStreets,...model.cartography.waterways.crossings.map(b=>({...b,id:b.sourceWay}))],connected=new Set([roads.find(r=>r.name==='清水坂').id]);
 for(let n=0;n<roads.length;n++)for(const a of roads)if(connected.has(a.id))for(const b of roads){
  if(a.points.some(p=>b.points.slice(1).some((q,j)=>pointDistance(p,b.points[j],q)<.13))||b.points.some(p=>a.points.slice(1).some((q,j)=>pointDistance(p,a.points[j],q)<.13)))connected.add(b.id);
 }
-for(const name of ['清水坂','産寧坂','二寧坂','一念坂','八坂通','五条坂','ねねの道','下河原通','台所坂','八坂神社南参道','石塀小路'])assert.ok(roads.filter(r=>r.name===name).every(r=>connected.has(r.id)),name+' has source-based continuity');
+for(const name of ['清水坂','産寧坂','二寧坂','一念坂','八坂通','五条坂','ねねの道','下河原通','台所坂','八坂神社南参道','石塀小路','五条通','五条大橋'])assert.ok(roads.filter(r=>r.name===name).every(r=>connected.has(r.id)),name+' has source-based continuity');
 // Compare the actual two road edges across touching OSM way boundaries. The
 // former independent rectangles left gaps at Ninenzaka's stair/landing joins.
 const ninen=craft.construction.filter(r=>r.name==='二寧坂');let joins=0;

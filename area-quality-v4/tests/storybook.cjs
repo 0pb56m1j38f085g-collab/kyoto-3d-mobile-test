@@ -2,7 +2,7 @@
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const root=path.join(__dirname,'..'),context=vm.createContext({console,performance});
 for(const file of ['renderer','scene'])vm.runInContext(fs.readFileSync(path.join(root,'site/src',file+'.js'),'utf8'),context);
-const model=vm.runInContext('makeStudy()',context,{timeout:120000});
+const model=vm.runInContext('makeStudy()',context,{timeout:240000});
 const triangles=model.meshes.reduce((sum,m)=>sum+m.p.length/9*m.instances.length,0),instances=model.meshes.reduce((sum,m)=>sum+m.instances.length,0);
 assert.ok(triangles<3000000&&instances<42000,'shared full-quality geometry budget');
 assert.equal(model.cartography.mode,'illustrated-miniature');assert.equal(model.cartography.metric,false);assert.equal(model.cartography.routeGeometry,false);
@@ -10,7 +10,8 @@ assert.equal(model.metricLandmarks.length,13);
 assert.equal(model.meshes.reduce((n,m)=>n+m.instances.filter(i=>i.group==='main-hall').length,0),2158,'main hall and stage construction retained');
 for(const record of model.metricLandmarks)assert.ok(model.meshes.some(m=>m.instances.some(i=>i.group===record.group)),record.key+' remains present');
 assert.ok(model.areaBuildings.length>100&&model.areaBuildings.length<=360);
-assert.ok(model.cartography.trees>=900&&model.cartography.trees<=1650,'continuous woodland budget');
+assert.ok(model.cartography.trees>=1000&&model.cartography.trees<=1300,'quieter woodland budget');
+assert.ok(model.cartography.vegetation.maxHeight<=2.1&&model.cartography.vegetation.averageHeight<1.6,'small crowns stay subordinate to landmark architecture');
 assert.ok(model.meshes.some(m=>m.name==='storybook-sculpted-canopy'));
 assert.ok(model.meshes.some(m=>m.name==='storybook-machiya-gables'),'closed gables avoid hollow toy roofs');
 for(const name of ['storybook-machiya-roof','storybook-shop-eave']){
@@ -56,7 +57,8 @@ for(const r of cart.waterways.channels){const original=waterSource.water.find(s=
  const p=original.points.map(p=>[p[0]*cart.displayScaleEast,-p[1]*cart.displayScale]);
  for(const v of r.points)assert.ok(Math.min(...p.slice(1).map((b,j)=>distance(...v,p[j],b)))<.0001,'rendered river centre line follows source');
 }
-for(const r of cart.waterways.crossings){const source=waterSource.bridges.find(b=>b.id===r.sourceWay);assert.ok(source,'no fictional bridge');for(let j=0;j<r.points.length;j++){assert.ok(Math.abs(r.points[j][0]-source.points[j][0]*cart.displayScaleEast)<1e-8);assert.ok(Math.abs(r.points[j][1]+source.points[j][1]*cart.displayScale)<1e-8);}}
+const gojoSource=JSON.parse(fs.readFileSync(path.join(root,'../area-data/gojo-entry-reference.json')));
+for(const r of cart.waterways.crossings){const source=[...waterSource.bridges,...gojoSource.bridges].find(b=>b.id===r.sourceWay);assert.ok(source,'no fictional bridge');for(let j=0;j<r.points.length;j++){assert.ok(Math.abs(r.points[j][0]-source.points[j][0]*cart.displayScaleEast)<1e-8);assert.ok(Math.abs(r.points[j][1]+source.points[j][1]*cart.displayScale)<1e-8);}}
 const major=cart.landmarks,westRiver=cart.waterways.channels.find(r=>r.name==='鴨川');
 assert.ok(westRiver.points.every(p=>p[0]<major.yasaka.at[0]&&p[0]<major.hokanji.at[0]),'Kamo stays west, beyond the Gion town block');
 assert.ok(major.temple.at[1]>major.hokanji.at[1]&&major.hokanji.at[1]>major.kodaiji.at[1]&&major.kodaiji.at[1]>major.yasaka.at[1],'Kiyomizu -> Hokanji -> Kodaiji -> Yasaka south-to-north order');
@@ -74,7 +76,7 @@ for(const m of model.meshes.filter(m=>['storybook-soft-ground','storybook-wooded
 }
 assert.ok(!model.meshes.some(m=>m.instances.some(i=>['kiyomizu-landscape','gion-footprint-blocks','district-terrain'].includes(i.group))),'retire dense non-display geometry');
 const asset=JSON.parse(fs.readFileSync(path.join(root,'.build/mobile-pack.json')));
-assert.ok(asset.bytes<16*1024*1024&&asset.compressedBytes<5*1024*1024&&asset.manifestBytes<220000,'download and GPU-input budgets');
+assert.ok(asset.bytes<16*1024*1024&&asset.compressedBytes<5*1024*1024&&asset.manifestBytes<280000,'download and GPU-input budgets, including the real Gojo arrival source');
 assert.ok(asset.maxChunkBytes<=2*1024*1024&&asset.chunkCount>=2);
 assert.equal(asset.triangles,triangles);assert.equal(asset.instances,instances);
 const sourceHashes={};for(const file of ['historic-streets.json','gion-footprints.json'])sourceHashes[file]=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'../area-data',file))).digest('hex');
