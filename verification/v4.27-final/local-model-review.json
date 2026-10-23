@@ -1,0 +1,19 @@
+{
+  "revision": "area-higashiyama-quality-v4.27",
+  "modelHash": "bdf2609eab20c442bec0083b06539703fd0e909e5fab99f3df87572cfd16a1e0",
+  "lightingHash": "f9fae0b7c5d54ae4fc363e0addcaf0bc92c85da8b7178f5abd7f461397bd925f",
+  "lightSamples": 1991321,
+  "triangles": 2368054,
+  "meshes": 180,
+  "instances": 28030,
+  "buildRuntime": {
+    "node": "24.22.1",
+    "openssl": "3.5.9"
+  },
+  "scope": "Local geometry and full lighting reviewed; final CI artifact is authoritative for publication.",
+  "visuallyInspected": [
+    "area",
+    "bridge",
+    "street"
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "ok": true,
+  "checkedAt": "2026-10-23T21:37:46.653Z",
+  "url": "https://higashiyama-quality-v4.onrender.com/",
+  "revision": "area-higashiyama-quality-v4.27",
+  "modelHash": "bdf2609eab20c442bec0083b06539703fd0e909e5fab99f3df87572cfd16a1e0",
+  "lightingHash": "f9fae0b7c5d54ae4fc363e0addcaf0bc92c85da8b7178f5abd7f461397bd925f",
+  "buildRuntime": {
+    "node": "24.22.1",
+    "openssl": "3.5.9"
+  },
+  "checks": [
+    {
+      "file": "src/renderer.js",
+      "bytes": 69784,
+      "sha256": "84568a6a3d277fa768faad42b6225369e202e7cd218158f3cb36fa406241d8b0"
+    },
+    {
+      "file": "src/scene.js",
+      "bytes": 3694121,
+      "sha256": "04aff649bd602512bebff202553fe64354e9b87f16099f04b530d9a65af7ff18"
+    },
+    {
+      "file": "src/app.js",
+      "bytes": 21722,
+      "sha256": "853f2837fb6b39e72d83a0f17fe7b88dfc36db06c69892da08ddc98aaac6073b"
+    },
+    {
+      "file": "index.html",
+      "bytes": 20372,
+      "sha256": "2bddf3d11b537b0e65cfef05bf1464bf29aad92be0650e9950a690d4cf635f58"
+    },
+    {
+      "file": "lighting.bin",
+      "bytes": 7965292,
+      "sha256": "f9fae0b7c5d54ae4fc363e0addcaf0bc92c85da8b7178f5abd7f461397bd925f"
+    },
+    {
+      "file": "./mobile/7623d09a722e55ada7b90056.json",
+      "bytes": 255929,
+      "sha256": "7623d09a722e55ada7b900561947df4cc2cecd42ed0767889571d0a2ad3ad3e5"
+    },
+    {
+      "file": "./mobile/1d8ef733810a503d7bf990a3.bin.gz",
+      "bytes": 559394,
+      "sha256": "d3579ff03e63c2a994dc694d027c5412f33d70d2ef371e00e71ee1418c07fd0c"
+    },
+    {
+      "file": "./mobile/ab8de74a2af1b64c78019a1d.bin.gz",
+      "bytes": 526117,
+      "sha256": "6b81da1fba8dfa6fc9a4b74e72107d584a2039a939e27c5831ff8e8127a4948c"
+    },
+    {
+      "file": "./mobile/75e2773a19dc08751bb45b82.bin.gz",
+      "bytes": 143944,
+      "sha256": "1c820132d82bcafd8fa4a5f1bcbf17a871ff3b0cc44fd4caa7c7250a500379bd"
+    },
+    {
+      "file": "./mobile/4bc54fa13251f9caf37edef5.bin.gz",
+      "bytes": 567246,
+      "sha256": "c80a61a4b8f6c5f4e50a6076d4cd33e772f45d446b08e6420cffb8c0eda1890f"
+    },
+    {
+      "file": "./mobile/eba4dbce7516ae9aa738009a.bin.gz",
+      "bytes": 866967,
+      "sha256": "b6ca1bb113aa9144b189ac07abd9e55ff79b64d0c98c9abfee53297a953ce841"
+    },
+    {
+      "file": "./mobile/f55af2995e5e59924e2bdc1a.bin.gz",
+      "bytes": 655274,
+      "sha256": "1e03e989676a81d7d215905d4e311c24e4cd9621faa99f3e319b077820159aba"
+    },
+    {
+      "file": "./mobile/20b5782d0b40967db827660c.bin.gz",
+      "bytes": 394858,
+      "sha256": "dce8a9890727739d316a48932cb973fb7148a485e2d1c32c65de60d8d084dfa4"
+    }
+  ],
+  "physicalDevice": false,
+  "scope": "Public bytes match the browser-tested artifact."
+}

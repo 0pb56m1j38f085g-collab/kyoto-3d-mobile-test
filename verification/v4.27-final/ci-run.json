@@ -1,0 +1,85 @@
+{
+  "id": 40025477786,
+  "url": "https://github.com/0pb56m1j38f085g-collab/kyoto-3d-mobile-test/actions/runs/40025477786",
+  "sourceCommit": "16451cf65634c9c9c8406ad1be54061c1dd29fc6",
+  "sourceTree": "5ef5455692e04c137072bc5815a27cb4e7c2a9b9",
+  "status": "completed",
+  "conclusion": "success",
+  "startedAt": "2026-10-23T21:15:53Z",
+  "completedAt": "2026-10-23T21:32:41Z",
+  "jobs": [
+    {
+      "id": 120660458588,
+      "name": "build",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 120664723437,
+      "name": "browser (webkit)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 120664723570,
+      "name": "browser (chromium)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 120667239272,
+      "name": "evidence",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 12533785165,
+      "name": "east-concept-v427-webkit",
+      "sizeBytes": 22688813,
+      "digest": "sha256:008a878c8a276f3f421450e439cc917bfe3d0518007de8c8b4a64ca652ac58ab",
+      "expiresAt": "2026-11-06T21:28:20Z"
+    },
+    {
+      "id": 12533142712,
+      "name": "east-concept-v427-review",
+      "sizeBytes": 50732034,
+      "digest": "sha256:dc038684ffb320ba3f3a04294c3dbfa855d0c5de7730a06d0c105288f0eca327",
+      "expiresAt": "2026-11-22T21:32:35Z"
+    },
+    {
+      "id": 12532942320,
+      "name": "east-concept-v427-site",
+      "sizeBytes": 7742690,
+      "digest": "sha256:004062c9e2de4f6f58fbe8e2fb10312c7bca999cdd510b9fedc4283356587947",
+      "expiresAt": "2026-11-06T21:26:03Z"
+    },
+    {
+      "id": 12532593583,
+      "name": "east-concept-v427-chromium",
+      "sizeBytes": 20296865,
+      "digest": "sha256:3b8df0abe832158aec3727e8dd139ac6e70ea813fc1ab8430bd59d9d3b515f79",
+      "expiresAt": "2026-11-06T21:32:11Z"
+    }
+  ],
+  "browserEvidence": {
+    "webkit": {
+      "passed": 55,
+      "screenshots": 18,
+      "report": "webkit-report.json"
+    },
+    "chromium": {
+      "passed": 55,
+      "screenshots": 18,
+      "report": "chromium-report.json"
+    }
+  },
+  "physicalDevice": false,
+  "visualReview": [
+    "WebKit iphone-area.png",
+    "WebKit iphone-street.png",
+    "Chromium iphone-bridge.png"
+  ],
+  "note": "Both downloaded browser ZIPs and the site ZIP were verified against GitHub artifact SHA-256 digests. CI screenshots are actual renders, not generated concept images."
+}

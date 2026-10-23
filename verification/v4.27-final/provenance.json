@@ -1,0 +1,31 @@
+{
+  "status": "implemented, newly verified, and publicly deployed",
+  "sourceCommit": "16451cf65634c9c9c8406ad1be54061c1dd29fc6",
+  "sourceTree": "5ef5455692e04c137072bc5815a27cb4e7c2a9b9",
+  "ciRun": 40025477786,
+  "ciUrl": "https://github.com/0pb56m1j38f085g-collab/kyoto-3d-mobile-test/actions/runs/40025477786",
+  "entrySourceWay": 28144474,
+  "sourceInputSha256": "295f1b90d6a9266361c794ce5f2dcb41338bb372add5683d72ee08716ab9d411",
+  "sourceExtractSha256": "831b510ab5271d668eb02d59f41303f17ed38bf09228690bb60f02f3a92c039f",
+  "originalGeographicInputsChanged": false,
+  "physicalDevice": false,
+  "releaseCommit": "bea8f0dbd4dbe6bd732336b27c05f5c1cd64ccf2",
+  "renderDeploy": "dep-dbdt54vf3r2c73bvj430",
+  "liveAt": "2026-10-23T21:36:37.526657Z",
+  "publicBytesCheckedAt": "2026-10-23T21:37:46.653Z",
+  "publicBrowserCheckedAt": "2026-10-23T21:38:13.264Z",
+  "publicAssetsVerified": 13,
+  "browserChecks": {
+    "webkit": 55,
+    "chromium": 55
+  },
+  "buildRuntime": {
+    "node": "24.22.1",
+    "openssl": "3.5.9"
+  },
+  "publicScreenshotsReviewed": [
+    "public-area.jpg",
+    "public-bridge.jpg",
+    "public-street.jpg"
+  ]
+}

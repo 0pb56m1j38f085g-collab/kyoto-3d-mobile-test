@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "checkedAt": "2026-10-23T21:38:13.264Z",
+  "url": "https://higashiyama-quality-v4.onrender.com/",
+  "state": {
+    "ready": true,
+    "revision": "area-higashiyama-quality-v4.27",
+    "opacity": 0.64,
+    "roads": 33,
+    "entry": "五条大橋",
+    "trees": 1250,
+    "streetCraft": 2,
+    "baked": true,
+    "gl": 0
+  },
+  "errors": [],
+  "physicalDevice": false,
+  "proxyCertificateBypass": true,
+  "scope": "Published page startup, actual Gojo bridge and Ninenzaka pin taps and Gojozaka paving in Chromium mobile viewport. TLS checked separately by the byte verifier."
+}

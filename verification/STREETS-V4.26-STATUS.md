@@ -46,4 +46,8 @@ Riverbank/bridge treatment for Shirakawa, Yamashina expansion, measured routing/
 
 ## Subsequent security rebuild
 
-On 2026-10-23 the same v4.26 visual assets were rebuilt and redeployed with Node.js 24.22.1 / OpenSSL 3.5.9. Fresh WebKit and Chromium checks passed (50 each), and the public bytes and runtime were verified. The current live release is `f4adbde8bfb165ca159feb3f0d617448bba3e9c2`, Render deploy `dep-dbdr340n74is73ek9no0`. See [SECURITY-2026-10-23.md](SECURITY-2026-10-23.md) for this later deployment and its separate evidence; the original publication record above is retained as history.
+On 2026-10-23 the same v4.26 visual assets were rebuilt and redeployed with Node.js 24.22.1 / OpenSSL 3.5.9. Fresh WebKit and Chromium checks passed (50 each), and the public bytes and runtime were verified. The security-update release was `f4adbde8bfb165ca159feb3f0d617448bba3e9c2`, Render deploy `dep-dbdr340n74is73ek9no0`. See [SECURITY-2026-10-23.md](SECURITY-2026-10-23.md) for this later deployment and its separate evidence; the original publication record above is retained as history.
+
+## Later v4.27 visual release
+
+The current public release is now v4.27, with a Gojo bridge opening composition and quieter woodland around enlarged landmarks. See [RIVER-ENTRY-V4.27-STATUS.md](RIVER-ENTRY-V4.27-STATUS.md) for its separate new verification and deployment record. Historical v4.26 evidence above remains unchanged.

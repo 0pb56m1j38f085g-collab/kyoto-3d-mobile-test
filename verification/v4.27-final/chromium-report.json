@@ -1,0 +1,837 @@
+{
+  "engine": "chromium",
+  "checks": [
+    {
+      "name": "iphone real 3D ready",
+      "passed": true,
+      "detail": {
+        "ready": true,
+        "quality": "standard",
+        "baked": true,
+        "dpr": 1.5,
+        "msaa": 4,
+        "gl": 0,
+        "memory": {
+          "geometryBytes": 11956660,
+          "downloadBytes": 3713800,
+          "chunkCount": 7,
+          "maxChunkBytes": 2031804,
+          "maxCompressedChunkBytes": 866967,
+          "retainedGeometryBytes": 0,
+          "stagingBytes": 0,
+          "uploadedChunks": 7,
+          "proceduralBuild": false,
+          "runtimeVertexIndexing": false
+        },
+        "diagnostics": "東山・祇園 v4.27\n表示: 390 × 700 CSS px\n描画: 585 × 1050 px\n画質: 標準\n間接照明: 事前計算した多重反射光\n分割読込: 7 / 7、作業バッファ最大 1.94 MiB、形状のCPU保持なし\n初期表示: 1164 ms\n操作時の描画間隔: 約17 ms\n三角形: 2,368,054\n本堂: 2158 個の形状インスタンスを保持\n描画フレーム数: 2\n実行エラー: 0\nGPS / アクセス解析: 不使用\n自動送信: なし",
+        "camera": {
+          "target": [
+            -17.922837929274706,
+            5,
+            -8.03831715076021
+          ],
+          "span": 59.91315948291905,
+          "yaw": -1.685283424400028,
+          "pitch": 0.56
+        }
+      }
+    },
+    {
+      "name": "iphone full baked lighting",
+      "passed": true
+    },
+    {
+      "name": "iphone shared full resolution",
+      "passed": true,
+      "detail": {
+        "ready": true,
+        "quality": "standard",
+        "baked": true,
+        "dpr": 1.5,
+        "msaa": 4,
+        "gl": 0,
+        "memory": {
+          "geometryBytes": 11956660,
+          "downloadBytes": 3713800,
+          "chunkCount": 7,
+          "maxChunkBytes": 2031804,
+          "maxCompressedChunkBytes": 866967,
+          "retainedGeometryBytes": 0,
+          "stagingBytes": 0,
+          "uploadedChunks": 7,
+          "proceduralBuild": false,
+          "runtimeVertexIndexing": false
+        },
+        "diagnostics": "東山・祇園 v4.27\n表示: 390 × 700 CSS px\n描画: 585 × 1050 px\n画質: 標準\n間接照明: 事前計算した多重反射光\n分割読込: 7 / 7、作業バッファ最大 1.94 MiB、形状のCPU保持なし\n初期表示: 1164 ms\n操作時の描画間隔: 約17 ms\n三角形: 2,368,054\n本堂: 2158 個の形状インスタンスを保持\n描画フレーム数: 2\n実行エラー: 0\nGPS / アクセス解析: 不使用\n自動送信: なし",
+        "camera": {
+          "target": [
+            -17.922837929274706,
+            5,
+            -8.03831715076021
+          ],
+          "span": 59.91315948291905,
+          "yaw": -1.685283424400028,
+          "pitch": 0.56
+        }
+      }
+    },
+    {
+      "name": "iphone bounded packed upload",
+      "passed": true
+    },
+    {
+      "name": "iphone no bottom menu or light option",
+      "passed": true
+    },
+    {
+      "name": "iphone bridge-to-temple camera",
+      "passed": true
+    },
+    {
+      "name": "iphone Gojo bridge visible in overview",
+      "passed": true
+    },
+    {
+      "name": "iphone quieter trees around larger landmarks",
+      "passed": true
+    },
+    {
+      "name": "iphone main landmarks reachable as pins or directions",
+      "passed": true
+    },
+    {
+      "name": "iphone displaced labels retain geographic leaders",
+      "passed": true
+    },
+    {
+      "name": "iphone curated tourist roads loaded",
+      "passed": true
+    },
+    {
+      "name": "iphone detail alleys hidden in overview",
+      "passed": true
+    },
+    {
+      "name": "iphone semantic town metadata loaded",
+      "passed": true
+    },
+    {
+      "name": "iphone real alpha blend with visible background",
+      "passed": true,
+      "detail": {
+        "background": [
+          215,
+          90,
+          34
+        ],
+        "front": [
+          210,
+          165,
+          145
+        ],
+        "layered": [
+          210,
+          165,
+          145
+        ],
+        "reversed": [
+          210,
+          165,
+          145
+        ],
+        "opaque": [
+          32,
+          158,
+          207
+        ],
+        "occluded": [
+          32,
+          158,
+          207
+        ],
+        "solid": [
+          207,
+          208,
+          207
+        ],
+        "expected": [
+          209.88,
+          165.52,
+          144.72
+        ],
+        "alphaError": 0.5200000000000102,
+        "rearError": 0,
+        "orderError": 0,
+        "occlusionError": 0,
+        "gl": 0,
+        "baked": true,
+        "msaa": 4
+      }
+    },
+    {
+      "name": "iphone rear walls do not accumulate opacity",
+      "passed": true,
+      "detail": {
+        "background": [
+          215,
+          90,
+          34
+        ],
+        "front": [
+          210,
+          165,
+          145
+        ],
+        "layered": [
+          210,
+          165,
+          145
+        ],
+        "reversed": [
+          210,
+          165,
+          145
+        ],
+        "opaque": [
+          32,
+          158,
+          207
+        ],
+        "occluded": [
+          32,
+          158,
+          207
+        ],
+        "solid": [
+          207,
+          208,
+          207
+        ],
+        "expected": [
+          209.88,
+          165.52,
+          144.72
+        ],
+        "alphaError": 0.5200000000000102,
+        "rearError": 0,
+        "orderError": 0,
+        "occlusionError": 0,
+        "gl": 0,
+        "baked": true,
+        "msaa": 4
+      }
+    },
+    {
+      "name": "iphone transparency independent of draw order",
+      "passed": true,
+      "detail": {
+        "background": [
+          215,
+          90,
+          34
+        ],
+        "front": [
+          210,
+          165,
+          145
+        ],
+        "layered": [
+          210,
+          165,
+          145
+        ],
+        "reversed": [
+          210,
+          165,
+          145
+        ],
+        "opaque": [
+          32,
+          158,
+          207
+        ],
+        "occluded": [
+          32,
+          158,
+          207
+        ],
+        "solid": [
+          207,
+          208,
+          207
+        ],
+        "expected": [
+          209.88,
+          165.52,
+          144.72
+        ],
+        "alphaError": 0.5200000000000102,
+        "rearError": 0,
+        "orderError": 0,
+        "occlusionError": 0,
+        "gl": 0,
+        "baked": true,
+        "msaa": 4
+      }
+    },
+    {
+      "name": "iphone opaque foreground occludes transparent town",
+      "passed": true,
+      "detail": {
+        "background": [
+          215,
+          90,
+          34
+        ],
+        "front": [
+          210,
+          165,
+          145
+        ],
+        "layered": [
+          210,
+          165,
+          145
+        ],
+        "reversed": [
+          210,
+          165,
+          145
+        ],
+        "opaque": [
+          32,
+          158,
+          207
+        ],
+        "occluded": [
+          32,
+          158,
+          207
+        ],
+        "solid": [
+          207,
+          208,
+          207
+        ],
+        "expected": [
+          209.88,
+          165.52,
+          144.72
+        ],
+        "alphaError": 0.5200000000000102,
+        "rearError": 0,
+        "orderError": 0,
+        "occlusionError": 0,
+        "gl": 0,
+        "baked": true,
+        "msaa": 4
+      }
+    },
+    {
+      "name": "offscreen Yasaka has an explicit directional button",
+      "passed": true
+    },
+    {
+      "name": "offscreen direction opens the real landmark",
+      "passed": true
+    },
+    {
+      "name": "view bridge draws",
+      "passed": true
+    },
+    {
+      "name": "view temple draws",
+      "passed": true
+    },
+    {
+      "name": "view street draws",
+      "passed": true
+    },
+    {
+      "name": "view sannenzaka draws",
+      "passed": true
+    },
+    {
+      "name": "view hokanji draws",
+      "passed": true
+    },
+    {
+      "name": "view kodaiji draws",
+      "passed": true
+    },
+    {
+      "name": "view yasaka draws",
+      "passed": true
+    },
+    {
+      "name": "crafted street kiyomizu-approach draws",
+      "passed": true
+    },
+    {
+      "name": "crafted street gojo draws",
+      "passed": true
+    },
+    {
+      "name": "crafted street nene draws",
+      "passed": true
+    },
+    {
+      "name": "crafted street tower-connection draws",
+      "passed": true
+    },
+    {
+      "name": "crafted street ishibe draws",
+      "passed": true
+    },
+    {
+      "name": "rotation updates camera with transparent town",
+      "passed": true
+    },
+    {
+      "name": "zoom updates camera with transparent town",
+      "passed": true
+    },
+    {
+      "name": "iPhone high quality available",
+      "passed": true
+    },
+    {
+      "name": "reload keeps baked quality",
+      "passed": true
+    },
+    {
+      "name": "context restoration keeps baked quality",
+      "passed": true,
+      "detail": {
+        "baked": true,
+        "gl": 0,
+        "width": 585,
+        "height": 990,
+        "msaa": 4,
+        "framebuffer": true,
+        "uploaded": 7,
+        "chunkCount": 7
+      }
+    },
+    {
+      "name": "iphone no runtime errors",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "desktop real 3D ready",
+      "passed": true,
+      "detail": {
+        "ready": true,
+        "quality": "standard",
+        "baked": true,
+        "dpr": 1.5,
+        "msaa": 2,
+        "gl": 0,
+        "memory": {
+          "geometryBytes": 11956660,
+          "downloadBytes": 3713800,
+          "chunkCount": 7,
+          "maxChunkBytes": 2031804,
+          "maxCompressedChunkBytes": 866967,
+          "retainedGeometryBytes": 0,
+          "stagingBytes": 0,
+          "uploadedChunks": 7,
+          "proceduralBuild": false,
+          "runtimeVertexIndexing": false
+        },
+        "diagnostics": "東山・祇園 v4.27\n表示: 1280 × 900 CSS px\n描画: 1920 × 1350 px\n画質: 標準\n間接照明: 事前計算した多重反射光\n分割読込: 7 / 7、作業バッファ最大 1.94 MiB、形状のCPU保持なし\n初期表示: 614 ms\n描画間隔: まだ操作データがありません\n三角形: 2,368,054\n本堂: 2158 個の形状インスタンスを保持\n描画フレーム数: 1\n実行エラー: 0\nGPS / アクセス解析: 不使用\n自動送信: なし",
+        "camera": {
+          "target": [
+            -18.0724964585175,
+            5,
+            -8.055004483994106
+          ],
+          "span": 53.37958397081877,
+          "yaw": -1.685283424400028,
+          "pitch": 0.56
+        }
+      }
+    },
+    {
+      "name": "desktop full baked lighting",
+      "passed": true
+    },
+    {
+      "name": "desktop shared full resolution",
+      "passed": true,
+      "detail": {
+        "ready": true,
+        "quality": "standard",
+        "baked": true,
+        "dpr": 1.5,
+        "msaa": 2,
+        "gl": 0,
+        "memory": {
+          "geometryBytes": 11956660,
+          "downloadBytes": 3713800,
+          "chunkCount": 7,
+          "maxChunkBytes": 2031804,
+          "maxCompressedChunkBytes": 866967,
+          "retainedGeometryBytes": 0,
+          "stagingBytes": 0,
+          "uploadedChunks": 7,
+          "proceduralBuild": false,
+          "runtimeVertexIndexing": false
+        },
+        "diagnostics": "東山・祇園 v4.27\n表示: 1280 × 900 CSS px\n描画: 1920 × 1350 px\n画質: 標準\n間接照明: 事前計算した多重反射光\n分割読込: 7 / 7、作業バッファ最大 1.94 MiB、形状のCPU保持なし\n初期表示: 614 ms\n描画間隔: まだ操作データがありません\n三角形: 2,368,054\n本堂: 2158 個の形状インスタンスを保持\n描画フレーム数: 1\n実行エラー: 0\nGPS / アクセス解析: 不使用\n自動送信: なし",
+        "camera": {
+          "target": [
+            -18.0724964585175,
+            5,
+            -8.055004483994106
+          ],
+          "span": 53.37958397081877,
+          "yaw": -1.685283424400028,
+          "pitch": 0.56
+        }
+      }
+    },
+    {
+      "name": "desktop bounded packed upload",
+      "passed": true
+    },
+    {
+      "name": "desktop no bottom menu or light option",
+      "passed": true
+    },
+    {
+      "name": "desktop bridge-to-temple camera",
+      "passed": true
+    },
+    {
+      "name": "desktop Gojo bridge visible in overview",
+      "passed": true
+    },
+    {
+      "name": "desktop quieter trees around larger landmarks",
+      "passed": true
+    },
+    {
+      "name": "desktop main landmarks reachable as pins or directions",
+      "passed": true
+    },
+    {
+      "name": "desktop displaced labels retain geographic leaders",
+      "passed": true
+    },
+    {
+      "name": "desktop curated tourist roads loaded",
+      "passed": true
+    },
+    {
+      "name": "desktop detail alleys hidden in overview",
+      "passed": true
+    },
+    {
+      "name": "desktop semantic town metadata loaded",
+      "passed": true
+    },
+    {
+      "name": "desktop real alpha blend with visible background",
+      "passed": true,
+      "detail": {
+        "background": [
+          215,
+          90,
+          34
+        ],
+        "front": [
+          210,
+          165,
+          145
+        ],
+        "layered": [
+          210,
+          165,
+          145
+        ],
+        "reversed": [
+          210,
+          165,
+          145
+        ],
+        "opaque": [
+          32,
+          158,
+          207
+        ],
+        "occluded": [
+          32,
+          158,
+          207
+        ],
+        "solid": [
+          207,
+          208,
+          207
+        ],
+        "expected": [
+          209.88,
+          165.52,
+          144.72
+        ],
+        "alphaError": 0.5200000000000102,
+        "rearError": 0,
+        "orderError": 0,
+        "occlusionError": 0,
+        "gl": 0,
+        "baked": true,
+        "msaa": 4
+      }
+    },
+    {
+      "name": "desktop rear walls do not accumulate opacity",
+      "passed": true,
+      "detail": {
+        "background": [
+          215,
+          90,
+          34
+        ],
+        "front": [
+          210,
+          165,
+          145
+        ],
+        "layered": [
+          210,
+          165,
+          145
+        ],
+        "reversed": [
+          210,
+          165,
+          145
+        ],
+        "opaque": [
+          32,
+          158,
+          207
+        ],
+        "occluded": [
+          32,
+          158,
+          207
+        ],
+        "solid": [
+          207,
+          208,
+          207
+        ],
+        "expected": [
+          209.88,
+          165.52,
+          144.72
+        ],
+        "alphaError": 0.5200000000000102,
+        "rearError": 0,
+        "orderError": 0,
+        "occlusionError": 0,
+        "gl": 0,
+        "baked": true,
+        "msaa": 4
+      }
+    },
+    {
+      "name": "desktop transparency independent of draw order",
+      "passed": true,
+      "detail": {
+        "background": [
+          215,
+          90,
+          34
+        ],
+        "front": [
+          210,
+          165,
+          145
+        ],
+        "layered": [
+          210,
+          165,
+          145
+        ],
+        "reversed": [
+          210,
+          165,
+          145
+        ],
+        "opaque": [
+          32,
+          158,
+          207
+        ],
+        "occluded": [
+          32,
+          158,
+          207
+        ],
+        "solid": [
+          207,
+          208,
+          207
+        ],
+        "expected": [
+          209.88,
+          165.52,
+          144.72
+        ],
+        "alphaError": 0.5200000000000102,
+        "rearError": 0,
+        "orderError": 0,
+        "occlusionError": 0,
+        "gl": 0,
+        "baked": true,
+        "msaa": 4
+      }
+    },
+    {
+      "name": "desktop opaque foreground occludes transparent town",
+      "passed": true,
+      "detail": {
+        "background": [
+          215,
+          90,
+          34
+        ],
+        "front": [
+          210,
+          165,
+          145
+        ],
+        "layered": [
+          210,
+          165,
+          145
+        ],
+        "reversed": [
+          210,
+          165,
+          145
+        ],
+        "opaque": [
+          32,
+          158,
+          207
+        ],
+        "occluded": [
+          32,
+          158,
+          207
+        ],
+        "solid": [
+          207,
+          208,
+          207
+        ],
+        "expected": [
+          209.88,
+          165.52,
+          144.72
+        ],
+        "alphaError": 0.5200000000000102,
+        "rearError": 0,
+        "orderError": 0,
+        "occlusionError": 0,
+        "gl": 0,
+        "baked": true,
+        "msaa": 4
+      }
+    },
+    {
+      "name": "desktop no runtime errors",
+      "passed": true,
+      "detail": []
+    }
+  ],
+  "screenshots": [
+    "iphone-area.png",
+    "iphone-bridge.png",
+    "iphone-temple.png",
+    "iphone-street.png",
+    "iphone-sannenzaka.png",
+    "iphone-hokanji.png",
+    "iphone-kodaiji.png",
+    "iphone-yasaka.png",
+    "iphone-kiyomizu-approach.png",
+    "iphone-gojo.png",
+    "iphone-nene.png",
+    "iphone-tower-connection.png",
+    "iphone-ishibe.png",
+    "iphone-street-rotated.png",
+    "iphone-street-zoomed.png",
+    "iphone-short.png",
+    "iphone-restored.png",
+    "desktop-area.png"
+  ],
+  "physicalDevice": false,
+  "iphone": {
+    "ready": true,
+    "quality": "standard",
+    "baked": true,
+    "dpr": 1.5,
+    "msaa": 4,
+    "gl": 0,
+    "memory": {
+      "geometryBytes": 11956660,
+      "downloadBytes": 3713800,
+      "chunkCount": 7,
+      "maxChunkBytes": 2031804,
+      "maxCompressedChunkBytes": 866967,
+      "retainedGeometryBytes": 0,
+      "stagingBytes": 0,
+      "uploadedChunks": 7,
+      "proceduralBuild": false,
+      "runtimeVertexIndexing": false
+    },
+    "diagnostics": "東山・祇園 v4.27\n表示: 390 × 700 CSS px\n描画: 585 × 1050 px\n画質: 標準\n間接照明: 事前計算した多重反射光\n分割読込: 7 / 7、作業バッファ最大 1.94 MiB、形状のCPU保持なし\n初期表示: 1164 ms\n操作時の描画間隔: 約17 ms\n三角形: 2,368,054\n本堂: 2158 個の形状インスタンスを保持\n描画フレーム数: 2\n実行エラー: 0\nGPS / アクセス解析: 不使用\n自動送信: なし",
+    "camera": {
+      "target": [
+        -17.922837929274706,
+        5,
+        -8.03831715076021
+      ],
+      "span": 59.91315948291905,
+      "yaw": -1.685283424400028,
+      "pitch": 0.56
+    }
+  },
+  "desktop": {
+    "ready": true,
+    "quality": "standard",
+    "baked": true,
+    "dpr": 1.5,
+    "msaa": 2,
+    "gl": 0,
+    "memory": {
+      "geometryBytes": 11956660,
+      "downloadBytes": 3713800,
+      "chunkCount": 7,
+      "maxChunkBytes": 2031804,
+      "maxCompressedChunkBytes": 866967,
+      "retainedGeometryBytes": 0,
+      "stagingBytes": 0,
+      "uploadedChunks": 7,
+      "proceduralBuild": false,
+      "runtimeVertexIndexing": false
+    },
+    "diagnostics": "東山・祇園 v4.27\n表示: 1280 × 900 CSS px\n描画: 1920 × 1350 px\n画質: 標準\n間接照明: 事前計算した多重反射光\n分割読込: 7 / 7、作業バッファ最大 1.94 MiB、形状のCPU保持なし\n初期表示: 614 ms\n描画間隔: まだ操作データがありません\n三角形: 2,368,054\n本堂: 2158 個の形状インスタンスを保持\n描画フレーム数: 1\n実行エラー: 0\nGPS / アクセス解析: 不使用\n自動送信: なし",
+    "camera": {
+      "target": [
+        -18.0724964585175,
+        5,
+        -8.055004483994106
+      ],
+      "span": 53.37958397081877,
+      "yaw": -1.685283424400028,
+      "pitch": 0.56
+    }
+  },
+  "ok": true
+}

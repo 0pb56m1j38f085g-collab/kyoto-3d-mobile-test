@@ -1,0 +1,35 @@
+{
+  "workspace": "tea-dbbs370473hc73cb8gog",
+  "service": "srv-dbcf79mktt5c73f8l7cg",
+  "url": "https://higashiyama-quality-v4.onrender.com/",
+  "autoDeploy": false,
+  "clearCache": false,
+  "deploy": {
+    "commit": {
+      "createdAt": "2026-10-23T21:16:40Z",
+      "id": "bea8f0dbd4dbe6bd732336b27c05f5c1cd64ccf2",
+      "message": "Release v4.27 Gojo bridge entry and clearer landmarks [skip ci]"
+    },
+    "createdAt": "2026-10-23T21:33:07.503938Z",
+    "finishedAt": "2026-10-23T21:36:37.526657Z",
+    "id": "dep-dbdt54vf3r2c73bvj430",
+    "startedAt": "2026-10-23T21:33:07.502215Z",
+    "status": "live",
+    "trigger": "api",
+    "updatedAt": "2026-10-23T21:36:37.526919Z"
+  },
+  "buildEvidence": [
+    {
+      "timestamp": "2026-10-23T21:33:12.721555936Z",
+      "message": "AREA_BUILD_RUNTIME {\"node\":\"24.22.1\",\"openssl\":\"3.5.9\"}"
+    },
+    {
+      "timestamp": "2026-10-23T21:36:35.410259449Z",
+      "message": "AREA_BUILD_VALIDATED {\"modelHash\":\"bdf2609eab20c442bec0083b06539703fd0e909e5fab99f3df87572cfd16a1e0\",\"meshes\":180,\"instances\":28030,\"triangles\":2368054,\"lightSamples\":1991321,\"lightingBytes\":7965292}"
+    },
+    {
+      "timestamp": "2026-10-23T21:36:37.042169802Z",
+      "message": "==>\u001b(B Your site is live 🎉\u001b(B"
+    }
+  ]
+}
